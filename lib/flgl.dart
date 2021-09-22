@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
-
 import 'openGL/contexts/open_gl_context_es.dart';
 import 'openGL/open_gl_es.dart';
 
