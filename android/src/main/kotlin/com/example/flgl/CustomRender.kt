@@ -51,7 +51,6 @@ class CustomRender {
         this.executeSync {
             setup();
         }
-
     }
 
     fun setup() {
@@ -87,8 +86,6 @@ class CustomRender {
     fun initEGL() {
         shareEglEnv = EglEnv();
         shareEglEnv.setupRender();
-
-        // ThreeEgl.setContext("shareContext", shareEglEnv.eglContext);
 
         eglEnv = EglEnv();
         dartEglEnv = EglEnv();

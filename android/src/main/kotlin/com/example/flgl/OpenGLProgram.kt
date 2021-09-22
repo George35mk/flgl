@@ -156,7 +156,6 @@ class OpenGLProgram {
         throw Exception(" name: ${name} is not support ");
     }
 
-
     fun compileShaders(vertex_shader: String, fragment_shader: String): Int {
         val vertexShader = this.compileShader(vertex_shader, GLES30.GL_VERTEX_SHADER)
         val fragmentShader = this.compileShader(fragment_shader, GLES30.GL_FRAGMENT_SHADER)

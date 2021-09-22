@@ -16,7 +16,6 @@ class EglEnv {
     var eglSurface = EGL14.EGL_NO_SURFACE
     private var eglConfig: EGLConfig? = null
 
-
     constructor() {}
 
     fun setupFBO(shareContext: EGLContext = EGL14.EGL_NO_CONTEXT) {

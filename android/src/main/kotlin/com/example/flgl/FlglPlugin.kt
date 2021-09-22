@@ -59,8 +59,8 @@ class FlglPlugin: FlutterPlugin, MethodCallHandler {
       renders[textureID] = render;
 
       var resp = mapOf(
-              "textureId" to textureID,
-              "dpr" to render.screenScale
+        "textureId" to textureID,
+        "dpr" to render.screenScale
       )
 
       result.success(resp);
@@ -96,7 +96,7 @@ class FlglPlugin: FlutterPlugin, MethodCallHandler {
       }
 
       result.success(null);
-
+      
     } else {
       result.notImplemented()
     }

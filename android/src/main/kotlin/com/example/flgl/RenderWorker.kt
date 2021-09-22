@@ -34,10 +34,10 @@ class RenderWorker {
         glUniform1i(glGetUniformLocation(program, "Texture0"), 10);
 
         var resultMatrix = floatArrayOf(
-                1.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
         );
 
         if(matrix != null) {
