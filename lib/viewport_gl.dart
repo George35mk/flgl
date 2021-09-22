@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class ViewportGL extends StatefulWidget {
+  /// The viewport width.
   final int width;
+
+  /// The viewport height.
   final int height;
 
+  /// Use this method to get the gl context.
   final Function? onChange;
+
   const ViewportGL({
     Key? key,
     this.onChange,
@@ -19,15 +24,18 @@ class ViewportGL extends StatefulWidget {
 }
 
 class _ViewportGLState extends State<ViewportGL> {
+  /// The device Pixel Ratio
   num dpr = 1.0;
 
+  /// The default frame buffer
   dynamic defaultFramebuffer;
+
+  /// The default frame buffer texture.
   dynamic defaultFramebufferTexture;
 
   Size? screenSize;
 
   late Flgl flgl;
-  // late Engine engine;
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +46,7 @@ class _ViewportGLState extends State<ViewportGL> {
       color: Colors.pink,
       child: Builder(
         builder: (BuildContext context) {
-          return flgl.isInitialized
-              ? Texture(textureId: flgl.textureId!)
-              : Container(
-                  child: Text('Nop!!'),
-                );
+          return flgl.isInitialized ? Texture(textureId: flgl.textureId!) : Container();
         },
       ),
     );
