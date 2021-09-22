@@ -33,6 +33,7 @@ class _ViewportGLState extends State<ViewportGL> {
   /// The default frame buffer texture.
   dynamic defaultFramebufferTexture;
 
+  /// The screen size.
   Size? screenSize;
 
   late Flgl flgl;
@@ -52,6 +53,7 @@ class _ViewportGLState extends State<ViewportGL> {
     );
   }
 
+  /// Setup the default Framebuffer Object.
   setupDefaultFBO() {
     final _gl = flgl.gl;
     int glWidth = (widget.width * dpr).toInt();
