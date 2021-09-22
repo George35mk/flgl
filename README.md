@@ -1,6 +1,6 @@
 # flgl
 
-A new flutter plugin project.
+One more plugin to use the openGL ES in Flutter apps.
 
 ## Getting Started
 
