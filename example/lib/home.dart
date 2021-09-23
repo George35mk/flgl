@@ -18,6 +18,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final Map<String, dynamic> _pages = {
+    '1': {"name": "Open example 1", "page": const Example1()},
+    '2': {"name": "Open example 2", 'page': const Example2()},
+    '3': {"name": "Open example 3", 'page': const Example3()},
+    '4': {"name": "Open example 4", 'page': const Example4()},
+    '5': {"name": "Open example 5", 'page': const Example5()},
+    '6': {"name": "Open example 6", 'page': const Example6()},
+    '7': {"name": "Open example 7", 'page': const Example7()},
+    '8': {"name": "Open example 8", 'page': const Example8()},
+    '9': {"name": "Open example 9", 'page': const Example9()},
+    '10': {"name": "Open example 10 (2D Rotation)", 'page': const Example10()},
+  };
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,96 +42,16 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              ElevatedButton(
-                child: const Text('Open example 1'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example1()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 2'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example2()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 3'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example3()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 4'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example4()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 5'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example5()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 6'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example6()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 7'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example7()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 8'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example8()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 9'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example9()),
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Open example 10 (2D Rotation)'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Example10()),
-                  );
-                },
-              ),
+              for (var key in _pages.keys)
+                ElevatedButton(
+                  child: Text(_pages[key]['name']),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => _pages[key]['page']),
+                    );
+                  },
+                ),
             ],
           ),
         ),
