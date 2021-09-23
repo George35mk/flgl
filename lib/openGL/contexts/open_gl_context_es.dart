@@ -13,10 +13,7 @@ class OpenGLContextES extends OpenGL30Constant {
   // late dynamic gl;
 
   OpenGLContextES(Map<String, dynamic> parameters) {
-    print(" OpenGLContextES ");
-    print(parameters);
-
-    this.gl = parameters["gl"];
+    gl = parameters["gl"];
   }
 
   scissor(x, y, z, w) {
@@ -45,8 +42,6 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   getParameter(key) {
-    // print("OpenGL getParameter key: ${key} ");
-
     List<int> _intValues = [
       MAX_TEXTURE_IMAGE_UNITS,
       MAX_VERTEX_TEXTURE_IMAGE_UNITS,
@@ -119,8 +114,6 @@ class OpenGLContextES extends OpenGL30Constant {
 
   texImage3D(int target, int level, int internalformat, int width, int height, int depth,
       int border, int format, int type, data) {
-    print(" flutter gl texImage3D: target: ${target} type: ${type} format: ${format}   ");
-
     Pointer<Int8> nativeBuffer;
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
@@ -719,9 +712,6 @@ class OpenGLContextES extends OpenGL30Constant {
     final valuePtr = calloc<Float>(count);
     List<double> _values = value.map((e) => e.toDouble()).toList().cast();
     valuePtr.asTypedList(count).setAll(0, _values);
-
-    // print("uniform4fv location: ${location} value: ${value} ");
-
     return gl.glUniform4fv(location, count ~/ 4, valuePtr.cast<Void>());
   }
 

@@ -73,9 +73,7 @@ class OpenGLES {
       eglMakeCurrent(_display, _surface, _surface, _context);
     } else if (Platform.isIOS) {
       var _d = egl.eglTest();
-      // print("makeCurrent egl test ${_d} ");
       var _result = egl.makeCurrent(_context);
-      // print("ios makeCurrent _result: ${_result} ");
     }
   }
 

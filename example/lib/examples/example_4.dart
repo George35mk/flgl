@@ -198,7 +198,6 @@ class _Example4State extends State<Example4> {
 
   // Fill the buffer with the values that define a rectangle.
   setRectangle(OpenGLContextES gl, double x, double y, double width, double height) {
-    // print('x: $x y: $y width: $width height: $height');
     var x1 = x;
     var x2 = x + width;
     var y1 = y;

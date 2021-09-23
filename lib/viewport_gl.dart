@@ -105,8 +105,6 @@ class _ViewportGLState extends State<ViewportGL> {
     screenSize = mq.size;
     dpr = mq.devicePixelRatio;
 
-    print(" screenSize: ${screenSize} dpr: ${dpr} ");
-
     initPlatformState();
   }
 }
