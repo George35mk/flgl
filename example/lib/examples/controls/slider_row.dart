@@ -36,7 +36,7 @@ class _SliderRowState extends State<SliderRow> {
             ),
           ),
           SizedBox(
-            width: 280,
+            width: 250,
             child: Slider(
               value: widget.value,
               min: widget.min,

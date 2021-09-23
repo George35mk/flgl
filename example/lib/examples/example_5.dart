@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'controls/controls_manager.dart';
 import 'controls/gl_controls.dart';
 import 'gl_utils.dart';
+import 'math/math_utils.dart';
 
 class Example5 extends StatefulWidget {
   const Example5({Key? key}) : super(key: key);
@@ -33,9 +34,9 @@ class _Example5State extends State<Example5> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  var translation = [200.0, 200.0];
-  var angleInRadians = 0.0;
-  var scale = [1, 1];
+  List<double> translation = [200.0, 200.0];
+  double angleInRadians = 0.0;
+  List<double> scale = [1.0, 1.0];
 
   ControlsManager? controlsManager;
 
@@ -46,9 +47,11 @@ class _Example5State extends State<Example5> {
     // init control manager.
     // ! add more controls for scale and rotation.
     controlsManager = ControlsManager({});
-    controlsManager!.add(Control(name: 'tx', min: -500, max: 500, value: 0));
-    controlsManager!.add(Control(name: 'ty', min: -500, max: 500, value: 0));
-    // controlsManager!.add(Control(name: 'tz', min: -500, max: 500, value: 0));
+    controlsManager!.add(Control(name: 'tx', min: 0, max: 1000, value: 250));
+    controlsManager!.add(Control(name: 'ty', min: 0, max: 1000, value: 250));
+    controlsManager!.add(Control(name: 'angle', min: 0, max: 360, value: 0));
+    controlsManager!.add(Control(name: 'sx', min: 1, max: 10, value: 1));
+    controlsManager!.add(Control(name: 'sy', min: 1, max: 10, value: 1));
   }
 
   @override
@@ -60,7 +63,6 @@ class _Example5State extends State<Example5> {
       body: Column(
         children: [
           Stack(
-            // alignment: AlignmentDirectional.topStart,
             children: [
               ViewportGL(
                 width: width,
@@ -78,7 +80,7 @@ class _Example5State extends State<Example5> {
               ),
               Positioned(
                 width: 350,
-                height: 150,
+                // height: 150,
                 top: 10,
                 right: 10,
                 child: GLControls(
@@ -91,6 +93,15 @@ class _Example5State extends State<Example5> {
                           break;
                         case 'ty':
                           translation[1] = control.value;
+                          break;
+                        case 'angle':
+                          angleInRadians = MathUtils.degToRad(control.value);
+                          break;
+                        case 'sx':
+                          scale[0] = control.value;
+                          break;
+                        case 'sy':
+                          scale[1] = control.value;
                           break;
                         default:
                       }
