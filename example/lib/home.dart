@@ -42,22 +42,26 @@ class _HomeState extends State<Home> {
         ),
         body: Container(
           padding: const EdgeInsets.all(10.0),
-          child: ListView(
-            children: [
-              for (var key in _pages.keys)
-                ListTile(
-                  title: Text(_pages[key]['name']),
-                  subtitle: const Text('OpenGLES'),
-                  contentPadding: const EdgeInsets.all(5.0),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => _pages[key]['page']),
-                    );
-                  },
-                ),
-              Divider(),
-            ],
+          child: ListView.separated(
+            itemCount: 10,
+            separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade300),
+            itemBuilder: (BuildContext context, int index) {
+              String key = _pages.keys.elementAt(index);
+              var name = _pages[key]['name'];
+              var page = _pages[key]['page'];
+
+              return ListTile(
+                title: Text(name),
+                subtitle: const Text('OpenGLES'),
+                contentPadding: const EdgeInsets.all(5.0),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => page),
+                  );
+                },
+              );
+            },
           ),
         ),
       ),
