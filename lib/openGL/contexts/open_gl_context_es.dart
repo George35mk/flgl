@@ -467,7 +467,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  createProgram() {
+  int createProgram() {
     return gl.glCreateProgram();
   }
 
@@ -604,7 +604,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  createShader(int type) {
+  int createShader(int type) {
     return gl.glCreateShader(type);
   }
 

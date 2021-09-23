@@ -27,10 +27,6 @@ class _Example13State extends State<Example13> {
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic matrixLocation;
-  dynamic translationLocation;
-  dynamic rotationLocation;
-  dynamic scaleLocation;
-  dynamic resolutionLocation;
   dynamic positionBuffer;
   dynamic program;
 
@@ -188,8 +184,8 @@ class _Example13State extends State<Example13> {
   }
 
   initGl() {
-    var vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    var fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
     program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
 

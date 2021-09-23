@@ -98,8 +98,8 @@ class _Example1State extends State<Example1> {
   """;
 
   initGl() {
-    var vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    var fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
     program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
 
