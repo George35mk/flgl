@@ -12,6 +12,7 @@ import 'package:flgl_example/examples/example_10.dart';
 import 'package:flgl_example/examples/example_11.dart';
 import 'package:flgl_example/examples/example_12.dart';
 import 'package:flgl_example/examples/example_13.dart';
+import 'package:flgl_example/examples/example_14.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -22,19 +23,28 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final Map<String, dynamic> _pages = {
-    '1': {"name": "Open example 1", "page": const Example1()},
-    '2': {"name": "Open example 2", 'page': const Example2()},
-    '3': {"name": "Open example 3", 'page': const Example3()},
-    '4': {"name": "Open example 4", 'page': const Example4()},
-    '5': {"name": "Open example 5", 'page': const Example5()},
-    '6': {"name": "Open example 6", 'page': const Example6()},
-    '7': {"name": "Open example 7", 'page': const Example7()},
-    '8': {"name": "Open example 8", 'page': const Example8()},
-    '9': {"name": "Open example 9 (2D Translation)", 'page': const Example9()},
-    '10': {"name": "Open example 10 (2D Rotation)", 'page': const Example10()},
-    '11': {"name": "Open example 11 (2D Scale)", 'page': const Example11()},
-    '12': {"name": "Open example 12 (2D Matrices)", 'page': const Example12()},
-    '13': {"name": "Open example 13 (2D Matrices reducing complexity)", 'page': const Example13()},
+    '1': {"name": "Example 1", "description": "OpenGLES: Hello triangle", "page": const Example1()},
+    '2': {"name": "Example 2", "description": "OpenGLES: ", 'page': const Example2()},
+    '3': {"name": "Example 3", "description": "OpenGLES: ", 'page': const Example3()},
+    '4': {"name": "Example 4", "description": "OpenGLES: ", 'page': const Example4()},
+    '5': {"name": "Example 5", "description": "OpenGLES: ", 'page': const Example5()},
+    '6': {"name": "Example 6", "description": "OpenGLES: ", 'page': const Example6()},
+    '7': {"name": "Example 7", "description": "OpenGLES: ", 'page': const Example7()},
+    '8': {"name": "Example 8", "description": "OpenGLES: ", 'page': const Example8()},
+    '9': {"name": "Example 9", "description": "OpenGLES: 2D Translation", 'page': const Example9()},
+    '10': {"name": "Example 10", "description": "OpenGLES: 2D Rotation", 'page': const Example10()},
+    '11': {"name": "Example 11", "description": "OpenGLES: 2D Scale", 'page': const Example11()},
+    '12': {"name": "Example 12", "description": "OpenGLES: 2D Matrices", 'page': const Example12()},
+    '13': {
+      "name": "Example 13",
+      "description": "OpenGLES: 2D Matrices reducing complexity",
+      'page': const Example13()
+    },
+    '14': {
+      "name": "Example 14",
+      "description": "OpenGLES: 2D Matrices Improving the matrix",
+      'page': const Example14()
+    },
   };
 
   @override
@@ -53,10 +63,11 @@ class _HomeState extends State<Home> {
               String key = _pages.keys.elementAt(index);
               var name = _pages[key]['name'];
               var page = _pages[key]['page'];
+              var description = _pages[key]['description'];
 
               return ListTile(
                 title: Text(name),
-                subtitle: const Text('OpenGLES'),
+                subtitle: Text(description),
                 contentPadding: const EdgeInsets.all(5.0),
                 onTap: () {
                   Navigator.push(
