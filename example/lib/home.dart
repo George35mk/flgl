@@ -11,6 +11,7 @@ import 'package:flgl_example/examples/example_9.dart';
 import 'package:flgl_example/examples/example_10.dart';
 import 'package:flgl_example/examples/example_11.dart';
 import 'package:flgl_example/examples/example_12.dart';
+import 'package:flgl_example/examples/example_13.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -32,7 +33,8 @@ class _HomeState extends State<Home> {
     '9': {"name": "Open example 9 (2D Translation)", 'page': const Example9()},
     '10': {"name": "Open example 10 (2D Rotation)", 'page': const Example10()},
     '11': {"name": "Open example 11 (2D Scale)", 'page': const Example11()},
-    '11': {"name": "Open example 12 (2D Matrices)", 'page': const Example12()},
+    '12': {"name": "Open example 12 (2D Matrices)", 'page': const Example12()},
+    '13': {"name": "Open example 13 (2D Matrices reducing complexity)", 'page': const Example13()},
   };
 
   @override
