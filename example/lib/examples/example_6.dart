@@ -27,8 +27,6 @@ class _Example6State extends State<Example6> {
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic matrixLocation;
-  dynamic resolutionUniformLocation;
-  dynamic colorUniformLocation;
   dynamic positionBuffer;
   dynamic colorBuffer;
   dynamic program;

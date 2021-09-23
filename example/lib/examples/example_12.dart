@@ -27,9 +27,6 @@ class _Example12State extends State<Example12> {
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic matrixLocation;
-  dynamic translationLocation;
-  dynamic rotationLocation;
-  dynamic scaleLocation;
   dynamic resolutionLocation;
   dynamic positionBuffer;
   dynamic program;
