@@ -10,18 +10,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
-import 'math/m3.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
+import '../math/m3.dart';
 
-class Example14 extends StatefulWidget {
-  const Example14({Key? key}) : super(key: key);
+class Example13 extends StatefulWidget {
+  const Example13({Key? key}) : super(key: key);
 
   @override
-  _Example14State createState() => _Example14State();
+  _Example13State createState() => _Example13State();
 }
 
-class _Example14State extends State<Example14> {
+class _Example13State extends State<Example13> {
   bool initialized = false;
 
   dynamic positionLocation;
@@ -61,7 +61,7 @@ class _Example14State extends State<Example14> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 14 (2D Matrices Improving the matrix)"),
+        title: const Text("Example 13 (2D Matrices reducing complexity)"),
       ),
       body: Column(
         children: [
@@ -233,10 +233,15 @@ class _Example14State extends State<Example14> {
     gl.uniform4fv(colorLocation, color);
 
     // Compute the matrices
-    var matrix = M3.projection(width, height);
-    matrix = M3.translate(matrix, translation[0], translation[1]);
-    matrix = M3.rotate(matrix, angleInRadians);
-    matrix = M3.scale(matrix, scale[0], scale[1]);
+    var projectionMatrix = M3.projection(width, height);
+    var translationMatrix = M3.translation(translation[0], translation[1]);
+    var rotationMatrix = M3.rotation(angleInRadians);
+    var scaleMatrix = M3.scaling(scale[0], scale[1]);
+
+    // Multiply the matrices.
+    var matrix = M3.multiply(projectionMatrix, translationMatrix);
+    matrix = M3.multiply(matrix, rotationMatrix);
+    matrix = M3.multiply(matrix, scaleMatrix);
 
     // Set the matrix.
     gl.uniformMatrix3fv(matrixLocation, false, matrix);

@@ -5,28 +5,26 @@ import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
-import 'package:flgl_example/examples/math/math_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
-import 'math/m3.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
 
-class Example12 extends StatefulWidget {
-  const Example12({Key? key}) : super(key: key);
+class Example9 extends StatefulWidget {
+  const Example9({Key? key}) : super(key: key);
 
   @override
-  _Example12State createState() => _Example12State();
+  _Example9State createState() => _Example9State();
 }
 
-class _Example12State extends State<Example12> {
+class _Example9State extends State<Example9> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic colorLocation;
-  dynamic matrixLocation;
+  dynamic translationLocation;
   dynamic resolutionLocation;
   dynamic positionBuffer;
   dynamic program;
@@ -38,9 +36,7 @@ class _Example12State extends State<Example12> {
   late int height = 752 - 80 - 48;
 
   List<double> translation = [0.0, 0.0];
-  List<double> scale = [1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
-  double angleInRadians = 0.0;
 
   TransformControlsManager? controlsManager;
 
@@ -53,16 +49,13 @@ class _Example12State extends State<Example12> {
     controlsManager = TransformControlsManager({});
     controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
     controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
-    controlsManager!.add(TransformControl(name: 'angle', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 12 (2D Matrices)"),
+        title: const Text("Example 9 (2D Translation)"),
       ),
       body: Column(
         children: [
@@ -98,15 +91,6 @@ class _Example12State extends State<Example12> {
                         case 'ty':
                           translation[1] = control.value;
                           break;
-                        case 'angle':
-                          angleInRadians = MathUtils.degToRad(control.value);
-                          break;
-                        case 'sx':
-                          scale[0] = control.value;
-                          break;
-                        case 'sy':
-                          scale[1] = control.value;
-                          break;
                         default:
                       }
                       draw();
@@ -137,11 +121,11 @@ class _Example12State extends State<Example12> {
     attribute vec2 a_position;
 
     uniform vec2 u_resolution;
-    uniform mat3 u_matrix;
+    uniform vec2 u_translation;
 
     void main() {
-      // Multiply the position by the matrix.
-      vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+      // Add in the translation.
+      vec2 position = a_position + u_translation;
 
       // convert the position from pixels to 0.0 to 1.0
       vec2 zeroToOne = position / u_resolution;
@@ -208,7 +192,7 @@ class _Example12State extends State<Example12> {
     // lookup uniforms
     resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     colorLocation = gl.getUniformLocation(program, "u_color");
-    matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    translationLocation = gl.getUniformLocation(program, "u_translation");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -249,17 +233,8 @@ class _Example12State extends State<Example12> {
     // set the color
     gl.uniform4fv(colorLocation, color);
 
-    // Compute the matrices
-    var translationMatrix = M3.translation(translation[0], translation[1]);
-    var rotationMatrix = M3.rotation(angleInRadians);
-    var scaleMatrix = M3.scaling(scale[0], scale[1]);
-
-    // Multiply the matrices.
-    var matrix = M3.multiply(translationMatrix, rotationMatrix);
-    matrix = M3.multiply(matrix, scaleMatrix);
-
-    // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
+    // Set the translation.
+    gl.uniform2fv(translationLocation, translation);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;

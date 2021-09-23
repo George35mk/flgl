@@ -7,12 +7,12 @@ import 'package:flgl_example/examples/Fundamentals/example_5.dart';
 import 'package:flgl_example/examples/Fundamentals/example_6.dart';
 import 'package:flgl_example/examples/Fundamentals/example_7.dart';
 import 'package:flgl_example/examples/Fundamentals/example_8.dart';
-import 'package:flgl_example/examples/example_9.dart';
-import 'package:flgl_example/examples/example_10.dart';
-import 'package:flgl_example/examples/example_11.dart';
-import 'package:flgl_example/examples/example_12.dart';
-import 'package:flgl_example/examples/example_13.dart';
-import 'package:flgl_example/examples/example_14.dart';
+import 'package:flgl_example/examples/2D/example_9.dart';
+import 'package:flgl_example/examples/2D/example_10.dart';
+import 'package:flgl_example/examples/2D/example_11.dart';
+import 'package:flgl_example/examples/2D/example_12.dart';
+import 'package:flgl_example/examples/2D/example_13.dart';
+import 'package:flgl_example/examples/2D/example_14.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

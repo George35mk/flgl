@@ -10,8 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
 
 class Example10 extends StatefulWidget {
   const Example10({Key? key}) : super(key: key);

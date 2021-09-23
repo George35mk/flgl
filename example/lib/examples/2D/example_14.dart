@@ -10,25 +10,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
+import '../math/m3.dart';
 
-class Example11 extends StatefulWidget {
-  const Example11({Key? key}) : super(key: key);
+class Example14 extends StatefulWidget {
+  const Example14({Key? key}) : super(key: key);
 
   @override
-  _Example11State createState() => _Example11State();
+  _Example14State createState() => _Example14State();
 }
 
-class _Example11State extends State<Example11> {
+class _Example14State extends State<Example14> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic colorLocation;
-  dynamic translationLocation;
-  dynamic rotationLocation;
-  dynamic scaleLocation;
-  dynamic resolutionLocation;
+  dynamic matrixLocation;
   dynamic positionBuffer;
   dynamic program;
 
@@ -39,7 +37,6 @@ class _Example11State extends State<Example11> {
   late int height = 752 - 80 - 48;
 
   List<double> translation = [0.0, 0.0];
-  List<double> rotation = [0, 1];
   List<double> scale = [1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
   double angleInRadians = 0.0;
@@ -64,7 +61,7 @@ class _Example11State extends State<Example11> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 11 (2D Scale)"),
+        title: const Text("Example 14 (2D Matrices Improving the matrix)"),
       ),
       body: Column(
         children: [
@@ -102,10 +99,6 @@ class _Example11State extends State<Example11> {
                           break;
                         case 'angle':
                           angleInRadians = MathUtils.degToRad(control.value);
-                          // https://www.construct.net/en/forum/construct-2/how-do-i-18/calculate-position-xy-using-78314
-                          var distance = 1;
-                          rotation[0] = distance * cos(angleInRadians);
-                          rotation[1] = distance * sin(angleInRadians);
                           break;
                         case 'sx':
                           scale[0] = control.value;
@@ -142,33 +135,11 @@ class _Example11State extends State<Example11> {
   String vertexShaderSource = """
     attribute vec2 a_position;
 
-    uniform vec2 u_resolution;
-    uniform vec2 u_translation;
-    uniform vec2 u_rotation;
-    uniform vec2 u_scale;
+    uniform mat3 u_matrix;
 
     void main() {
-      // Scale the position
-      vec2 scaledPosition = a_position * u_scale;
-
-      // Rotate the position
-      vec2 rotatedPosition = vec2(
-        scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
-        scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);
-
-      // Add in the translation.
-      vec2 position = rotatedPosition + u_translation;
-
-      // convert the position from pixels to 0.0 to 1.0
-      vec2 zeroToOne = position / u_resolution;
-
-      // convert from 0->1 to 0->2
-      vec2 zeroToTwo = zeroToOne * 2.0;
-
-      // convert from 0->2 to -1->+1 (clipspace)
-      vec2 clipSpace = zeroToTwo - 1.0;
-
-      gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+      // Multiply the position by the matrix.
+      gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
     }
   """;
 
@@ -213,8 +184,8 @@ class _Example11State extends State<Example11> {
   }
 
   initGl() {
-    var vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    var fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
     program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
 
@@ -222,11 +193,8 @@ class _Example11State extends State<Example11> {
     positionLocation = gl.getAttribLocation(program, "a_position");
 
     // lookup uniforms
-    resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     colorLocation = gl.getUniformLocation(program, "u_color");
-    translationLocation = gl.getUniformLocation(program, "u_translation");
-    rotationLocation = gl.getUniformLocation(program, "u_rotation");
-    scaleLocation = gl.getUniformLocation(program, "u_scale");
+    matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -261,20 +229,17 @@ class _Example11State extends State<Example11> {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // set the resolution
-    gl.uniform2f(resolutionLocation, width, height);
-
     // set the color
     gl.uniform4fv(colorLocation, color);
 
-    // Set the translation.
-    gl.uniform2fv(translationLocation, translation);
+    // Compute the matrices
+    var matrix = M3.projection(width, height);
+    matrix = M3.translate(matrix, translation[0], translation[1]);
+    matrix = M3.rotate(matrix, angleInRadians);
+    matrix = M3.scale(matrix, scale[0], scale[1]);
 
-    // Set the rotation.
-    gl.uniform2fv(rotationLocation, rotation);
-
-    // Set the scale.
-    gl.uniform2fv(scaleLocation, scale);
+    // Set the matrix.
+    gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
