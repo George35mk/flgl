@@ -39,12 +39,19 @@ class _ViewportGLState extends State<ViewportGL> {
   late Flgl flgl;
 
   @override
+  void dispose() {
+    super.dispose();
+    // flgl.dispose();
+    print('Dispose...');
+  }
+
+  @override
   Widget build(BuildContext context) {
     initSize(context);
     return Container(
       width: widget.width.toDouble(),
       height: widget.height.toDouble(),
-      color: Colors.pink,
+      color: Colors.white,
       child: Builder(
         builder: (BuildContext context) {
           return flgl.isInitialized ? Texture(textureId: flgl.textureId!) : Container();
@@ -88,11 +95,11 @@ class _ViewportGLState extends State<ViewportGL> {
     setState(() {});
 
     // web need wait dom ok!!!
-    Future.delayed(const Duration(milliseconds: 100), () {
-      setState(() {
-        widget.onChange!(flgl);
-      });
+    // Future.delayed(const Duration(milliseconds: 100), () {
+    setState(() {
+      widget.onChange!(flgl);
     });
+    // });
   }
 
   initSize(BuildContext context) {
