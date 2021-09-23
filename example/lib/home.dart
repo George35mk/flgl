@@ -42,18 +42,21 @@ class _HomeState extends State<Home> {
         ),
         body: Container(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
+          child: ListView(
             children: [
               for (var key in _pages.keys)
-                ElevatedButton(
-                  child: Text(_pages[key]['name']),
-                  onPressed: () {
+                ListTile(
+                  title: Text(_pages[key]['name']),
+                  subtitle: const Text('OpenGLES'),
+                  contentPadding: const EdgeInsets.all(5.0),
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => _pages[key]['page']),
                     );
                   },
                 ),
+              Divider(),
             ],
           ),
         ),
