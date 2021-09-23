@@ -467,6 +467,19 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
+  /// ### glCreateProgram — Creates a program object
+  ///
+  /// #### Description
+  /// glCreateProgram creates an empty program object and returns a non-zero
+  /// value by which it can be referenced. A program object is an object to
+  /// which shader objects can be attached. This provides a mechanism to
+  /// specify the shader objects that will be linked to create a program.
+  /// It also provides a means for checking the compatibility of the shaders
+  /// that will be used to create a program (for instance, checking the
+  /// compatibility between a vertex shader and a fragment shader).
+  /// When no longer needed as part of a program object, shader objects can
+  /// be detached.
+  /// - Returns [int]
   int createProgram() {
     return gl.glCreateProgram();
   }
