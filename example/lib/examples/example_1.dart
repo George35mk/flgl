@@ -141,7 +141,7 @@ class _Example1State extends State<Example1> {
     // print('GL_VIEWPORT: ${gl.getParameter(gl.GL_VIEWPORT)}');
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 3 components per iteration
+    var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;
