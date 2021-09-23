@@ -1,12 +1,13 @@
 import 'package:flgl/flgl.dart';
 import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
+import 'package:flgl_example/examples/controls/transform_control.dart';
+import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flgl_example/examples/math/m3.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/controls_manager.dart';
 import 'controls/gl_controls.dart';
 import 'gl_utils.dart';
 import 'math/math_utils.dart';
@@ -38,7 +39,7 @@ class _Example5State extends State<Example5> {
   double angleInRadians = 0.0;
   List<double> scale = [1.0, 1.0];
 
-  ControlsManager? controlsManager;
+  TransformControlsManager? controlsManager;
 
   @override
   void initState() {
@@ -46,12 +47,12 @@ class _Example5State extends State<Example5> {
 
     // init control manager.
     // ! add more controls for scale and rotation.
-    controlsManager = ControlsManager({});
-    controlsManager!.add(Control(name: 'tx', min: 0, max: 1000, value: 250));
-    controlsManager!.add(Control(name: 'ty', min: 0, max: 1000, value: 250));
-    controlsManager!.add(Control(name: 'angle', min: 0, max: 360, value: 0));
-    controlsManager!.add(Control(name: 'sx', min: 1, max: 10, value: 1));
-    controlsManager!.add(Control(name: 'sy', min: 1, max: 10, value: 1));
+    controlsManager = TransformControlsManager({});
+    controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
+    controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
+    controlsManager!.add(TransformControl(name: 'angle', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'sx', min: 1, max: 10, value: 1));
+    controlsManager!.add(TransformControl(name: 'sy', min: 1, max: 10, value: 1));
   }
 
   @override
@@ -84,8 +85,8 @@ class _Example5State extends State<Example5> {
                 top: 10,
                 right: 10,
                 child: GLControls(
-                  controlsManager: controlsManager,
-                  onChange: (Control control) {
+                  transformControlsManager: controlsManager,
+                  onChange: (TransformControl control) {
                     setState(() {
                       switch (control.name) {
                         case 'tx':
