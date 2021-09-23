@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'gl_utils.dart';
+import '../gl_utils.dart';
 
 class Example2 extends StatefulWidget {
   const Example2({Key? key}) : super(key: key);

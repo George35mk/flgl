@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flgl/flgl.dart';
 import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -8,23 +10,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
-import 'math/math_utils.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
+import '../math/math_utils.dart';
 
-class Example5 extends StatefulWidget {
-  const Example5({Key? key}) : super(key: key);
+class Example7 extends StatefulWidget {
+  const Example7({Key? key}) : super(key: key);
 
   @override
-  _Example5State createState() => _Example5State();
+  _Example7State createState() => _Example7State();
 }
 
-class _Example5State extends State<Example5> {
+class _Example7State extends State<Example7> {
   bool initialized = false;
 
   dynamic positionLocation;
+  dynamic colorLocation;
   dynamic matrixLocation;
   dynamic positionBuffer;
+  dynamic colorBuffer;
   dynamic program;
 
   late Flgl flgl;
@@ -57,7 +61,7 @@ class _Example5State extends State<Example5> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 5"),
+        title: const Text("Example 7"),
       ),
       body: Column(
         children: [
@@ -117,7 +121,7 @@ class _Example5State extends State<Example5> {
             children: [
               TextButton(
                 onPressed: () {
-                  render();
+                  draw();
                 },
                 child: const Text("Render"),
               )
@@ -128,12 +132,9 @@ class _Example5State extends State<Example5> {
     );
   }
 
-  render() {
-    draw();
-  }
-
   String vertexShaderSource = """
     attribute vec2 a_position;
+    attribute vec4 a_color;
 
     uniform mat3 u_matrix;
 
@@ -143,10 +144,8 @@ class _Example5State extends State<Example5> {
       // Multiply the position by the matrix.
       gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
 
-      // Convert from clipspace to colorspace.
-      // Clipspace goes -1.0 to +1.0
-      // Colorspace goes from 0.0 to 1.0
-      v_color = gl_Position * 0.5 + 0.5;
+      // Copy the color from the attribute to the varying.
+      v_color = a_color;
     }
   """;
 
@@ -167,11 +166,33 @@ class _Example5State extends State<Example5> {
     gl.bufferData(
         gl.ARRAY_BUFFER,
         Float32List.fromList([
-          0, -100, //
-          150, 100, //
-          -175, 100, //
+          -150, -100, //
+          150, -100, //
+          -150, 100, //
+          150, -100, //
+          -150, 100, //
+          150, 100 //
         ]),
         gl.STATIC_DRAW);
+  }
+
+  // Fill the buffer with colors for the 2 triangles
+  // that make the rectangle.
+  // Note, will put the values in whatever buffer is currently
+  // bound to the ARRAY_BUFFER bind point
+  setColors(gl) {
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      Float32List.fromList([
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+        Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1, //
+      ]),
+      gl.STATIC_DRAW,
+    );
   }
 
   initGl() {
@@ -182,15 +203,24 @@ class _Example5State extends State<Example5> {
 
     // look up where the vertex data needs to go.
     positionLocation = gl.getAttribLocation(program, "a_position");
+    colorLocation = gl.getAttribLocation(program, "a_color");
 
     // lookup uniforms
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
+    // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Set Geometry.
     setGeometry(gl);
+
+    // Create a buffer for the colors.
+    colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
+    // Set the colors.
+    setColors(gl);
   }
 
   draw() {
@@ -218,6 +248,20 @@ class _Example5State extends State<Example5> {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
+    // Turn on the color attribute
+    gl.enableVertexAttribArray(colorLocation);
+
+    // Bind the color buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
+    // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
+    size = 4; // 4 components per iteration
+    type = gl.FLOAT; // the data is 32bit floats
+    normalize = false; // don't normalize the data
+    stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
+    offset = 0; // start at the beginning of the buffer
+    gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
+
     // Compute the matrix
     var matrix = M3.projection(width, height);
     matrix = M3.translate(matrix, translation[0].toDouble(), translation[1].toDouble());
@@ -230,7 +274,7 @@ class _Example5State extends State<Example5> {
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
-    var count = 3;
+    var count = 6;
     gl.drawArrays(primitiveType, offset_, count);
 
     // !super important.

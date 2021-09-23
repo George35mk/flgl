@@ -5,30 +5,27 @@ import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
-import 'package:flgl_example/examples/math/m3.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
-import 'math/math_utils.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
 
-class Example6 extends StatefulWidget {
-  const Example6({Key? key}) : super(key: key);
+class Example8 extends StatefulWidget {
+  const Example8({Key? key}) : super(key: key);
 
   @override
-  _Example6State createState() => _Example6State();
+  _Example8State createState() => _Example8State();
 }
 
-class _Example6State extends State<Example6> {
+class _Example8State extends State<Example8> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic colorLocation;
-  dynamic matrixLocation;
+  dynamic resolutionLocation;
   dynamic positionBuffer;
-  dynamic colorBuffer;
   dynamic program;
 
   late Flgl flgl;
@@ -37,9 +34,10 @@ class _Example6State extends State<Example6> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  List<double> translation = [200.0, 200.0];
-  double angleInRadians = 0.0;
-  List<double> scale = [1.0, 1.0];
+  var rectTranslation = [0.0, 0.0];
+  var rectWidth = 100.0;
+  var rectHeight = 30.0;
+  var rectColor = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
 
   TransformControlsManager? controlsManager;
 
@@ -52,16 +50,13 @@ class _Example6State extends State<Example6> {
     controlsManager = TransformControlsManager({});
     controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
     controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
-    controlsManager!.add(TransformControl(name: 'angle', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'sx', min: 1, max: 10, value: 1));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1, max: 10, value: 1));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 6"),
+        title: const Text("Example 8"),
       ),
       body: Column(
         children: [
@@ -92,19 +87,10 @@ class _Example6State extends State<Example6> {
                     setState(() {
                       switch (control.name) {
                         case 'tx':
-                          translation[0] = control.value;
+                          rectTranslation[0] = control.value;
                           break;
                         case 'ty':
-                          translation[1] = control.value;
-                          break;
-                        case 'angle':
-                          angleInRadians = MathUtils.degToRad(control.value);
-                          break;
-                        case 'sx':
-                          scale[0] = control.value;
-                          break;
-                        case 'sy':
-                          scale[1] = control.value;
+                          rectTranslation[1] = control.value;
                           break;
                         default:
                       }
@@ -134,73 +120,50 @@ class _Example6State extends State<Example6> {
 
   String vertexShaderSource = """
     attribute vec2 a_position;
-    attribute vec4 a_color;
 
-    uniform mat3 u_matrix;
-
-    varying vec4 v_color;
+    uniform vec2 u_resolution;
 
     void main() {
-      // Multiply the position by the matrix.
-      gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+      // convert the rectangle points from pixels to 0.0 to 1.0
+      vec2 zeroToOne = a_position / u_resolution;
 
-      // Copy the color from the attribute to the varying.
-      v_color = a_color;
+      // convert from 0->1 to 0->2
+      vec2 zeroToTwo = zeroToOne * 2.0;
+
+      // convert from 0->2 to -1->+1 (clipspace)
+      vec2 clipSpace = zeroToTwo - 1.0;
+
+      gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     }
   """;
 
   String fragmentShaderSource = """
     precision mediump float;
 
-    varying vec4 v_color;
+    uniform vec4 u_color;
 
     void main() {
-      gl_FragColor = v_color;
+      gl_FragColor = u_color;
     }
   """;
 
-  // Fill the buffer with the values that define a triangle.
-  // Note, will put the values in whatever buffer is currently
-  // bound to the ARRAY_BUFFER bind point
-  setGeometry(OpenGLContextES gl) {
+  // Fill the buffer with the values that define a rectangle.
+  setRectangle(gl, x, y, width, height) {
+    var x1 = x;
+    var x2 = x + width;
+    var y1 = y;
+    var y2 = y + height;
     gl.bufferData(
         gl.ARRAY_BUFFER,
         Float32List.fromList([
-          -150, -100, //
-          150, -100, //
-          -150, 100, //
-          150, -100, //
-          -150, 100, //
-          150, 100 //
+          x1, y1, //
+          x2, y1, //
+          x1, y2, //
+          x1, y2, //
+          x2, y1, //
+          x2, y2, //
         ]),
         gl.STATIC_DRAW);
-  }
-
-  // Fill the buffer with colors for the 2 triangles
-  // that make the rectangle.
-  // Note, will put the values in whatever buffer is currently
-  // bound to the ARRAY_BUFFER bind point
-  setColors(gl) {
-    // Pick 2 random colors.
-    var r1 = Random().nextDouble();
-    var b1 = Random().nextDouble();
-    var g1 = Random().nextDouble();
-    var r2 = Random().nextDouble();
-    var b2 = Random().nextDouble();
-    var g2 = Random().nextDouble();
-
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      Float32List.fromList([
-        r1, b1, g1, 1, //
-        r1, b1, g1, 1, //
-        r1, b1, g1, 1, //
-        r2, b2, g2, 1, //
-        r2, b2, g2, 1, //
-        r2, b2, g2, 1, //
-      ]),
-      gl.STATIC_DRAW,
-    );
   }
 
   initGl() {
@@ -211,24 +174,14 @@ class _Example6State extends State<Example6> {
 
     // look up where the vertex data needs to go.
     positionLocation = gl.getAttribLocation(program, "a_position");
-    colorLocation = gl.getAttribLocation(program, "a_color");
 
     // lookup uniforms
-    matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    colorLocation = gl.getUniformLocation(program, "u_color");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // Set Geometry.
-    setGeometry(gl);
-
-    // Create a buffer for the colors.
-    colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-
-    // Set the colors.
-    setColors(gl);
   }
 
   draw() {
@@ -248,6 +201,9 @@ class _Example6State extends State<Example6> {
     // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+    // Setup a rectangle
+    setRectangle(gl, rectTranslation[0], rectTranslation[1], rectWidth, rectHeight);
+
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
@@ -256,30 +212,13 @@ class _Example6State extends State<Example6> {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // Turn on the color attribute
-    gl.enableVertexAttribArray(colorLocation);
+    // set the resolution
+    gl.uniform2f(resolutionLocation, width, height);
 
-    // Bind the color buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // set the color
+    gl.uniform4fv(colorLocation, rectColor);
 
-    // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-    size = 4; // 4 components per iteration
-    type = gl.FLOAT; // the data is 32bit floats
-    normalize = false; // don't normalize the data
-    stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-    offset = 0; // start at the beginning of the buffer
-    gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
-
-    // Compute the matrix
-    var matrix = M3.projection(width, height);
-    matrix = M3.translate(matrix, translation[0].toDouble(), translation[1].toDouble());
-    matrix = M3.rotate(matrix, angleInRadians);
-    matrix = M3.scale(matrix, scale[0].toDouble(), scale[1].toDouble());
-
-    // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
-    // Draw the geometry.
+    // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
     var count = 6;
