@@ -5,6 +5,7 @@ import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
+import 'package:flgl_example/examples/math/math_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
@@ -12,19 +13,21 @@ import 'dart:typed_data';
 import 'controls/gl_controls.dart';
 import 'gl_utils.dart';
 
-class Example9 extends StatefulWidget {
-  const Example9({Key? key}) : super(key: key);
+class Example11 extends StatefulWidget {
+  const Example11({Key? key}) : super(key: key);
 
   @override
-  _Example9State createState() => _Example9State();
+  _Example11State createState() => _Example11State();
 }
 
-class _Example9State extends State<Example9> {
+class _Example11State extends State<Example11> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic translationLocation;
+  dynamic rotationLocation;
+  dynamic scaleLocation;
   dynamic resolutionLocation;
   dynamic positionBuffer;
   dynamic program;
@@ -36,7 +39,10 @@ class _Example9State extends State<Example9> {
   late int height = 752 - 80 - 48;
 
   List<double> translation = [0.0, 0.0];
+  List<double> rotation = [0, 1];
+  List<double> scale = [1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
+  double angleInRadians = 0.0;
 
   TransformControlsManager? controlsManager;
 
@@ -49,13 +55,16 @@ class _Example9State extends State<Example9> {
     controlsManager = TransformControlsManager({});
     controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
     controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
+    controlsManager!.add(TransformControl(name: 'angle', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 9 (2D Translation)"),
+        title: const Text("Example 11 (2D Scale)"),
       ),
       body: Column(
         children: [
@@ -91,6 +100,19 @@ class _Example9State extends State<Example9> {
                         case 'ty':
                           translation[1] = control.value;
                           break;
+                        case 'angle':
+                          angleInRadians = MathUtils.degToRad(control.value);
+                          // https://www.construct.net/en/forum/construct-2/how-do-i-18/calculate-position-xy-using-78314
+                          var distance = 1;
+                          rotation[0] = distance * cos(angleInRadians);
+                          rotation[1] = distance * sin(angleInRadians);
+                          break;
+                        case 'sx':
+                          scale[0] = control.value;
+                          break;
+                        case 'sy':
+                          scale[1] = control.value;
+                          break;
                         default:
                       }
                       draw();
@@ -122,10 +144,20 @@ class _Example9State extends State<Example9> {
 
     uniform vec2 u_resolution;
     uniform vec2 u_translation;
+    uniform vec2 u_rotation;
+    uniform vec2 u_scale;
 
     void main() {
+      // Scale the position
+      vec2 scaledPosition = a_position * u_scale;
+
+      // Rotate the position
+      vec2 rotatedPosition = vec2(
+        scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
+        scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);
+
       // Add in the translation.
-      vec2 position = a_position + u_translation;
+      vec2 position = rotatedPosition + u_translation;
 
       // convert the position from pixels to 0.0 to 1.0
       vec2 zeroToOne = position / u_resolution;
@@ -193,6 +225,8 @@ class _Example9State extends State<Example9> {
     resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     colorLocation = gl.getUniformLocation(program, "u_color");
     translationLocation = gl.getUniformLocation(program, "u_translation");
+    rotationLocation = gl.getUniformLocation(program, "u_rotation");
+    scaleLocation = gl.getUniformLocation(program, "u_scale");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -235,6 +269,12 @@ class _Example9State extends State<Example9> {
 
     // Set the translation.
     gl.uniform2fv(translationLocation, translation);
+
+    // Set the rotation.
+    gl.uniform2fv(rotationLocation, rotation);
+
+    // Set the scale.
+    gl.uniform2fv(scaleLocation, scale);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
