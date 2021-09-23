@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
         body: Container(
           padding: const EdgeInsets.all(10.0),
           child: ListView.separated(
-            itemCount: 10,
+            itemCount: _pages.keys.length,
             separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade300),
             itemBuilder: (BuildContext context, int index) {
               String key = _pages.keys.elementAt(index);
