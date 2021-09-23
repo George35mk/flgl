@@ -684,6 +684,14 @@ class OpenGLContextES extends OpenGL30Constant {
     return location;
   }
 
+  void uniform2fv(int location, List<double> value) {
+    int count = value.length;
+    final valuePtr = calloc<Float>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform2fv(location, count ~/ 2, valuePtr);
+    calloc.free(valuePtr); // free memory
+  }
+
   uniform2f(v0, num v1, num v2) {
     return gl.glUniform2f(v0, v1.toDouble(), v2.toDouble());
   }
@@ -692,7 +700,8 @@ class OpenGLContextES extends OpenGL30Constant {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
-    return gl.glUniform1iv(location, count, valuePtr);
+    gl.glUniform1iv(location, count, valuePtr);
+    calloc.free(valuePtr);
   }
 
   // uniform2iv(v0, v1) {
@@ -712,7 +721,8 @@ class OpenGLContextES extends OpenGL30Constant {
     final valuePtr = calloc<Float>(count);
     List<double> _values = value.map((e) => e.toDouble()).toList().cast();
     valuePtr.asTypedList(count).setAll(0, _values);
-    return gl.glUniform4fv(location, count ~/ 4, valuePtr.cast<Void>());
+    gl.glUniform4fv(location, count ~/ 4, valuePtr.cast<Void>());
+    calloc.free(valuePtr);
   }
 
   uniform4f(location, num v0, num v1, num v2, num v3) {
