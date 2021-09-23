@@ -5,6 +5,7 @@ import 'package:flgl_example/examples/example_3.dart';
 import 'package:flgl_example/examples/example_4.dart';
 import 'package:flgl_example/examples/example_5.dart';
 import 'package:flgl_example/examples/example_6.dart';
+import 'package:flgl_example/examples/example_7.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -76,6 +77,15 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const Example6()),
+                  );
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Open example 7'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Example7()),
                   );
                 },
               ),
