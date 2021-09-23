@@ -117,7 +117,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result
   ///
   /// @memberOf module:webgl-2d-math
-  static translate(m, double tx, double ty) {
+  static List<double> translate(m, double tx, double ty) {
     return multiply(m, translation(tx, ty));
   }
 
@@ -128,7 +128,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} a rotation matrix that rotates by angleInRadians
   ///
   /// @memberOf module:webgl-2d-math
-  static rotation(double angleInRadians) {
+  static List<double> rotation(double angleInRadians) {
     var c = cos(angleInRadians);
     var s = sin(angleInRadians);
     return [
