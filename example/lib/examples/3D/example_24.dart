@@ -37,11 +37,11 @@ class _Example24State extends State<Example24> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  List<double> translation = [0, 0, 0];
+  List<double> translation = [0, 0, -200];
   List<double> rotation = [0, 0, 0];
   List<double> scale = [1, 1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
-  double fudgeFactor = 2.0;
+  double fieldOfViewRadians = 100;
 
   TransformControlsManager? controlsManager;
 
@@ -53,9 +53,9 @@ class _Example24State extends State<Example24> {
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
 
-    controlsManager!.add(TransformControl(name: 'tx', min: -200, max: 1000, value: translation[0]));
-    controlsManager!.add(TransformControl(name: 'ty', min: -200, max: 1000, value: translation[1]));
-    controlsManager!.add(TransformControl(name: 'tz', min: -200, max: 1000, value: translation[2]));
+    controlsManager!.add(TransformControl(name: 'tx', min: -500, max: 1000, value: translation[0]));
+    controlsManager!.add(TransformControl(name: 'ty', min: -500, max: 1000, value: translation[1]));
+    controlsManager!.add(TransformControl(name: 'tz', min: -500, max: 1000, value: translation[2]));
 
     controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: rotation[0]));
     controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: rotation[1]));
@@ -66,7 +66,7 @@ class _Example24State extends State<Example24> {
     controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: scale[2]));
 
     controlsManager!
-        .add(TransformControl(name: 'fudgeFactor', min: 0.0, max: 2.0, value: fudgeFactor));
+        .add(TransformControl(name: 'FoV', min: 1, max: 180, value: fieldOfViewRadians));
   }
 
   @override
@@ -130,8 +130,8 @@ class _Example24State extends State<Example24> {
                         case 'sz':
                           scale[2] = control.value;
                           break;
-                        case 'fudgeFactor':
-                          fudgeFactor = control.value;
+                        case 'FoV':
+                          fieldOfViewRadians = control.value;
                           break;
                         default:
                       }
@@ -272,10 +272,13 @@ class _Example24State extends State<Example24> {
 
     // ----------------------- Matrix setup-----------------------
 
-    // Compute the matrices
-    int depth = 400;
-    var matrix = M4.makeZToWMatrix(fudgeFactor);
-    matrix = M4.multiply(matrix, M4.projection(width, height, depth));
+    // Compute the matrix
+    double fov = MathUtils.degToRad(fieldOfViewRadians);
+    double aspect = (width * flgl.dpr) / (height * flgl.dpr);
+    double zNear = 1.0;
+    double zFar = 2000.0;
+
+    var matrix = M4.perspective(fov, aspect, zNear, zFar);
     matrix = M4.translate(matrix, translation[0], translation[1], translation[2]);
     matrix = M4.xRotate(matrix, rotation[0]);
     matrix = M4.yRotate(matrix, rotation[1]);

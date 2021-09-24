@@ -30,6 +30,23 @@ class M4 {
     ];
   }
 
+  static List<double> perspective(
+    double fieldOfViewInRadians,
+    double aspect,
+    double near,
+    double far,
+  ) {
+    var f = tan(pi * 0.5 - 0.5 * fieldOfViewInRadians);
+    var rangeInv = 1.0 / (near - far);
+
+    return [
+      f / aspect, 0, 0, 0, //
+      0, f, 0, 0, //
+      0, 0, (near + far) * rangeInv, -1, //
+      0, 0, near * far * rangeInv * 2, 0 //
+    ];
+  }
+
   static List<double> multiply(a, b) {
     var a00 = a[0 * 4 + 0];
     var a01 = a[0 * 4 + 1];
