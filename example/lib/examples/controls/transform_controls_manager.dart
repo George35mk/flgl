@@ -5,7 +5,12 @@ class TransformControlsManager {
 
   TransformControlsManager(this.controls);
 
+  /// add's new control in TransformControl list.
   add(TransformControl control) {
     controls[control.name] = control;
   }
+
+  /// TODO add the remove control method.
+  /// TODO add get control by name method.
+  /// TODO add get control by id method.
 }
