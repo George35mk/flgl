@@ -27,6 +27,7 @@ class _Example21State extends State<Example21> {
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic matrixLocation;
+  dynamic fudgeLocation;
   dynamic positionBuffer;
   dynamic colorBuffer;
   dynamic program;
@@ -41,6 +42,7 @@ class _Example21State extends State<Example21> {
   List<double> rotation = [0, 0, 0];
   List<double> scale = [1, 1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
+  double fudgeFactor = 2.0;
 
   TransformControlsManager? controlsManager;
 
@@ -63,6 +65,9 @@ class _Example21State extends State<Example21> {
     controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: scale[0]));
     controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: scale[1]));
     controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: scale[2]));
+
+    controlsManager!
+        .add(TransformControl(name: 'fudgeFactor', min: 0.0, max: 2.0, value: fudgeFactor));
   }
 
   @override
@@ -90,7 +95,7 @@ class _Example21State extends State<Example21> {
                 },
               ),
               Positioned(
-                width: 350,
+                width: 390,
                 // height: 150,
                 top: 10,
                 right: 10,
@@ -126,6 +131,9 @@ class _Example21State extends State<Example21> {
                         case 'sz':
                           scale[2] = control.value;
                           break;
+                        case 'fudgeFactor':
+                          fudgeFactor = control.value;
+                          break;
                         default:
                       }
                       draw();
@@ -158,12 +166,19 @@ class _Example21State extends State<Example21> {
     attribute vec4 a_color;
 
     uniform mat4 u_matrix;
+    uniform float u_fudgeFactor;
 
     varying vec4 v_color;
 
     void main() {
       // Multiply the position by the matrix.
-      gl_Position = u_matrix * a_position;
+      vec4 position = u_matrix * a_position;
+
+      // Adjust the z to divide by
+      float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
+
+      // Divide x and y by z.
+      gl_Position = vec4(position.xy / zToDivideBy, position.zw);
 
       // Pass the color to the fragment shader.
       v_color = a_color;
@@ -193,6 +208,7 @@ class _Example21State extends State<Example21> {
 
     // lookup uniforms
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    fudgeLocation = gl.getUniformLocation(program, "u_fudgeFactor");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -276,6 +292,9 @@ class _Example21State extends State<Example21> {
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+    // Set the fudgeFactor
+    gl.uniform1f(fudgeLocation, fudgeFactor);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
