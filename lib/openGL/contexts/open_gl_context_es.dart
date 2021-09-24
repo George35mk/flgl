@@ -715,8 +715,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  uniform1f(v0, num v1) {
-    return gl.glUniform1f(v0, v1.toDouble());
+  uniform1f(int location, num v1) {
+    return gl.glUniform1f(location, v1.toDouble());
   }
 
   uniformMatrix3fv(location, bool transpose, List<num> value) {
