@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flgl/flgl.dart';
@@ -28,6 +29,7 @@ class _Example17State extends State<Example17> {
   dynamic colorLocation;
   dynamic matrixLocation;
   dynamic positionBuffer;
+  dynamic colorBuffer;
   dynamic program;
 
   late Flgl flgl;
@@ -154,22 +156,29 @@ class _Example17State extends State<Example17> {
 
   String vertexShaderSource = """
     attribute vec4 a_position;
+    attribute vec4 a_color;
 
     uniform mat4 u_matrix;
+
+    varying vec4 v_color;
 
     void main() {
       // Multiply the position by the matrix.
       gl_Position = u_matrix * a_position;
+
+      // Pass the color to the fragment shader.
+      v_color = a_color;
     }
   """;
 
   String fragmentShaderSource = """
     precision mediump float;
 
-    uniform vec4 u_color;
+    // Passed in from the vertex shader.
+    varying vec4 v_color;
 
     void main() {
-      gl_FragColor = u_color;
+      gl_FragColor = v_color;
     }
   """;
 
@@ -181,9 +190,9 @@ class _Example17State extends State<Example17> {
 
     // look up where the vertex data needs to go.
     positionLocation = gl.getAttribLocation(program, "a_position");
+    colorLocation = gl.getAttribLocation(program, "a_color");
 
     // lookup uniforms
-    colorLocation = gl.getUniformLocation(program, "u_color");
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
     // Create a buffer for the positions.
@@ -192,6 +201,15 @@ class _Example17State extends State<Example17> {
 
     // Put geometry data into buffer
     setGeometry(gl);
+
+    // Create a buffer to put colors in
+    colorBuffer = gl.createBuffer();
+
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = colorBuffer)
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
+    // Put geometry data into buffer
+    setColors(gl);
   }
 
   draw() {
@@ -219,8 +237,23 @@ class _Example17State extends State<Example17> {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // set the color
-    gl.uniform4fv(colorLocation, color);
+    // ------------------------ Colors setup------------------------
+
+    // Turn on the color attribute
+    gl.enableVertexAttribArray(colorLocation);
+
+    // Bind the color buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
+    // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
+    var _size = 3; // 3 components per iteration
+    var _type = gl.UNSIGNED_BYTE; // the data is 8bit unsigned values
+    var _normalize = true; // normalize the data (convert from 0-255 to 0-1)
+    var _stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
+    var _offset = 0; // start at the beginning of the buffer
+    gl.vertexAttribPointer(colorLocation, _size, _type, _normalize, _stride, _offset);
+
+    // ----------------------- Matrix setup-----------------------
 
     // Compute the matrices
     var matrix = M4.projection(width, height, 400);
@@ -376,5 +409,138 @@ class _Example17State extends State<Example17> {
       0, 150, 0
     ];
     gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(vertices), gl.STATIC_DRAW);
+  }
+
+  setColors(gl) {
+    List<int> colors = [
+      // left column front
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+
+      // top rung front
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+
+      // middle rung front
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+      200, 70, 120,
+
+      // left column back
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+
+      // top rung back
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+
+      // middle rung back
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+      80, 70, 200,
+
+      // top
+      70, 200, 210,
+      70, 200, 210,
+      70, 200, 210,
+      70, 200, 210,
+      70, 200, 210,
+      70, 200, 210,
+
+      // top rung right
+      200, 200, 70,
+      200, 200, 70,
+      200, 200, 70,
+      200, 200, 70,
+      200, 200, 70,
+      200, 200, 70,
+
+      // under top rung
+      210, 100, 70,
+      210, 100, 70,
+      210, 100, 70,
+      210, 100, 70,
+      210, 100, 70,
+      210, 100, 70,
+
+      // between top rung and middle
+      210, 160, 70,
+      210, 160, 70,
+      210, 160, 70,
+      210, 160, 70,
+      210, 160, 70,
+      210, 160, 70,
+
+      // top of middle rung
+      70, 180, 210,
+      70, 180, 210,
+      70, 180, 210,
+      70, 180, 210,
+      70, 180, 210,
+      70, 180, 210,
+
+      // right of middle rung
+      100, 70, 210,
+      100, 70, 210,
+      100, 70, 210,
+      100, 70, 210,
+      100, 70, 210,
+      100, 70, 210,
+
+      // bottom of middle rung.
+      76, 210, 100,
+      76, 210, 100,
+      76, 210, 100,
+      76, 210, 100,
+      76, 210, 100,
+      76, 210, 100,
+
+      // right of bottom
+      140, 210, 80,
+      140, 210, 80,
+      140, 210, 80,
+      140, 210, 80,
+      140, 210, 80,
+      140, 210, 80,
+
+      // bottom
+      90, 130, 110,
+      90, 130, 110,
+      90, 130, 110,
+      90, 130, 110,
+      90, 130, 110,
+      90, 130, 110,
+
+      // left side
+      160, 160, 220,
+      160, 160, 220,
+      160, 160, 220,
+      160, 160, 220,
+      160, 160, 220,
+      160, 160, 220
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, Uint8List.fromList(colors), gl.STATIC_DRAW);
   }
 }

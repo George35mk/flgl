@@ -336,12 +336,38 @@ class OpenGLContextES extends OpenGL30Constant {
   //   gl.glBufferData(target, size, data.cast<Void>(), usage);
   // }
 
-  bufferData(int target, data, int usage) {
+  /// ### Creates and initializes a buffer object's data store
+  ///
+  /// #### Parameters
+  /// - target
+  ///
+  ///   Specifies the target buffer object. The symbolic constant must be
+  ///   - GL_ARRAY_BUFFER, GL_ATOMIC_COUNTER_BUFFER, GL_COPY_READ_BUFFER,
+  ///   - GL_COPY_WRITE_BUFFER, GL_DRAW_INDIRECT_BUFFER,
+  ///   - GL_DISPATCH_INDIRECT_BUFFER, GL_ELEMENT_ARRAY_BUFFER,
+  ///   - GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER,
+  ///   - GL_SHADER_STORAGE_BUFFER, GL_TRANSFORM_FEEDBACK_BUFFER, or
+  ///   - GL_UNIFORM_BUFFER.
+  ///
+  /// - data
+  ///
+  ///   Specifies a pointer to data that will be copied into the data store for initialization,
+  ///   or NULL if no data is to be copied.
+  ///
+  /// - usage
+  ///
+  ///   Specifies the expected usage pattern of the data store. The symbolic constant must be
+  ///   GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY, GL_STATIC_DRAW, GL_STATIC_READ,
+  ///   GL_STATIC_COPY, GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, or GL_DYNAMIC_COPY.
+  void bufferData(int target, dynamic data, int usage) {
     late Pointer<Void> nativeData;
     late int size;
     if (data is List<double> || data is Float32List) {
       nativeData = floatListToArrayPointer(data as List<double>).cast();
       size = data.length * sizeOf<Float>();
+    } else if (data is Uint8List) {
+      nativeData = uint8ListToArrayPointer(data).cast();
+      size = data.length * sizeOf<Uint8>();
     } else if (data is Int32List) {
       nativeData = int32ListToArrayPointer(data).cast();
       size = data.length * sizeOf<Int32>();
@@ -467,7 +493,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  /// ### glCreateProgram — Creates a program object
+  /// ### Creates a program object
   ///
   /// #### Description
   /// glCreateProgram creates an empty program object and returns a non-zero
