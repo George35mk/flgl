@@ -135,8 +135,12 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glDepthMask(v0 ? 1 : 0);
   }
 
-  enable(v0) {
-    return gl.glEnable(v0);
+  /// ### enable or disable server-side GL capabilities
+  /// #### Parameters
+  ///
+  /// - [cap] Specifies a symbolic constant indicating a GL capability.
+  void enable(int cap) {
+    gl.glEnable(cap);
   }
 
   disable(v0) {

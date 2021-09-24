@@ -219,6 +219,10 @@ class _Example18State extends State<Example18> {
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    // Turn on culling. By default backfacing triangles
+    // will be culled.
+    gl.enable(gl.CULL_FACE);
+
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
 
