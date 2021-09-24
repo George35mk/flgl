@@ -27,7 +27,6 @@ class _Example23State extends State<Example23> {
   dynamic positionLocation;
   dynamic colorLocation;
   dynamic matrixLocation;
-  dynamic fudgeLocation;
   dynamic positionBuffer;
   dynamic colorBuffer;
   dynamic program;
@@ -166,19 +165,12 @@ class _Example23State extends State<Example23> {
     attribute vec4 a_color;
 
     uniform mat4 u_matrix;
-    uniform float u_fudgeFactor;
 
     varying vec4 v_color;
 
     void main() {
       // Multiply the position by the matrix.
-      vec4 position = u_matrix * a_position;
-
-      // Adjust the z to divide by
-      float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
-
-      // Divide x and y by z.
-      gl_Position = vec4(position.xyz, zToDivideBy);
+      gl_Position = u_matrix * a_position;
 
       // Pass the color to the fragment shader.
       v_color = a_color;
@@ -208,7 +200,6 @@ class _Example23State extends State<Example23> {
 
     // lookup uniforms
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
-    fudgeLocation = gl.getUniformLocation(program, "u_fudgeFactor");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -282,8 +273,9 @@ class _Example23State extends State<Example23> {
     // ----------------------- Matrix setup-----------------------
 
     // Compute the matrices
-    int depth = 1500;
-    var matrix = M4.projection(width, height, depth);
+    int depth = 400;
+    var matrix = M4.makeZToWMatrix(fudgeFactor);
+    matrix = M4.multiply(matrix, M4.projection(width, height, depth));
     matrix = M4.translate(matrix, translation[0], translation[1], translation[2]);
     matrix = M4.xRotate(matrix, rotation[0]);
     matrix = M4.yRotate(matrix, rotation[1]);
@@ -292,9 +284,6 @@ class _Example23State extends State<Example23> {
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
-
-    // Set the fudgeFactor
-    gl.uniform1f(fudgeLocation, fudgeFactor);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;

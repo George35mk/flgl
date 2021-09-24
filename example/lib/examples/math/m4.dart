@@ -21,6 +21,15 @@ class M4 {
     ];
   }
 
+  static List<double> makeZToWMatrix(double fudgeFactor) {
+    return [
+      1, 0, 0, 0, //
+      0, 1, 0, 0, //
+      0, 0, 1, fudgeFactor, //
+      0, 0, 0, 1, //
+    ];
+  }
+
   static List<double> multiply(a, b) {
     var a00 = a[0 * 4 + 0];
     var a01 = a[0 * 4 + 1];
