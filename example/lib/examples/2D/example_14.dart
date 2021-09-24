@@ -70,7 +70,7 @@ class _Example14State extends State<Example14> {
               FLGLViewport(
                 width: width,
                 height: height,
-                onChange: (Flgl _flgl) {
+                onInit: (Flgl _flgl) {
                   setState(() {
                     initialized = true;
                     flgl = _flgl;

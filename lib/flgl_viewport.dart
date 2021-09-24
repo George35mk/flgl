@@ -10,11 +10,11 @@ class FLGLViewport extends StatefulWidget {
   final int height;
 
   /// Use this method to get the gl context.
-  final Function? onChange;
+  final Function? onInit;
 
   const FLGLViewport({
     Key? key,
-    this.onChange,
+    this.onInit,
     this.width = 500, // default
     this.height = 500, // default
   }) : super(key: key);
@@ -93,7 +93,7 @@ class _FLGLViewportState extends State<FLGLViewport> {
     flgl.sourceTexture = defaultFramebufferTexture;
 
     setState(() {
-      widget.onChange!(flgl);
+      widget.onInit!(flgl);
     });
   }
 
