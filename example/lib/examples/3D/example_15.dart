@@ -5,6 +5,7 @@ import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
+import 'package:flgl_example/examples/math/m4.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'dart:typed_data';
 
 import '../controls/gl_controls.dart';
 import '../gl_utils.dart';
-import '../math/m3.dart';
 
 class Example15 extends StatefulWidget {
   const Example15({Key? key}) : super(key: key);
@@ -36,10 +36,10 @@ class _Example15State extends State<Example15> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  List<double> translation = [0.0, 0.0];
-  List<double> scale = [1, 1];
+  List<double> translation = [0.0, 0.0, 0.0];
+  List<double> rotation = [0.0, 0.0, 0.0];
+  List<double> scale = [1, 1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
-  double angleInRadians = 0.0;
 
   TransformControlsManager? controlsManager;
 
@@ -50,11 +50,18 @@ class _Example15State extends State<Example15> {
     // init control manager.
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
-    controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
-    controlsManager!.add(TransformControl(name: 'angle', min: 0, max: 360, value: 0));
+
+    controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 0));
+    controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 0));
+    controlsManager!.add(TransformControl(name: 'tz', min: 0, max: 1000, value: 0));
+
+    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
+
     controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
     controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: 1.0));
   }
 
   @override
@@ -97,14 +104,26 @@ class _Example15State extends State<Example15> {
                         case 'ty':
                           translation[1] = control.value;
                           break;
-                        case 'angle':
-                          angleInRadians = MathUtils.degToRad(control.value);
+                        case 'tz':
+                          translation[2] = control.value;
+                          break;
+                        case 'rx':
+                          rotation[0] = MathUtils.degToRad(control.value);
+                          break;
+                        case 'ry':
+                          rotation[1] = MathUtils.degToRad(control.value);
+                          break;
+                        case 'rz':
+                          rotation[2] = MathUtils.degToRad(control.value);
                           break;
                         case 'sx':
                           scale[0] = control.value;
                           break;
                         case 'sy':
                           scale[1] = control.value;
+                          break;
+                        case 'sz':
+                          scale[2] = control.value;
                           break;
                         default:
                       }
@@ -121,6 +140,7 @@ class _Example15State extends State<Example15> {
             children: [
               TextButton(
                 onPressed: () {
+                  color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
                   draw();
                 },
                 child: const Text("Render"),
@@ -133,13 +153,13 @@ class _Example15State extends State<Example15> {
   }
 
   String vertexShaderSource = """
-    attribute vec2 a_position;
+    attribute vec4 a_position;
 
-    uniform mat3 u_matrix;
+    uniform mat4 u_matrix;
 
     void main() {
       // Multiply the position by the matrix.
-      gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+      gl_Position = u_matrix * a_position;
     }
   """;
 
@@ -157,28 +177,28 @@ class _Example15State extends State<Example15> {
   setGeometry(gl) {
     List<double> vertices = [
       // left column
-      0, 0,
-      30, 0,
-      0, 150,
-      0, 150,
-      30, 0,
-      30, 150,
+      0, 0, 0,
+      30, 0, 0,
+      0, 150, 0,
+      0, 150, 0,
+      30, 0, 0,
+      30, 150, 0,
 
       // top rung
-      30, 0,
-      100, 0,
-      30, 30,
-      30, 30,
-      100, 0,
-      100, 30,
+      30, 0, 0,
+      100, 0, 0,
+      30, 30, 0,
+      30, 30, 0,
+      100, 0, 0,
+      100, 30, 0,
 
       // middle rung
-      30, 60,
-      67, 60,
-      30, 90,
-      30, 90,
-      67, 60,
-      67, 90,
+      30, 60, 0,
+      67, 60, 0,
+      30, 90, 0,
+      30, 90, 0,
+      67, 60, 0,
+      67, 90, 0
     ];
     gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(vertices), gl.STATIC_DRAW);
   }
@@ -222,7 +242,7 @@ class _Example15State extends State<Example15> {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 2 components per iteration
+    var size = 3; // 3 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;
@@ -233,13 +253,15 @@ class _Example15State extends State<Example15> {
     gl.uniform4fv(colorLocation, color);
 
     // Compute the matrices
-    var matrix = M3.projection(width, height);
-    matrix = M3.translate(matrix, translation[0], translation[1]);
-    matrix = M3.rotate(matrix, angleInRadians);
-    matrix = M3.scale(matrix, scale[0], scale[1]);
+    var matrix = M4.projection(width, height, 400);
+    matrix = M4.translate(matrix, translation[0], translation[1], translation[2]);
+    matrix = M4.xRotate(matrix, rotation[0]);
+    matrix = M4.yRotate(matrix, rotation[1]);
+    matrix = M4.zRotate(matrix, rotation[2]);
+    matrix = M4.scale(matrix, scale[0], scale[1], scale[2]);
 
     // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
+    gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;

@@ -147,8 +147,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glBlendEquation(v0);
   }
 
-  useProgram(v0) {
-    return gl.glUseProgram(v0);
+  useProgram(int program) {
+    return gl.glUseProgram(program);
   }
 
   blendFuncSeparate(v0, v1, v2, v3) {
