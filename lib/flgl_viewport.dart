@@ -2,7 +2,7 @@ import 'package:flgl/flgl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-class ViewportGL extends StatefulWidget {
+class FLGLViewport extends StatefulWidget {
   /// The viewport width.
   final int width;
 
@@ -12,7 +12,7 @@ class ViewportGL extends StatefulWidget {
   /// Use this method to get the gl context.
   final Function? onChange;
 
-  const ViewportGL({
+  const FLGLViewport({
     Key? key,
     this.onChange,
     this.width = 500, // default
@@ -20,10 +20,10 @@ class ViewportGL extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ViewportGLState createState() => _ViewportGLState();
+  _FLGLViewportState createState() => _FLGLViewportState();
 }
 
-class _ViewportGLState extends State<ViewportGL> {
+class _FLGLViewportState extends State<FLGLViewport> {
   /// The device Pixel Ratio
   num dpr = 1.0;
 
@@ -92,14 +92,9 @@ class _ViewportGLState extends State<ViewportGL> {
     setupDefaultFBO();
     flgl.sourceTexture = defaultFramebufferTexture;
 
-    setState(() {});
-
-    // web need wait dom ok!!!
-    // Future.delayed(const Duration(milliseconds: 100), () {
     setState(() {
       widget.onChange!(flgl);
     });
-    // });
   }
 
   initSize(BuildContext context) {

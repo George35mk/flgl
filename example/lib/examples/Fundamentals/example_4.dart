@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flgl/flgl.dart';
-import 'package:flgl/viewport_gl.dart';
+import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class _Example4State extends State<Example4> {
       ),
       body: Column(
         children: [
-          ViewportGL(
+          FLGLViewport(
               width: width,
               height: height,
               onChange: (Flgl _flgl) {

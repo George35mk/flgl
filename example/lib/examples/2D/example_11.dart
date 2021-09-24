@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flgl/flgl.dart';
-import 'package:flgl/viewport_gl.dart';
+import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
@@ -70,7 +70,7 @@ class _Example11State extends State<Example11> {
         children: [
           Stack(
             children: [
-              ViewportGL(
+              FLGLViewport(
                 width: width,
                 height: height,
                 onChange: (Flgl _flgl) {
