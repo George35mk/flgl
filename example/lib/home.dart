@@ -1,4 +1,5 @@
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
+import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,8 @@ class _HomeState extends State<Home> {
       "description": "OpenGLES: Fundamentals",
       "page": const ExamplesPageFundamentals()
     },
-    '2': {"name": "2D", "description": "OpenGLES: 3D examples", "page": const ExamplesPage2d()},
+    '2': {"name": "2D", "description": "OpenGLES: 2D examples", "page": const ExamplesPage2d()},
+    '3': {"name": "3D", "description": "OpenGLES: 3D examples", "page": const ExamplesPage3d()},
   };
 
   @override

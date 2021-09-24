@@ -1,4 +1,5 @@
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
+import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
 import 'package:flgl_example/home.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ import 'examples/2D/example_11.dart';
 import 'examples/2D/example_12.dart';
 import 'examples/2D/example_13.dart';
 import 'examples/2D/example_14.dart';
+import 'examples/3D/example_15.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +60,8 @@ class _MyAppState extends State<MyApp> {
         '/2d/example_12': (context) => const Example12(),
         '/2d/example_13': (context) => const Example13(),
         '/2d/example_14': (context) => const Example14(),
+        '/3d': (context) => const ExamplesPage3d(),
+        '/3d/example_15': (context) => const Example15(),
       },
     );
   }
