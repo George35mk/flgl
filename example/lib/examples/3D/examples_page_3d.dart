@@ -9,7 +9,16 @@ class ExamplesPage3d extends StatefulWidget {
 
 class _ExamplesPage3dState extends State<ExamplesPage3d> {
   final Map<String, dynamic> _pages = {
-    '1': {"name": "Example 15", "description": "OpenGLES: Orthographic 3D", 'route': 'example_15'},
+    '1': {
+      "name": "Example 15",
+      "description": "OpenGLES: Orthographic 3D 1",
+      'route': 'example_15'
+    },
+    '2': {
+      "name": "Example 16",
+      "description": "OpenGLES: Orthographic 3D 2",
+      'route': 'example_16'
+    },
   };
 
   @override

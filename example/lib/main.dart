@@ -19,6 +19,7 @@ import 'examples/2D/example_12.dart';
 import 'examples/2D/example_13.dart';
 import 'examples/2D/example_14.dart';
 import 'examples/3D/example_15.dart';
+import 'examples/3D/example_16.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
         '/2d/example_14': (context) => const Example14(),
         '/3d': (context) => const ExamplesPage3d(),
         '/3d/example_15': (context) => const Example15(),
+        '/3d/example_16': (context) => const Example16(),
       },
     );
   }

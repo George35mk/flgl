@@ -14,14 +14,14 @@ import 'dart:typed_data';
 import '../controls/gl_controls.dart';
 import '../gl_utils.dart';
 
-class Example15 extends StatefulWidget {
-  const Example15({Key? key}) : super(key: key);
+class Example16 extends StatefulWidget {
+  const Example16({Key? key}) : super(key: key);
 
   @override
-  _Example15State createState() => _Example15State();
+  _Example16State createState() => _Example16State();
 }
 
-class _Example15State extends State<Example15> {
+class _Example16State extends State<Example16> {
   bool initialized = false;
 
   dynamic positionLocation;
@@ -68,7 +68,7 @@ class _Example15State extends State<Example15> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 15 (Orthographic 3D 1)"),
+        title: const Text("Example 16 (Orthographic 3D 2)"),
       ),
       body: Column(
         children: [
