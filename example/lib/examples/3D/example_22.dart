@@ -178,7 +178,7 @@ class _Example22State extends State<Example22> {
       float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
 
       // Divide x and y by z.
-      gl_Position = vec4(position.xy / zToDivideBy, position.zw);
+      gl_Position = vec4(position.xyz, zToDivideBy);
 
       // Pass the color to the fragment shader.
       v_color = a_color;
