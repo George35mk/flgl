@@ -37,8 +37,8 @@ class _Example20State extends State<Example20> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  List<double> translation = [0.0, 0.0, 0.0];
-  List<double> rotation = [0.0, 0.0, 0.0];
+  List<double> translation = [0, 0, 0];
+  List<double> rotation = [0, 0, 0];
   List<double> scale = [1, 1, 1];
   List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
 
@@ -52,17 +52,17 @@ class _Example20State extends State<Example20> {
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
 
-    controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 0));
-    controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 0));
-    controlsManager!.add(TransformControl(name: 'tz', min: 0, max: 1000, value: 0));
+    controlsManager!.add(TransformControl(name: 'tx', min: -200, max: 1000, value: translation[0]));
+    controlsManager!.add(TransformControl(name: 'ty', min: -200, max: 1000, value: translation[1]));
+    controlsManager!.add(TransformControl(name: 'tz', min: -200, max: 1000, value: translation[2]));
 
-    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: rotation[0]));
+    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: rotation[1]));
+    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: rotation[2]));
 
-    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: scale[0]));
+    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: scale[1]));
+    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: scale[2]));
   }
 
   @override
@@ -217,11 +217,18 @@ class _Example20State extends State<Example20> {
 
     // Clear the canvas. sets the canvas background color.
     gl.clearColor(0, 0, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Turn on culling. By default backfacing triangles
-    // will be culled.
+    // Clear the canvas.
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Turn on culling. By default backfacing triangles will be culled.
     gl.enable(gl.CULL_FACE);
+
+    // Enable the depth buffer
+    gl.enable(gl.DEPTH_TEST);
+
+    // print('CULL_FACE Enabled: ${gl.getParameter(gl.CULL_FACE)}');
+    // print('DEPTH_TEST Enabled: ${gl.getParameter(gl.DEPTH_TEST)}');
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
@@ -259,7 +266,8 @@ class _Example20State extends State<Example20> {
     // ----------------------- Matrix setup-----------------------
 
     // Compute the matrices
-    var matrix = M4.projection(width, height, 400);
+    int depth = 1500;
+    var matrix = M4.projection(width, height, depth);
     matrix = M4.translate(matrix, translation[0], translation[1], translation[2]);
     matrix = M4.xRotate(matrix, rotation[0]);
     matrix = M4.yRotate(matrix, rotation[1]);

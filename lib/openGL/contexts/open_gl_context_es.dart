@@ -20,8 +20,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glScissor(x, y, z, w);
   }
 
-  viewport(x, y, z, w) {
-    return gl.glViewport(x, y, z, w);
+  viewport(int x, int y, int width, int height) {
+    return gl.glViewport(x, y, width, height);
   }
 
   getShaderPrecisionFormat() {
@@ -54,7 +54,9 @@ class OpenGLContextES extends OpenGL30Constant {
       MAX_SAMPLES,
       MAX_COMBINED_TEXTURE_IMAGE_UNITS,
       GL_SCISSOR_BOX,
-      GL_VIEWPORT
+      GL_VIEWPORT,
+      CULL_FACE,
+      DEPTH_TEST
     ];
 
     if (_intValues.indexOf(key) >= 0) {
@@ -140,7 +142,7 @@ class OpenGLContextES extends OpenGL30Constant {
   ///
   /// - [cap] Specifies a symbolic constant indicating a GL capability.
   void enable(int cap) {
-    gl.glEnable(cap);
+    return gl.glEnable(cap);
   }
 
   disable(v0) {
@@ -312,8 +314,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return location;
   }
 
-  clear(v0) {
-    return gl.glClear(v0);
+  clear(int mask) {
+    return gl.glClear(mask);
   }
 
   createBuffer() {
@@ -332,8 +334,8 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(ptr);
   }
 
-  bindBuffer(v0, v1) {
-    return gl.glBindBuffer(v0, v1.bufferId);
+  bindBuffer(int target, dynamic buffer) {
+    return gl.glBindBuffer(target, buffer.bufferId);
   }
 
   // bufferData(int target, int size, data, int usage) {
@@ -412,8 +414,13 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glCheckFramebufferStatus(v0);
   }
 
-  framebufferTexture2D(v0, v1, v2, v3, v4) {
-    return gl.glFramebufferTexture2D(v0, v1, v2, v3, v4);
+  // int target,
+  // int attachment,
+  // int textarget,
+  // int texture,
+  // int level,
+  framebufferTexture2D(target, attachment, textarget, texture, level) {
+    return gl.glFramebufferTexture2D(target, attachment, textarget, texture, level);
   }
 
   readPixels(int x, int y, int width, int height, int format, int type, Uint8List data) {

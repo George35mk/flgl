@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'openGL/contexts/open_gl_context_es.dart';
 import 'openGL/open_gl_es.dart';
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
 
 class Flgl {
   /// The texture id.
@@ -109,6 +111,8 @@ class Flgl {
     await _channel.invokeMethod('dispose', args);
   }
 
+  /// https://stackoverflow.com/questions/24122859/glenablegl-depth-test-not-working
+  /// https://www.khronos.org/opengl/wiki/Framebuffer_Object_Extension_Examples
   setupDefaultFBO(OpenGLContextES _gl, num width, num height, num dpr) {
     int glWidth = (width * dpr).toInt();
     int glHeight = (height * dpr).toInt();
@@ -126,6 +130,33 @@ class Flgl {
     _gl.bindFramebuffer(_gl.FRAMEBUFFER, defaultFramebuffer);
     _gl.framebufferTexture2D(
         _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, defaultFramebufferTexture, 0);
+
+    // ===================== Setup the Depth Buffer Start =====================
+
+    // _gl.gl.createRenderbuffer();
+    // _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.DEPTH24_STENCIL8, glWidth, glHeight, 0, _gl.DEPTH_STENCIL,
+    //     _gl.UNSIGNED_INT_24_8, null);
+    // _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.DEPTH_STENCIL_ATTACHMENT, _gl.TEXTURE_2D,
+    //     defaultFramebufferTexture, 0);
+
+    var frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
+    if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
+      print("Framebuffer (color) check failed: $frameBufferCheck");
+    }
+
+    Pointer<Int32> depthBuffer = calloc();
+    _gl.gl.glGenRenderbuffers(1, depthBuffer.cast());
+    _gl.gl.glBindRenderbuffer(_gl.RENDERBUFFER, depthBuffer.value);
+    _gl.gl.glRenderbufferStorage(_gl.RENDERBUFFER, _gl.DEPTH_COMPONENT16, glWidth, glHeight);
+    _gl.gl.glFramebufferRenderbuffer(
+        _gl.FRAMEBUFFER, _gl.DEPTH_ATTACHMENT, _gl.RENDERBUFFER, depthBuffer.value);
+
+    frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
+    if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
+      print("Framebuffer (depth) check failed: $frameBufferCheck");
+    }
+
+    // ===================== Setup the Depth Buffer End =====================
 
     return defaultFramebufferTexture;
   }
