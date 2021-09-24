@@ -151,6 +151,9 @@ class Flgl {
     _gl.gl.glFramebufferRenderbuffer(
         _gl.FRAMEBUFFER, _gl.DEPTH_ATTACHMENT, _gl.RENDERBUFFER, depthBuffer.value);
 
+    int _v = depthBuffer.value; // just in case you need this value
+    calloc.free(depthBuffer); // free
+
     frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
       print("Framebuffer (depth) check failed: $frameBufferCheck");
