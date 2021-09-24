@@ -55,9 +55,14 @@ class Flgl {
       'options': _options,
       'renderToVideo': false,
     });
+
     textureId = res["textureId"];
 
     openGLES = OpenGLES(_options);
+
+    await prepareContext();
+    sourceTexture = setupDefaultFBO(gl, width, height, dpr);
+
     return Map<String, dynamic>.from(res);
   }
 
@@ -102,5 +107,26 @@ class Flgl {
 
     final args = {"textureId": textureId};
     await _channel.invokeMethod('dispose', args);
+  }
+
+  setupDefaultFBO(OpenGLContextES _gl, num width, num height, num dpr) {
+    int glWidth = (width * dpr).toInt();
+    int glHeight = (height * dpr).toInt();
+
+    dynamic defaultFramebuffer = _gl.createFramebuffer();
+    dynamic defaultFramebufferTexture = _gl.createTexture();
+    _gl.activeTexture(_gl.TEXTURE0);
+
+    _gl.bindTexture(_gl.TEXTURE_2D, defaultFramebufferTexture);
+    _gl.texImage2D(
+        _gl.TEXTURE_2D, 0, _gl.RGBA, glWidth, glHeight, 0, _gl.RGBA, _gl.UNSIGNED_BYTE, null);
+    _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR);
+    _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR);
+
+    _gl.bindFramebuffer(_gl.FRAMEBUFFER, defaultFramebuffer);
+    _gl.framebufferTexture2D(
+        _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, defaultFramebufferTexture, 0);
+
+    return defaultFramebufferTexture;
   }
 }
