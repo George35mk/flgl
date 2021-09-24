@@ -41,7 +41,12 @@ class _ExamplesPage3dState extends State<ExamplesPage3d> {
     },
     '7': {"name": "Example 21", "description": "OpenGLES: 3D Perspective 1", 'route': 'example_21'},
     '8': {"name": "Example 22", "description": "OpenGLES: 3D Perspective 2", 'route': 'example_22'},
-    '8': {"name": "Example 23", "description": "OpenGLES: 3D Perspective 3", 'route': 'example_23'},
+    '9': {"name": "Example 23", "description": "OpenGLES: 3D Perspective 3", 'route': 'example_23'},
+    '10': {
+      "name": "Example 24",
+      "description": "OpenGLES: 3D Perspective 4",
+      'route': 'example_24'
+    },
   };
 
   @override
