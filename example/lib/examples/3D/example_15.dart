@@ -266,7 +266,7 @@ class _Example15State extends State<Example15> {
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
-    var count = 18;
+    var count = 18; // 6 triangles in the 'F', 3 points per triangle
     gl.drawArrays(primitiveType, offset_, count);
 
     // !super important.
