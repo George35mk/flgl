@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'gl_utils.dart';
+import '../gl_utils.dart';
 
 class Example3 extends StatefulWidget {
   const Example3({Key? key}) : super(key: key);
@@ -145,7 +145,7 @@ class _Example3State extends State<Example3> {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 3 components per iteration
+    var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;

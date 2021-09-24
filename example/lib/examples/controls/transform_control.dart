@@ -1,14 +1,4 @@
-class ControlsManager {
-  Map<String, Control> controls = {};
-
-  ControlsManager(this.controls);
-
-  add(Control control) {
-    controls[control.name] = control;
-  }
-}
-
-class Control {
+class TransformControl {
   /// The control name
   String name;
 
@@ -21,7 +11,7 @@ class Control {
   /// The control maximum value.
   double max;
 
-  Control({
+  TransformControl({
     this.name = 'default name',
     this.min = 0,
     this.max = 0,

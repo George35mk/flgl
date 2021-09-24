@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'gl_utils.dart';
+import '../gl_utils.dart';
 
 class Example1 extends StatefulWidget {
   const Example1({Key? key}) : super(key: key);
@@ -98,8 +98,8 @@ class _Example1State extends State<Example1> {
   """;
 
   initGl() {
-    var vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    var fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
     program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
 
@@ -141,7 +141,7 @@ class _Example1State extends State<Example1> {
     // print('GL_VIEWPORT: ${gl.getParameter(gl.GL_VIEWPORT)}');
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 3 components per iteration
+    var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;

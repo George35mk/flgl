@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flgl/flgl.dart';
 import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -5,20 +7,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'gl_utils.dart';
+import '../gl_utils.dart';
 
-class Example2 extends StatefulWidget {
-  const Example2({Key? key}) : super(key: key);
+class Example4 extends StatefulWidget {
+  const Example4({Key? key}) : super(key: key);
 
   @override
-  _Example2State createState() => _Example2State();
+  _Example4State createState() => _Example4State();
 }
 
-class _Example2State extends State<Example2> {
+class _Example4State extends State<Example4> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic resolutionUniformLocation;
+  dynamic colorUniformLocation;
   dynamic positionBuffer;
   dynamic program;
 
@@ -37,7 +40,7 @@ class _Example2State extends State<Example2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 2"),
+        title: const Text("Example 4"),
       ),
       body: Column(
         children: [
@@ -88,15 +91,17 @@ class _Example2State extends State<Example2> {
       // convert from 0->2 to -1->+1 (clipspace)
       vec2 clipSpace = zeroToTwo - 1.0;
 
-      gl_Position = vec4(clipSpace, 0, 1);
+      gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     }
   """;
 
   String fragmentShaderSource = """
     precision mediump float;
-
+ 
+    uniform vec4 u_color;
+  
     void main() {
-      gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+      gl_FragColor = u_color;
     }
   """;
 
@@ -111,6 +116,7 @@ class _Example2State extends State<Example2> {
 
     // look up uniform locations
     resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+    colorUniformLocation = gl.getUniformLocation(program, "u_color");
 
     positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -145,7 +151,7 @@ class _Example2State extends State<Example2> {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 3 components per iteration
+    var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;
@@ -155,14 +161,57 @@ class _Example2State extends State<Example2> {
     // set the resolution
     gl.uniform2f(resolutionUniformLocation, width, height);
 
-    // draw TRIANGLE
-    var primitiveType = gl.TRIANGLES;
-    var offset_draw = 0;
-    var count = 6;
-    gl.drawArrays(primitiveType, offset_draw, count);
+    // draw 50 random rectangles in random colors
+    for (var ii = 0; ii < 50; ++ii) {
+      // Setup a random rectangle
+      // This will write to positionBuffer because
+      // its the last thing we bound on the ARRAY_BUFFER
+      // bind point
+      setRectangle(
+        gl,
+        Random().nextInt(300).toDouble(),
+        Random().nextInt(300).toDouble(),
+        Random().nextInt(300).toDouble(),
+        Random().nextInt(300).toDouble(),
+      );
+
+      // Set a random color.
+      gl.uniform4f(
+        colorUniformLocation,
+        Random().nextDouble(),
+        Random().nextDouble(),
+        Random().nextDouble(),
+        1,
+      );
+
+      // Draw the rectangle.
+      var primitiveType = gl.TRIANGLES;
+      var offset = 0;
+      var count = 6;
+      gl.drawArrays(primitiveType, offset, count);
+    }
 
     // !super important.
     gl.finish();
     flgl.updateTexture();
+  }
+
+  // Fill the buffer with the values that define a rectangle.
+  setRectangle(OpenGLContextES gl, double x, double y, double width, double height) {
+    var x1 = x;
+    var x2 = x + width;
+    var y1 = y;
+    var y2 = y + height;
+    gl.bufferData(
+        gl.ARRAY_BUFFER,
+        Float32List.fromList([
+          x1, y1, //
+          x2, y1, //
+          x1, y2, //
+          x1, y2, //
+          x2, y1, //
+          x2, y2, //
+        ]),
+        gl.STATIC_DRAW);
   }
 }

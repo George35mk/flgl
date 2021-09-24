@@ -147,8 +147,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glBlendEquation(v0);
   }
 
-  useProgram(v0) {
-    return gl.glUseProgram(v0);
+  useProgram(int program) {
+    return gl.glUseProgram(program);
   }
 
   blendFuncSeparate(v0, v1, v2, v3) {
@@ -467,7 +467,20 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  createProgram() {
+  /// ### glCreateProgram — Creates a program object
+  ///
+  /// #### Description
+  /// glCreateProgram creates an empty program object and returns a non-zero
+  /// value by which it can be referenced. A program object is an object to
+  /// which shader objects can be attached. This provides a mechanism to
+  /// specify the shader objects that will be linked to create a program.
+  /// It also provides a means for checking the compatibility of the shaders
+  /// that will be used to create a program (for instance, checking the
+  /// compatibility between a vertex shader and a fragment shader).
+  /// When no longer needed as part of a program object, shader objects can
+  /// be detached.
+  /// - Returns [int]
+  int createProgram() {
     return gl.glCreateProgram();
   }
 
@@ -604,7 +617,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  createShader(int type) {
+  int createShader(int type) {
     return gl.glCreateShader(type);
   }
 
@@ -684,6 +697,14 @@ class OpenGLContextES extends OpenGL30Constant {
     return location;
   }
 
+  void uniform2fv(int location, List<double> value) {
+    int count = value.length;
+    final valuePtr = calloc<Float>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform2fv(location, count ~/ 2, valuePtr);
+    calloc.free(valuePtr); // free memory
+  }
+
   uniform2f(v0, num v1, num v2) {
     return gl.glUniform2f(v0, v1.toDouble(), v2.toDouble());
   }
@@ -692,7 +713,8 @@ class OpenGLContextES extends OpenGL30Constant {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
-    return gl.glUniform1iv(location, count, valuePtr);
+    gl.glUniform1iv(location, count, valuePtr);
+    calloc.free(valuePtr);
   }
 
   // uniform2iv(v0, v1) {
@@ -712,7 +734,8 @@ class OpenGLContextES extends OpenGL30Constant {
     final valuePtr = calloc<Float>(count);
     List<double> _values = value.map((e) => e.toDouble()).toList().cast();
     valuePtr.asTypedList(count).setAll(0, _values);
-    return gl.glUniform4fv(location, count ~/ 4, valuePtr.cast<Void>());
+    gl.glUniform4fv(location, count ~/ 4, valuePtr.cast<Void>());
+    calloc.free(valuePtr);
   }
 
   uniform4f(location, num v0, num v1, num v2, num v3) {

@@ -12,7 +12,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result.
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> multiply(a, b) {
+  static List<num> multiply(a, b) {
     var a00 = a[0 * 3 + 0]; //
     var a01 = a[0 * 3 + 1]; //
     var a02 = a[0 * 3 + 2]; //
@@ -48,7 +48,7 @@ class M3 {
   /// Creates a 3x3 identity matrix
   ///
   /// @return {module:webgl2-2d-math.Matrix3} an identity matrix
-  static List<double> identity() {
+  static List<num> identity() {
     return [
       1, 0, 0, //
       0, 1, 0, //
@@ -65,7 +65,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} a projection matrix that converts from pixels to clipspace with Y = 0 at the top.
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> projection(width, height) {
+  static List<num> projection(num width, num height) {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [
       2 / width, 0, 0, //
@@ -85,7 +85,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> project(m, width, height) {
+  static List<num> project(m, width, height) {
     return multiply(m, projection(width, height));
   }
 
@@ -98,7 +98,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} a translation matrix that translates by tx and ty.
   ///
   /// @memberOf module:webgl-2d-math
-  static translation(double tx, double ty) {
+  static List<num> translation(double tx, double ty) {
     return [
       1, 0, 0, //
       0, 1, 0, //
@@ -117,7 +117,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result
   ///
   /// @memberOf module:webgl-2d-math
-  static translate(m, double tx, double ty) {
+  static List<num> translate(m, double tx, double ty) {
     return multiply(m, translation(tx, ty));
   }
 
@@ -128,7 +128,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} a rotation matrix that rotates by angleInRadians
   ///
   /// @memberOf module:webgl-2d-math
-  static rotation(double angleInRadians) {
+  static List<num> rotation(double angleInRadians) {
     var c = cos(angleInRadians);
     var s = sin(angleInRadians);
     return [
@@ -147,7 +147,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> rotate(m, double angleInRadians) {
+  static List<num> rotate(m, double angleInRadians) {
     return multiply(m, rotation(angleInRadians));
   }
 
@@ -160,7 +160,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} a scale matrix that scales by sx and sy.
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> scaling(double sx, double sy) {
+  static List<num> scaling(double sx, double sy) {
     return [
       sx, 0, 0, //
       0, sy, 0, //
@@ -179,7 +179,7 @@ class M3 {
   /// @return {module:webgl-2d-math.Matrix3} the result
   ///
   /// @memberOf module:webgl-2d-math
-  static List<double> scale(m, double sx, double sy) {
+  static List<num> scale(m, double sx, double sy) {
     return multiply(m, scaling(sx, sy));
   }
 
@@ -204,7 +204,7 @@ class M3 {
 
   // i = incident
   // n = normal
-  static List<double> reflect(ix, iy, nx, ny) {
+  static List<num> reflect(ix, iy, nx, ny) {
     // I - 2.0 * dot(N, I) * N.
     var d = dot(nx, ny, ix, iy);
     return [
@@ -213,15 +213,15 @@ class M3 {
     ];
   }
 
-  static radToDeg(double r) {
+  static double radToDeg(double r) {
     return r * 180 / pi;
   }
 
-  static degToRad(double d) {
+  static double degToRad(double d) {
     return d * pi / 180;
   }
 
-  static List<double> transformPoint(List<double> m, List<double> v) {
+  static List<num> transformPoint(List<num> m, List<num> v) {
     var v0 = v[0];
     var v1 = v[1];
     var d = v0 * m[0 * 3 + 2] + v1 * m[1 * 3 + 2] + m[2 * 3 + 2];
@@ -231,7 +231,7 @@ class M3 {
     ];
   }
 
-  static List<double> inverse(List<double> m) {
+  static List<num> inverse(List<num> m) {
     var t00 = m[1 * 3 + 1] * m[2 * 3 + 2] - m[1 * 3 + 2] * m[2 * 3 + 1];
     var t10 = m[0 * 3 + 1] * m[2 * 3 + 2] - m[0 * 3 + 2] * m[2 * 3 + 1];
     var t20 = m[0 * 3 + 1] * m[1 * 3 + 2] - m[0 * 3 + 2] * m[1 * 3 + 1];

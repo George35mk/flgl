@@ -1,29 +1,31 @@
+import 'dart:math';
+
 import 'package:flgl/flgl.dart';
 import 'package:flgl/viewport_gl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
-import 'package:flgl_example/examples/math/m3.dart';
+import 'package:flgl_example/examples/controls/transform_control.dart';
+import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-import 'controls/controls_manager.dart';
-import 'controls/gl_controls.dart';
-import 'gl_utils.dart';
+import '../controls/gl_controls.dart';
+import '../gl_utils.dart';
 
-class Example5 extends StatefulWidget {
-  const Example5({Key? key}) : super(key: key);
+class Example9 extends StatefulWidget {
+  const Example9({Key? key}) : super(key: key);
 
   @override
-  _Example5State createState() => _Example5State();
+  _Example9State createState() => _Example9State();
 }
 
-class _Example5State extends State<Example5> {
+class _Example9State extends State<Example9> {
   bool initialized = false;
 
   dynamic positionLocation;
-  dynamic matrixLocation;
-  dynamic resolutionUniformLocation;
-  dynamic colorUniformLocation;
+  dynamic colorLocation;
+  dynamic translationLocation;
+  dynamic resolutionLocation;
   dynamic positionBuffer;
   dynamic program;
 
@@ -33,11 +35,10 @@ class _Example5State extends State<Example5> {
   late int width = 1333;
   late int height = 752 - 80 - 48;
 
-  var translation = [200.0, 200.0];
-  var angleInRadians = 0.0;
-  var scale = [1, 1];
+  List<double> translation = [0.0, 0.0];
+  List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
 
-  ControlsManager? controlsManager;
+  TransformControlsManager? controlsManager;
 
   @override
   void initState() {
@@ -45,22 +46,20 @@ class _Example5State extends State<Example5> {
 
     // init control manager.
     // ! add more controls for scale and rotation.
-    controlsManager = ControlsManager({});
-    controlsManager!.add(Control(name: 'tx', min: -500, max: 500, value: 0));
-    controlsManager!.add(Control(name: 'ty', min: -500, max: 500, value: 0));
-    // controlsManager!.add(Control(name: 'tz', min: -500, max: 500, value: 0));
+    controlsManager = TransformControlsManager({});
+    controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
+    controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 5"),
+        title: const Text("Example 9 (2D Translation)"),
       ),
       body: Column(
         children: [
           Stack(
-            // alignment: AlignmentDirectional.topStart,
             children: [
               ViewportGL(
                 width: width,
@@ -78,12 +77,12 @@ class _Example5State extends State<Example5> {
               ),
               Positioned(
                 width: 350,
-                height: 150,
+                // height: 150,
                 top: 10,
                 right: 10,
                 child: GLControls(
-                  controlsManager: controlsManager,
-                  onChange: (Control control) {
+                  transformControlsManager: controlsManager,
+                  onChange: (TransformControl control) {
                     setState(() {
                       switch (control.name) {
                         case 'tx':
@@ -107,7 +106,7 @@ class _Example5State extends State<Example5> {
             children: [
               TextButton(
                 onPressed: () {
-                  render();
+                  draw();
                 },
                 child: const Text("Render"),
               )
@@ -118,50 +117,67 @@ class _Example5State extends State<Example5> {
     );
   }
 
-  render() {
-    draw();
-  }
-
   String vertexShaderSource = """
     attribute vec2 a_position;
 
-    uniform mat3 u_matrix;
-
-    varying vec4 v_color;
+    uniform vec2 u_resolution;
+    uniform vec2 u_translation;
 
     void main() {
-      // Multiply the position by the matrix.
-      gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+      // Add in the translation.
+      vec2 position = a_position + u_translation;
 
-      // Convert from clipspace to colorspace.
-      // Clipspace goes -1.0 to +1.0
-      // Colorspace goes from 0.0 to 1.0
-      v_color = gl_Position * 0.5 + 0.5;
+      // convert the position from pixels to 0.0 to 1.0
+      vec2 zeroToOne = position / u_resolution;
+
+      // convert from 0->1 to 0->2
+      vec2 zeroToTwo = zeroToOne * 2.0;
+
+      // convert from 0->2 to -1->+1 (clipspace)
+      vec2 clipSpace = zeroToTwo - 1.0;
+
+      gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
     }
   """;
 
   String fragmentShaderSource = """
     precision mediump float;
 
-    varying vec4 v_color;
+    uniform vec4 u_color;
 
     void main() {
-      gl_FragColor = v_color;
+      gl_FragColor = u_color;
     }
   """;
 
-  // Fill the buffer with the values that define a triangle.
-  // Note, will put the values in whatever buffer is currently
-  // bound to the ARRAY_BUFFER bind point
-  setGeometry(OpenGLContextES gl) {
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        Float32List.fromList([
-          0, -100, //
-          150, 100, //
-          -175, 100, //
-        ]),
-        gl.STATIC_DRAW);
+  // Fill the buffer with the values that define a letter 'F'.
+  setGeometry(gl) {
+    List<double> vertices = [
+      // left column
+      0, 0,
+      30, 0,
+      0, 150,
+      0, 150,
+      30, 0,
+      30, 150,
+
+      // top rung
+      30, 0,
+      100, 0,
+      30, 30,
+      30, 30,
+      100, 0,
+      100, 30,
+
+      // middle rung
+      30, 60,
+      67, 60,
+      30, 90,
+      30, 90,
+      67, 60,
+      67, 90,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(vertices), gl.STATIC_DRAW);
   }
 
   initGl() {
@@ -174,12 +190,15 @@ class _Example5State extends State<Example5> {
     positionLocation = gl.getAttribLocation(program, "a_position");
 
     // lookup uniforms
-    matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    colorLocation = gl.getUniformLocation(program, "u_color");
+    translationLocation = gl.getUniformLocation(program, "u_translation");
 
+    // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    // Set Geometry.
+    // Put geometry data into buffer
     setGeometry(gl);
   }
 
@@ -201,26 +220,26 @@ class _Example5State extends State<Example5> {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2; // 3 components per iteration
+    var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // Compute the matrix
-    var matrix = M3.projection(width, height);
-    matrix = M3.translate(matrix, translation[0].toDouble(), translation[1].toDouble());
-    matrix = M3.rotate(matrix, angleInRadians);
-    matrix = M3.scale(matrix, scale[0].toDouble(), scale[1].toDouble());
+    // set the resolution
+    gl.uniform2f(resolutionLocation, width, height);
 
-    // Set the matrix.
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
+    // set the color
+    gl.uniform4fv(colorLocation, color);
 
-    // Draw the geometry.
+    // Set the translation.
+    gl.uniform2fv(translationLocation, translation);
+
+    // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
-    var count = 3;
+    var count = 18;
     gl.drawArrays(primitiveType, offset_, count);
 
     // !super important.
