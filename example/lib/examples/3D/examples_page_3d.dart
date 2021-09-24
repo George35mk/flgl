@@ -19,6 +19,11 @@ class _ExamplesPage3dState extends State<ExamplesPage3d> {
       "description": "OpenGLES: Orthographic 3D 2",
       'route': 'example_16'
     },
+    '3': {
+      "name": "Example 17",
+      "description": "OpenGLES: Orthographic 3D 3",
+      'route': 'example_17'
+    },
   };
 
   @override
