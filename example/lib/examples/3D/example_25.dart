@@ -34,14 +34,14 @@ class _Example25State extends State<Example25> {
   late Flgl flgl;
   late OpenGLContextES gl;
 
+  /// The viewport width
   late int width = 1333;
+
+  /// The viewport height
   late int height = 752 - 80 - 48;
 
-  List<double> translation = [0, 0, -200];
-  List<double> rotation = [0, 0, 0];
-  List<double> scale = [1, 1, 1];
-  List<double> color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
-  double fieldOfViewRadians = 100;
+  double cameraAngleRadians = MathUtils.degToRad(0);
+  double fieldOfViewRadians = 60;
 
   TransformControlsManager? controlsManager;
 
@@ -52,21 +52,7 @@ class _Example25State extends State<Example25> {
     // init control manager.
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
-
-    controlsManager!.add(TransformControl(name: 'tx', min: -500, max: 1000, value: translation[0]));
-    controlsManager!.add(TransformControl(name: 'ty', min: -500, max: 1000, value: translation[1]));
-    controlsManager!.add(TransformControl(name: 'tz', min: -500, max: 1000, value: translation[2]));
-
-    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: rotation[0]));
-    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: rotation[1]));
-    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: rotation[2]));
-
-    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: scale[0]));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: scale[1]));
-    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: scale[2]));
-
-    controlsManager!
-        .add(TransformControl(name: 'FoV', min: 1, max: 180, value: fieldOfViewRadians));
+    controlsManager!.add(TransformControl(name: 'cameraAngle', min: -360, max: 360, value: 0));
   }
 
   @override
@@ -94,7 +80,7 @@ class _Example25State extends State<Example25> {
                 },
               ),
               Positioned(
-                width: 390,
+                width: 420,
                 // height: 150,
                 top: 10,
                 right: 10,
@@ -103,35 +89,8 @@ class _Example25State extends State<Example25> {
                   onChange: (TransformControl control) {
                     setState(() {
                       switch (control.name) {
-                        case 'tx':
-                          translation[0] = control.value;
-                          break;
-                        case 'ty':
-                          translation[1] = control.value;
-                          break;
-                        case 'tz':
-                          translation[2] = control.value;
-                          break;
-                        case 'rx':
-                          rotation[0] = MathUtils.degToRad(control.value);
-                          break;
-                        case 'ry':
-                          rotation[1] = MathUtils.degToRad(control.value);
-                          break;
-                        case 'rz':
-                          rotation[2] = MathUtils.degToRad(control.value);
-                          break;
-                        case 'sx':
-                          scale[0] = control.value;
-                          break;
-                        case 'sy':
-                          scale[1] = control.value;
-                          break;
-                        case 'sz':
-                          scale[2] = control.value;
-                          break;
-                        case 'FoV':
-                          fieldOfViewRadians = control.value;
+                        case 'cameraAngle':
+                          cameraAngleRadians = MathUtils.degToRad(control.value);
                           break;
                         default:
                       }
@@ -148,7 +107,6 @@ class _Example25State extends State<Example25> {
             children: [
               TextButton(
                 onPressed: () {
-                  color = [Random().nextDouble(), Random().nextDouble(), Random().nextDouble(), 1];
                   draw();
                 },
                 child: const Text("Render"),
@@ -192,6 +150,7 @@ class _Example25State extends State<Example25> {
     int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
+    // create the program
     program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
 
     // look up where the vertex data needs to go.
@@ -272,27 +231,45 @@ class _Example25State extends State<Example25> {
 
     // ----------------------- Matrix setup-----------------------
 
-    // Compute the matrix
+    var numFs = 5;
+    var radius = 200;
+
+    // Compute the projection matrix
     double fov = MathUtils.degToRad(fieldOfViewRadians);
     double aspect = (width * flgl.dpr) / (height * flgl.dpr);
-    double zNear = 1.0;
-    double zFar = 2000.0;
+    double zNear = 1;
+    double zFar = 2000;
 
-    var matrix = M4.perspective(fov, aspect, zNear, zFar);
-    matrix = M4.translate(matrix, translation[0], translation[1], translation[2]);
-    matrix = M4.xRotate(matrix, rotation[0]);
-    matrix = M4.yRotate(matrix, rotation[1]);
-    matrix = M4.zRotate(matrix, rotation[2]);
-    matrix = M4.scale(matrix, scale[0], scale[1], scale[2]);
+    List<num> projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
-    // Set the matrix.
-    gl.uniformMatrix4fv(matrixLocation, false, matrix);
+    // Compute a matrix for the camera
+    List<num> cameraMatrix = M4.yRotation(cameraAngleRadians);
+    cameraMatrix = M4.translate(cameraMatrix, 0, 50, radius * 1.5);
 
-    // Draw the rectangle.
-    var primitiveType = gl.TRIANGLES;
-    var offset_ = 0;
-    var count = 16 * 6;
-    gl.drawArrays(primitiveType, offset_, count);
+    // Make a view matrix from the camera matrix
+    List<num> viewMatrix = M4.inverse(cameraMatrix);
+
+    // Compute a view projection matrix
+    List<num> viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
+
+    for (var ii = 0; ii < numFs; ++ii) {
+      var angle = ii * pi * 2 / numFs;
+      var x = cos(angle) * radius;
+      var y = sin(angle) * radius;
+
+      // starting with the view projection matrix
+      // compute a matrix for the F
+      var matrix = M4.translate(viewProjectionMatrix, x, 0, y);
+
+      // Set the matrix.
+      gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+      // Draw the geometry.
+      var primitiveType = gl.TRIANGLES;
+      var offset = 0;
+      var count = 16 * 6;
+      gl.drawArrays(primitiveType, offset, count);
+    }
 
     // !super important.
     gl.finish();
