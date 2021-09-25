@@ -1,6 +1,7 @@
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
+import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -12,13 +13,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final Map<String, dynamic> _pages = {
-    '1': {
-      "name": "Fundamentals",
-      "description": "OpenGLES: Fundamentals",
-      "page": const ExamplesPageFundamentals()
-    },
+    '1': {"name": "Fundamentals", "description": "OpenGLES: Fundamentals", "page": const ExamplesPageFundamentals()},
     '2': {"name": "2D", "description": "OpenGLES: 2D examples", "page": const ExamplesPage2d()},
     '3': {"name": "3D", "description": "OpenGLES: 3D examples", "page": const ExamplesPage3d()},
+    '4': {"name": "Lighting", "description": "OpenGLES: Lighting Examples", "page": const LightingExamplesPage()},
   };
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
+import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
 import 'package:flgl_example/home.dart';
 import 'package:flutter/material.dart';
 
@@ -12,12 +13,14 @@ import 'examples/Fundamentals/example_5.dart';
 import 'examples/Fundamentals/example_6.dart';
 import 'examples/Fundamentals/example_7.dart';
 import 'examples/Fundamentals/example_8.dart';
+
 import 'examples/2D/example_9.dart';
 import 'examples/2D/example_10.dart';
 import 'examples/2D/example_11.dart';
 import 'examples/2D/example_12.dart';
 import 'examples/2D/example_13.dart';
 import 'examples/2D/example_14.dart';
+
 import 'examples/3D/example_15.dart';
 import 'examples/3D/example_16.dart';
 import 'examples/3D/example_17.dart';
@@ -30,6 +33,8 @@ import 'examples/3D/example_23.dart';
 import 'examples/3D/example_24.dart';
 import 'examples/3D/example_25.dart';
 import 'examples/3D/example_26.dart';
+
+import 'examples/Lighting/lighting_1.dart';
 
 void main() {
   runApp(const MyApp());
@@ -84,6 +89,8 @@ class _MyAppState extends State<MyApp> {
         '/3d/example_24': (context) => const Example24(),
         '/3d/example_25': (context) => const Example25(),
         '/3d/example_26': (context) => const Example26(),
+        '/lighting': (context) => const LightingExamplesPage(),
+        '/lighting/lighting_1': (context) => const Lighting1(),
       },
     );
   }
