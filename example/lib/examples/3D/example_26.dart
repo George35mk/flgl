@@ -231,7 +231,10 @@ class _Example26State extends State<Example26> {
 
     // ----------------------- Matrix setup-----------------------
 
+    /// set how many Fs you want.
     var numFs = 5;
+
+    /// set the distance of the Fs from the center.
     var radius = 200;
 
     // Compute the projection matrix
@@ -242,9 +245,26 @@ class _Example26State extends State<Example26> {
 
     List<num> projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
-    // Compute a matrix for the camera
+    // Compute the position of the first F
+    var fPosition = [radius, 0, 0];
+
+    // Use matrix math to compute a position on a circle where
+    // the camera is
     List<num> cameraMatrix = M4.yRotation(cameraAngleRadians);
     cameraMatrix = M4.translate(cameraMatrix, 0, 50, radius * 1.5);
+
+    // Get the camera's position from the matrix we computed
+    var cameraPosition = [
+      cameraMatrix[12],
+      cameraMatrix[13],
+      cameraMatrix[14],
+    ];
+
+    // camera up vector.
+    var up = [0, 1, 0];
+
+    // Compute the camera's matrix using look at.
+    cameraMatrix = M4.lookAt(cameraPosition, fPosition, up);
 
     // Make a view matrix from the camera matrix
     List<num> viewMatrix = M4.inverse(cameraMatrix);
