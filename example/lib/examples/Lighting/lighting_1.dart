@@ -25,10 +25,12 @@ class _Lighting1State extends State<Lighting1> {
   bool initialized = false;
 
   dynamic positionLocation;
-  dynamic colorLocation;
+  dynamic normalLocation;
   dynamic matrixLocation;
+  dynamic colorLocation;
+  dynamic reverseLightDirectionLocation;
   dynamic positionBuffer;
-  dynamic colorBuffer;
+  dynamic normalBuffer;
   dynamic program;
 
   late Flgl flgl;
@@ -40,8 +42,8 @@ class _Lighting1State extends State<Lighting1> {
   /// The viewport height
   late int height = 752 - 80 - 48;
 
-  double cameraAngleRadians = MathUtils.degToRad(0);
   double fieldOfViewRadians = 60;
+  var fRotationRadians = 0.0;
 
   TransformControlsManager? controlsManager;
 
@@ -52,14 +54,14 @@ class _Lighting1State extends State<Lighting1> {
     // init control manager.
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'cameraAngle', min: -360, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 26 (3D Cameras 2)"),
+        title: const Text("Example 26 (3D Directional Lighting 1)"),
       ),
       body: Column(
         children: [
@@ -89,8 +91,8 @@ class _Lighting1State extends State<Lighting1> {
                   onChange: (TransformControl control) {
                     setState(() {
                       switch (control.name) {
-                        case 'cameraAngle':
-                          cameraAngleRadians = MathUtils.degToRad(control.value);
+                        case 'fRotation':
+                          fRotationRadians = MathUtils.degToRad(control.value);
                           break;
                         default:
                       }
@@ -118,34 +120,6 @@ class _Lighting1State extends State<Lighting1> {
     );
   }
 
-  String vertexShaderSource = """
-    attribute vec4 a_position;
-    attribute vec4 a_color;
-
-    uniform mat4 u_matrix;
-
-    varying vec4 v_color;
-
-    void main() {
-      // Multiply the position by the matrix.
-      gl_Position = u_matrix * a_position;
-
-      // Pass the color to the fragment shader.
-      v_color = a_color;
-    }
-  """;
-
-  String fragmentShaderSource = """
-    precision mediump float;
-
-    // Passed in from the vertex shader.
-    varying vec4 v_color;
-
-    void main() {
-      gl_FragColor = v_color;
-    }
-  """;
-
   initGl() {
     int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -155,30 +129,30 @@ class _Lighting1State extends State<Lighting1> {
 
     // look up where the vertex data needs to go.
     positionLocation = gl.getAttribLocation(program, "a_position");
-    colorLocation = gl.getAttribLocation(program, "a_color");
+    normalLocation = gl.getAttribLocation(program, "a_normal");
 
     // lookup uniforms
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
+    colorLocation = gl.getUniformLocation(program, "u_color");
+    reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
+
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Put geometry data into buffer
     setGeometry(gl);
 
-    // Create a buffer to put colors in
-    colorBuffer = gl.createBuffer();
+    // Create a buffer to put normals in
+    normalBuffer = gl.createBuffer();
 
-    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = colorBuffer)
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = normalBuffer)
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 
-    // Put geometry data into buffer
-    setColors(gl);
-
-    print('VERSION: ${gl.getParameter(gl.VERSION)}');
-    print('SHADING_LANGUAGE_VERSION: ${gl.getParameter(gl.SHADING_LANGUAGE_VERSION)}');
-    print('VENDOR: ${gl.getParameter(gl.VENDOR)}');
+    // Put normals data into buffer
+    setNormals(gl);
   }
 
   draw() {
@@ -186,7 +160,7 @@ class _Lighting1State extends State<Lighting1> {
     gl.viewport(0, 0, (width * flgl.dpr).toInt(), (height * flgl.dpr).toInt());
 
     // Clear the canvas. sets the canvas background color.
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(0, 0, 0, 0);
 
     // Clear the canvas.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -217,29 +191,23 @@ class _Lighting1State extends State<Lighting1> {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // ------------------------ Colors setup------------------------
+    // ------------------------ Normals setup------------------------
 
-    // Turn on the color attribute
-    gl.enableVertexAttribArray(colorLocation);
+    // Turn on the normal attribute
+    gl.enableVertexAttribArray(normalLocation);
 
-    // Bind the color buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // Bind the normal buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 
-    // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
+    // Tell the attribute how to get data out of normalBuffer (ARRAY_BUFFER)
     var _size = 3; // 3 components per iteration
-    var _type = gl.UNSIGNED_BYTE; // the data is 8bit unsigned values
+    var _type = gl.FLOAT; // the data is 8bit unsigned values
     var _normalize = true; // normalize the data (convert from 0-255 to 0-1)
     var _stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
     var _offset = 0; // start at the beginning of the buffer
-    gl.vertexAttribPointer(colorLocation, _size, _type, _normalize, _stride, _offset);
+    gl.vertexAttribPointer(normalLocation, _size, _type, _normalize, _stride, _offset);
 
     // ----------------------- Matrix setup-----------------------
-
-    /// set how many Fs you want.
-    var numFs = 5;
-
-    /// set the distance of the Fs from the center.
-    var radius = 200;
 
     // Compute the projection matrix
     double fov = MathUtils.degToRad(fieldOfViewRadians);
@@ -247,58 +215,88 @@ class _Lighting1State extends State<Lighting1> {
     double zNear = 1;
     double zFar = 2000;
 
-    List<num> projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
+    var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
-    // Compute the position of the first F
-    var fPosition = [radius, 0, 0];
-
-    // Use matrix math to compute a position on a circle where
-    // the camera is
-    List<num> cameraMatrix = M4.yRotation(cameraAngleRadians);
-    cameraMatrix = M4.translate(cameraMatrix, 0, 50, radius * 1.5);
-
-    // Get the camera's position from the matrix we computed
-    var cameraPosition = [
-      cameraMatrix[12],
-      cameraMatrix[13],
-      cameraMatrix[14],
-    ];
-
-    // camera up vector.
+    // Compute the camera's matrix
+    var camera = [100, 150, 200];
+    var target = [0, 0, 0];
     var up = [0, 1, 0];
+    var cameraMatrix = M4.lookAt(camera, target, up);
 
-    // Compute the camera's matrix using look at.
-    cameraMatrix = M4.lookAt(cameraPosition, fPosition, up);
-
-    // Make a view matrix from the camera matrix
-    List<num> viewMatrix = M4.inverse(cameraMatrix);
+    // Make a view matrix from the camera matrix.
+    var viewMatrix = M4.inverse(cameraMatrix);
 
     // Compute a view projection matrix
-    List<num> viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
+    var viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
 
-    for (var ii = 0; ii < numFs; ++ii) {
-      var angle = ii * pi * 2 / numFs;
-      var x = cos(angle) * radius;
-      var y = sin(angle) * radius;
+    // Draw a F at the origin
+    var worldMatrix = M4.yRotation(fRotationRadians);
+    worldMatrix = M4.xRotate(worldMatrix, MathUtils.degToRad(180));
 
-      // starting with the view projection matrix
-      // compute a matrix for the F
-      var matrix = M4.translate(viewProjectionMatrix, x, 0, y);
+    // Multiply the matrices.
+    var worldViewProjectionMatrix = M4.multiply(viewProjectionMatrix, worldMatrix);
 
-      // Set the matrix.
-      gl.uniformMatrix4fv(matrixLocation, false, matrix);
+    // Set the matrix.
+    gl.uniformMatrix4fv(matrixLocation, false, worldViewProjectionMatrix);
 
-      // Draw the geometry.
-      var primitiveType = gl.TRIANGLES;
-      var offset = 0;
-      var count = 16 * 6;
-      gl.drawArrays(primitiveType, offset, count);
-    }
+    // Set the color to use
+    gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
+
+    // set the light direction.
+    gl.uniform3fv(reverseLightDirectionLocation, M4.normalize([0.5, 0.7, 1]));
+
+    // Draw the geometry.
+    var primitiveType = gl.TRIANGLES;
+    var offset_ = 0;
+    var count = 16 * 6;
+    gl.drawArrays(primitiveType, offset_, count);
 
     // !super important.
     gl.finish();
     flgl.updateTexture();
   }
+
+  String vertexShaderSource = """
+    attribute vec4 a_position;
+    attribute vec3 a_normal;
+
+    uniform mat4 u_matrix;
+
+    varying vec3 v_normal;
+
+    void main() {
+      // Multiply the position by the matrix.
+      gl_Position = u_matrix * a_position;
+
+      // Pass the normal to the fragment shader
+      v_normal = a_normal;
+    }
+  """;
+
+  String fragmentShaderSource = """
+    precision mediump float;
+
+    // Passed in from the vertex shader.
+    varying vec3 v_normal;
+
+    uniform vec3 u_reverseLightDirection;
+    uniform vec4 u_color;
+
+    void main() {
+      // because v_normal is a varying it's interpolated
+      // so it will not be a unit vector. Normalizing it
+      // will make it a unit vector again
+      vec3 normal = normalize(v_normal);
+
+      float light = dot(normal, u_reverseLightDirection);
+
+      gl_FragColor = u_color;
+
+      // Lets multiply just the color portion (not the alpha)
+      // by the light
+      gl_FragColor.rgb *= light;
+    }
+  """;
 
   // Fill the buffer with the values that define a letter 'F'.
   setGeometry(gl) {
