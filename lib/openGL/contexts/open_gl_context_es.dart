@@ -56,7 +56,10 @@ class OpenGLContextES extends OpenGL30Constant {
       GL_SCISSOR_BOX,
       GL_VIEWPORT,
       CULL_FACE,
-      DEPTH_TEST
+      DEPTH_TEST,
+      VERSION,
+      SHADING_LANGUAGE_VERSION,
+      VENDOR
     ];
 
     if (_intValues.indexOf(key) >= 0) {
@@ -102,8 +105,7 @@ class OpenGLContextES extends OpenGL30Constant {
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type,
-          nativeBuffer.cast<Void>());
+      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nativeBuffer.cast<Void>());
       calloc.free(nativeBuffer);
     } else {
       gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nullptr);
@@ -114,18 +116,17 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.texImage2D(target, level, internalformat, format, type, data);
   // }
 
-  texImage3D(int target, int level, int internalformat, int width, int height, int depth,
-      int border, int format, int type, data) {
+  texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format,
+      int type, data) {
     Pointer<Int8> nativeBuffer;
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type,
-          nativeBuffer.cast<Void>());
+      gl.glTexImage3D(
+          target, level, internalformat, width, height, depth, border, format, type, nativeBuffer.cast<Void>());
       calloc.free(nativeBuffer);
     } else {
-      gl.glTexImage3D(
-          target, level, internalformat, width, height, depth, border, format, type, nullptr);
+      gl.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, nullptr);
     }
   }
 
@@ -398,8 +399,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
   vertexAttribPointer(int index, int size, int type, bool normalized, int stride, int offset) {
     var offsetPointer = Pointer<Void>.fromAddress(offset);
-    gl.glVertexAttribPointer(
-        index, size, type, normalized ? 1 : 0, stride, offsetPointer.cast<Void>());
+    gl.glVertexAttribPointer(index, size, type, normalized ? 1 : 0, stride, offsetPointer.cast<Void>());
   }
 
   drawArrays(int mode, int first, int count) {
@@ -492,8 +492,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter) {
-    return gl.glBlitFramebuffer(
-        srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    return gl.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
   }
 
   createVertexArray() {
