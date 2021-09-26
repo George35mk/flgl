@@ -61,7 +61,7 @@ class _Lighting2State extends State<Lighting2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 26 (3D Directional Lighting 1)"),
+        title: const Text("Example 27 (3D Directional Lighting 2)"),
       ),
       body: Column(
         children: [
