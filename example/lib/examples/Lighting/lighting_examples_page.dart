@@ -49,6 +49,11 @@ class _LightingExamplesPageState extends State<LightingExamplesPage> {
       "description": "Example using spot lighting",
       "route": 'spot_light_1',
     },
+    '9': {
+      "name": "3D Spot Lighting 2",
+      "description": "Example using spot lighting",
+      "route": 'spot_light_2',
+    },
   };
 
   @override
