@@ -45,6 +45,8 @@ import 'examples/Lighting/point_light_4.dart';
 import 'examples/Lighting/spot_lighting_1.dart';
 import 'examples/Lighting/spot_lighting_2.dart';
 
+import 'examples/Structure_and_Organization/less_code_more_fun_1.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -110,6 +112,7 @@ class _MyAppState extends State<MyApp> {
         '/lighting/spot_light_1': (context) => const SpotLight1(),
         '/lighting/spot_light_2': (context) => const SpotLight2(),
         '/structure_and_organization': (context) => const StructureAndOrganization(),
+        '/structure_and_organization/less_code_more_fun_1': (context) => const LessCodeMoreFun1(),
       },
     );
   }

@@ -10,7 +10,7 @@ class StructureAndOrganization extends StatefulWidget {
 class _StructureAndOrganizationState extends State<StructureAndOrganization> {
   final Map<String, dynamic> _pages = {
     '1': {
-      "name": "Less Code, More Fun",
+      "name": "Less Code, More Fun 1",
       "description": "Example of using Less Code, More Fun",
       "route": 'less_code_more_fun_1',
     }
