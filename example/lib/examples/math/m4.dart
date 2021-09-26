@@ -287,8 +287,8 @@ class M4 {
   /// - @param {Vector4} dst optional vector4 to store result
   /// - @return {Vector4} dst or new Vector4 if not provided
   /// - @memberOf module:webgl-3d-math
-  static transformPoint(List<num> m, List<num> v, [tt]) {
-    var dst = [0.0, 0.0, 0.0];
+  static transformPoint(List<num> m, List<num> v, [dst]) {
+    dst ??= List<num>.filled(4, 0, growable: false);
     var v0 = v[0];
     var v1 = v[1];
     var v2 = v[2];
