@@ -31,6 +31,7 @@ class _PointLight2State extends State<PointLight2> {
   dynamic worldLocation;
   dynamic colorLocation;
   dynamic lightWorldPositionLocation;
+  dynamic viewWorldPositionLocation;
   dynamic reverseLightDirectionLocation;
   dynamic positionBuffer;
   dynamic normalBuffer;
@@ -139,6 +140,7 @@ class _PointLight2State extends State<PointLight2> {
     worldInverseTransposeLocation = gl.getUniformLocation(program, "u_worldInverseTranspose");
     colorLocation = gl.getUniformLocation(program, "u_color");
     lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
+    viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
     worldLocation = gl.getUniformLocation(program, "u_world");
 
     // Create a buffer for the positions.
@@ -249,6 +251,9 @@ class _PointLight2State extends State<PointLight2> {
     // set the light position
     gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
 
+    // set the camera/view position
+    gl.uniform3fv(viewWorldPositionLocation, camera);
+
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
@@ -265,12 +270,16 @@ class _PointLight2State extends State<PointLight2> {
     attribute vec3 a_normal;
 
     uniform vec3 u_lightWorldPosition;
+    uniform vec3 u_viewWorldPosition;
+
     uniform mat4 u_world;
     uniform mat4 u_worldViewProjection;
     uniform mat4 u_worldInverseTranspose;
 
     varying vec3 v_normal;
+
     varying vec3 v_surfaceToLight;
+    varying vec3 v_surfaceToView;
 
     void main() {
       // Multiply the position by the matrix.
@@ -285,6 +294,10 @@ class _PointLight2State extends State<PointLight2> {
       // compute the vector of the surface to the light
       // and pass it to the fragment shader
       v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+
+      // compute the vector of the surface to the view/camera
+      // and pass it to the fragment shader
+      v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
     }
   """;
 
@@ -294,6 +307,7 @@ class _PointLight2State extends State<PointLight2> {
     // Passed in from the vertex shader.
     varying vec3 v_normal;
     varying vec3 v_surfaceToLight;
+    varying vec3 v_surfaceToView;
 
     uniform vec4 u_color;
 
@@ -304,14 +318,20 @@ class _PointLight2State extends State<PointLight2> {
       vec3 normal = normalize(v_normal);
 
       vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+      vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+      vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
       float light = dot(normal, surfaceToLightDirection);
+      float specular = dot(normal, halfVector);
 
       gl_FragColor = u_color;
 
       // Lets multiply just the color portion (not the alpha)
       // by the light
       gl_FragColor.rgb *= light;
+
+      // Just add in the specular
+      gl_FragColor.rgb += specular;
     }
   """;
 
