@@ -4,6 +4,7 @@ import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.da
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
+import 'package:flgl_example/examples/Structure_and_Organization/structure_and_organization.dart';
 
 import 'examples/Fundamentals/example_1.dart';
 import 'examples/Fundamentals/example_2.dart';
@@ -108,6 +109,7 @@ class _MyAppState extends State<MyApp> {
         '/lighting/point_light_4': (context) => const PointLight4(),
         '/lighting/spot_light_1': (context) => const SpotLight1(),
         '/lighting/spot_light_2': (context) => const SpotLight2(),
+        '/structure_and_organization': (context) => const StructureAndOrganization(),
       },
     );
   }
