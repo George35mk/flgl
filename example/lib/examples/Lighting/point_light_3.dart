@@ -30,6 +30,7 @@ class _PointLight3State extends State<PointLight3> {
   dynamic worldInverseTransposeLocation;
   dynamic worldLocation;
   dynamic colorLocation;
+  dynamic shininessLocation;
   dynamic lightWorldPositionLocation;
   dynamic viewWorldPositionLocation;
   dynamic reverseLightDirectionLocation;
@@ -48,6 +49,7 @@ class _PointLight3State extends State<PointLight3> {
 
   double fieldOfViewRadians = 60;
   var fRotationRadians = 0.0;
+  var shininess = 150.0;
 
   TransformControlsManager? controlsManager;
 
@@ -59,6 +61,7 @@ class _PointLight3State extends State<PointLight3> {
     // ! add more controls for scale and rotation.
     controlsManager = TransformControlsManager({});
     controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'shininess', min: 1, max: 300, value: shininess));
   }
 
   @override
@@ -97,6 +100,9 @@ class _PointLight3State extends State<PointLight3> {
                       switch (control.name) {
                         case 'fRotation':
                           fRotationRadians = MathUtils.degToRad(control.value);
+                          break;
+                        case 'shininess':
+                          shininess = control.value;
                           break;
                         default:
                       }
@@ -139,6 +145,7 @@ class _PointLight3State extends State<PointLight3> {
     worldViewProjectionLocation = gl.getUniformLocation(program, "u_worldViewProjection");
     worldInverseTransposeLocation = gl.getUniformLocation(program, "u_worldInverseTranspose");
     colorLocation = gl.getUniformLocation(program, "u_color");
+    shininessLocation = gl.getUniformLocation(program, "u_shininess");
     lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
     viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
     worldLocation = gl.getUniformLocation(program, "u_world");
@@ -254,6 +261,9 @@ class _PointLight3State extends State<PointLight3> {
     // set the camera/view position
     gl.uniform3fv(viewWorldPositionLocation, camera);
 
+    // set the shininess
+    gl.uniform1f(shininessLocation, shininess);
+
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
@@ -288,7 +298,7 @@ class _PointLight3State extends State<PointLight3> {
       // orient the normals and pass to the fragment shader
       v_normal = mat3(u_worldInverseTranspose) * a_normal;
 
-      // compute the world position of the surfoace
+      // compute the world position of the surface
       vec3 surfaceWorldPosition = (u_world * a_position).xyz;
 
       // compute the vector of the surface to the light
@@ -310,6 +320,7 @@ class _PointLight3State extends State<PointLight3> {
     varying vec3 v_surfaceToView;
 
     uniform vec4 u_color;
+    uniform float u_shininess;
 
     void main() {
       // because v_normal is a varying it's interpolated
@@ -322,7 +333,10 @@ class _PointLight3State extends State<PointLight3> {
       vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
       float light = dot(normal, surfaceToLightDirection);
-      float specular = dot(normal, halfVector);
+      float specular = 0.0;
+      if (light > 0.0) {
+        specular = pow(dot(normal, halfVector), u_shininess);
+      }
 
       gl_FragColor = u_color;
 
