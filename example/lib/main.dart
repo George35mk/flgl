@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flgl_example/home.dart';
+import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
 import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
-import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
 import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
-import 'package:flgl_example/home.dart';
-import 'package:flutter/material.dart';
 
 import 'examples/Fundamentals/example_1.dart';
 import 'examples/Fundamentals/example_2.dart';
@@ -34,9 +34,9 @@ import 'examples/3D/example_24.dart';
 import 'examples/3D/example_25.dart';
 import 'examples/3D/example_26.dart';
 
-import 'examples/Lighting/lighting_1.dart';
-import 'examples/Lighting/lighting_2.dart';
-import 'examples/Lighting/lighting_3.dart';
+import 'examples/Lighting/directional_lighting_1.dart';
+import 'examples/Lighting/directional_lighting_2.dart';
+import 'examples/Lighting/directional_lighting_3.dart';
 import 'examples/Lighting/point_light_1.dart';
 
 void main() {
@@ -94,9 +94,9 @@ class _MyAppState extends State<MyApp> {
         '/3d/example_25': (context) => const Example25(),
         '/3d/example_26': (context) => const Example26(),
         '/lighting': (context) => const LightingExamplesPage(),
-        '/lighting/lighting_1': (context) => const Lighting1(),
-        '/lighting/lighting_2': (context) => const Lighting2(),
-        '/lighting/lighting_3': (context) => const Lighting3(),
+        '/lighting/directional_lighting_1': (context) => const DirectionalLighting1(),
+        '/lighting/directional_lighting_2': (context) => const DirectionalLighting2(),
+        '/lighting/directional_lighting_3': (context) => const DirectionalLighting3(),
         '/lighting/point_light_1': (context) => const PointLight1(),
       },
     );

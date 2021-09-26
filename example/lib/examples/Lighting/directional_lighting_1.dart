@@ -14,21 +14,19 @@ import 'dart:typed_data';
 import '../controls/gl_controls.dart';
 import '../gl_utils.dart';
 
-class Lighting3 extends StatefulWidget {
-  const Lighting3({Key? key}) : super(key: key);
+class DirectionalLighting1 extends StatefulWidget {
+  const DirectionalLighting1({Key? key}) : super(key: key);
 
   @override
-  _Lighting3State createState() => _Lighting3State();
+  _DirectionalLighting1State createState() => _DirectionalLighting1State();
 }
 
-class _Lighting3State extends State<Lighting3> {
+class _DirectionalLighting1State extends State<DirectionalLighting1> {
   bool initialized = false;
 
   dynamic positionLocation;
   dynamic normalLocation;
-  dynamic worldViewProjectionLocation;
-  dynamic worldInverseTransposeLocation;
-  dynamic worldLocation;
+  dynamic matrixLocation;
   dynamic colorLocation;
   dynamic reverseLightDirectionLocation;
   dynamic positionBuffer;
@@ -63,7 +61,7 @@ class _Lighting3State extends State<Lighting3> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 28 (3D Directional Lighting 3)"),
+        title: const Text("Example 26 (3D Directional Lighting 1)"),
       ),
       body: Column(
         children: [
@@ -134,8 +132,7 @@ class _Lighting3State extends State<Lighting3> {
     normalLocation = gl.getAttribLocation(program, "a_normal");
 
     // lookup uniforms
-    worldViewProjectionLocation = gl.getUniformLocation(program, "u_worldViewProjection");
-    worldInverseTransposeLocation = gl.getUniformLocation(program, "u_worldInverseTranspose");
+    matrixLocation = gl.getUniformLocation(program, "u_matrix");
     colorLocation = gl.getUniformLocation(program, "u_color");
     reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
 
@@ -217,6 +214,7 @@ class _Lighting3State extends State<Lighting3> {
     double aspect = (width * flgl.dpr) / (height * flgl.dpr);
     double zNear = 1;
     double zFar = 2000;
+
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
@@ -233,15 +231,13 @@ class _Lighting3State extends State<Lighting3> {
 
     // Draw a F at the origin
     var worldMatrix = M4.yRotation(fRotationRadians);
+    worldMatrix = M4.xRotate(worldMatrix, MathUtils.degToRad(180));
 
     // Multiply the matrices.
     var worldViewProjectionMatrix = M4.multiply(viewProjectionMatrix, worldMatrix);
-    var worldInverseMatrix = M4.inverse(worldMatrix);
-    var worldInverseTransposeMatrix = M4.transpose(worldInverseMatrix);
 
-    // Set the matrices
-    gl.uniformMatrix4fv(worldViewProjectionLocation, false, worldViewProjectionMatrix);
-    gl.uniformMatrix4fv(worldInverseTransposeLocation, false, worldInverseTransposeMatrix);
+    // Set the matrix.
+    gl.uniformMatrix4fv(matrixLocation, false, worldViewProjectionMatrix);
 
     // Set the color to use
     gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
@@ -264,17 +260,16 @@ class _Lighting3State extends State<Lighting3> {
     attribute vec4 a_position;
     attribute vec3 a_normal;
 
-    uniform mat4 u_worldViewProjection;
-    uniform mat4 u_worldInverseTranspose;
+    uniform mat4 u_matrix;
 
     varying vec3 v_normal;
 
     void main() {
       // Multiply the position by the matrix.
-      gl_Position = u_worldViewProjection * a_position;
+      gl_Position = u_matrix * a_position;
 
-      // orient the normals and pass to the fragment shader
-      v_normal = mat3(u_worldInverseTranspose) * a_normal;
+      // Pass the normal to the fragment shader
+      v_normal = a_normal;
     }
   """;
 
@@ -434,23 +429,6 @@ class _Lighting3State extends State<Lighting3> {
       0, 150, 30,
       0, 150, 0
     ];
-
-    // Center the F around the origin and Flip it around. We do this because
-    // we're in 3D now with and +Y is up where as before when we started with 2D
-    // we had +Y as down.
-
-    // We could do by changing all the values above but I'm lazy.
-    // We could also do it with a matrix at draw time but you should
-    // never do stuff at draw time if you can do it at init time.
-    var matrix = M4.xRotation(pi);
-    matrix = M4.translate(matrix, -50, -75, -15);
-
-    for (var ii = 0; ii < vertices.length; ii += 3) {
-      var vector = M4.transformPoint(matrix, [vertices[ii + 0], vertices[ii + 1], vertices[ii + 2], 1]);
-      vertices[ii + 0] = vector[0];
-      vertices[ii + 1] = vector[1];
-      vertices[ii + 2] = vector[2];
-    }
     gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(vertices), gl.STATIC_DRAW);
   }
 

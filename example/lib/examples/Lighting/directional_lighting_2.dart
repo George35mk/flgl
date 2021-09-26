@@ -14,14 +14,14 @@ import 'dart:typed_data';
 import '../controls/gl_controls.dart';
 import '../gl_utils.dart';
 
-class Lighting2 extends StatefulWidget {
-  const Lighting2({Key? key}) : super(key: key);
+class DirectionalLighting2 extends StatefulWidget {
+  const DirectionalLighting2({Key? key}) : super(key: key);
 
   @override
-  _Lighting2State createState() => _Lighting2State();
+  _DirectionalLighting2State createState() => _DirectionalLighting2State();
 }
 
-class _Lighting2State extends State<Lighting2> {
+class _DirectionalLighting2State extends State<DirectionalLighting2> {
   bool initialized = false;
 
   dynamic positionLocation;
