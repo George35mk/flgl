@@ -29,6 +29,8 @@ class _PointLight4State extends State<PointLight4> {
   dynamic worldViewProjectionLocation;
   dynamic worldInverseTransposeLocation;
   dynamic worldLocation;
+  dynamic lightColorLocation;
+  dynamic specularColorLocation;
   dynamic colorLocation;
   dynamic shininessLocation;
   dynamic lightWorldPositionLocation;
@@ -149,6 +151,8 @@ class _PointLight4State extends State<PointLight4> {
     lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
     viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
     worldLocation = gl.getUniformLocation(program, "u_world");
+    lightColorLocation = gl.getUniformLocation(program, "u_lightColor");
+    specularColorLocation = gl.getUniformLocation(program, "u_specularColor");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -264,6 +268,12 @@ class _PointLight4State extends State<PointLight4> {
     // set the shininess
     gl.uniform1f(shininessLocation, shininess);
 
+    // set the light color
+    gl.uniform3fv(lightColorLocation, M4.normalize([1, 0.6, 0.6])); // red light
+
+    // set the specular color
+    gl.uniform3fv(specularColorLocation, M4.normalize([1, 0.2, 0.2])); // red light
+
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
@@ -307,7 +317,7 @@ class _PointLight4State extends State<PointLight4> {
 
       // compute the vector of the surface to the view/camera
       // and pass it to the fragment shader
-      v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
+      v_surfaceToView = normalize(u_viewWorldPosition - surfaceWorldPosition);
     }
   """;
 
@@ -321,6 +331,8 @@ class _PointLight4State extends State<PointLight4> {
 
     uniform vec4 u_color;
     uniform float u_shininess;
+    uniform vec3 u_lightColor;
+    uniform vec3 u_specularColor;
 
     void main() {
       // because v_normal is a varying it's interpolated
@@ -342,10 +354,10 @@ class _PointLight4State extends State<PointLight4> {
 
       // Lets multiply just the color portion (not the alpha)
       // by the light
-      gl_FragColor.rgb *= light;
+      gl_FragColor.rgb *= light * u_lightColor;
 
       // Just add in the specular
-      gl_FragColor.rgb += specular;
+      gl_FragColor.rgb += specular * u_specularColor;
     }
   """;
 
