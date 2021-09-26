@@ -30,6 +30,7 @@ class _PointLight1State extends State<PointLight1> {
   dynamic worldInverseTransposeLocation;
   dynamic worldLocation;
   dynamic colorLocation;
+  dynamic lightWorldPositionLocation;
   dynamic reverseLightDirectionLocation;
   dynamic positionBuffer;
   dynamic normalBuffer;
@@ -137,7 +138,8 @@ class _PointLight1State extends State<PointLight1> {
     worldViewProjectionLocation = gl.getUniformLocation(program, "u_worldViewProjection");
     worldInverseTransposeLocation = gl.getUniformLocation(program, "u_worldInverseTranspose");
     colorLocation = gl.getUniformLocation(program, "u_color");
-    reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
+    lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
+    worldLocation = gl.getUniformLocation(program, "u_world");
 
     // Create a buffer for the positions.
     positionBuffer = gl.createBuffer();
@@ -173,9 +175,6 @@ class _PointLight1State extends State<PointLight1> {
 
     // Enable the depth buffer
     gl.enable(gl.DEPTH_TEST);
-
-    // print('CULL_FACE Enabled: ${gl.getParameter(gl.CULL_FACE)}');
-    // print('DEPTH_TEST Enabled: ${gl.getParameter(gl.DEPTH_TEST)}');
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
@@ -242,12 +241,13 @@ class _PointLight1State extends State<PointLight1> {
     // Set the matrices
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, worldViewProjectionMatrix);
     gl.uniformMatrix4fv(worldInverseTransposeLocation, false, worldInverseTransposeMatrix);
+    gl.uniformMatrix4fv(worldLocation, false, worldMatrix);
 
     // Set the color to use
     gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
 
-    // set the light direction.
-    gl.uniform3fv(reverseLightDirectionLocation, M4.normalize([0.5, 0.7, 1]));
+    // set the light position
+    gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
 
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
@@ -264,10 +264,13 @@ class _PointLight1State extends State<PointLight1> {
     attribute vec4 a_position;
     attribute vec3 a_normal;
 
+    uniform vec3 u_lightWorldPosition;
+    uniform mat4 u_world;
     uniform mat4 u_worldViewProjection;
     uniform mat4 u_worldInverseTranspose;
 
     varying vec3 v_normal;
+    varying vec3 v_surfaceToLight;
 
     void main() {
       // Multiply the position by the matrix.
@@ -275,6 +278,13 @@ class _PointLight1State extends State<PointLight1> {
 
       // orient the normals and pass to the fragment shader
       v_normal = mat3(u_worldInverseTranspose) * a_normal;
+
+      // compute the world position of the surfoace
+      vec3 surfaceWorldPosition = (u_world * a_position).xyz;
+
+      // compute the vector of the surface to the light
+      // and pass it to the fragment shader
+      v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
     }
   """;
 
@@ -283,8 +293,8 @@ class _PointLight1State extends State<PointLight1> {
 
     // Passed in from the vertex shader.
     varying vec3 v_normal;
+    varying vec3 v_surfaceToLight;
 
-    uniform vec3 u_reverseLightDirection;
     uniform vec4 u_color;
 
     void main() {
@@ -293,7 +303,9 @@ class _PointLight1State extends State<PointLight1> {
       // will make it a unit vector again
       vec3 normal = normalize(v_normal);
 
-      float light = dot(normal, u_reverseLightDirection);
+      vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+
+      float light = dot(normal, surfaceToLightDirection);
 
       gl_FragColor = u_color;
 
@@ -452,139 +464,6 @@ class _PointLight1State extends State<PointLight1> {
       vertices[ii + 2] = vector[2];
     }
     gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(vertices), gl.STATIC_DRAW);
-  }
-
-  setColors(gl) {
-    List<int> colors = [
-      // left column front
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-
-      // top rung front
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-
-      // middle rung front
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-      200, 70, 120,
-
-      // left column back
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-
-      // top rung back
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-
-      // middle rung back
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-      80, 70, 200,
-
-      // top
-      70, 200, 210,
-      70, 200, 210,
-      70, 200, 210,
-      70, 200, 210,
-      70, 200, 210,
-      70, 200, 210,
-
-      // top rung right
-      200, 200, 70,
-      200, 200, 70,
-      200, 200, 70,
-      200, 200, 70,
-      200, 200, 70,
-      200, 200, 70,
-
-      // under top rung
-      210, 100, 70,
-      210, 100, 70,
-      210, 100, 70,
-      210, 100, 70,
-      210, 100, 70,
-      210, 100, 70,
-
-      // between top rung and middle
-      210, 160, 70,
-      210, 160, 70,
-      210, 160, 70,
-      210, 160, 70,
-      210, 160, 70,
-      210, 160, 70,
-
-      // top of middle rung
-      70, 180, 210,
-      70, 180, 210,
-      70, 180, 210,
-      70, 180, 210,
-      70, 180, 210,
-      70, 180, 210,
-
-      // right of middle rung
-      100, 70, 210,
-      100, 70, 210,
-      100, 70, 210,
-      100, 70, 210,
-      100, 70, 210,
-      100, 70, 210,
-
-      // bottom of middle rung.
-      76, 210, 100,
-      76, 210, 100,
-      76, 210, 100,
-      76, 210, 100,
-      76, 210, 100,
-      76, 210, 100,
-
-      // right of bottom
-      140, 210, 80,
-      140, 210, 80,
-      140, 210, 80,
-      140, 210, 80,
-      140, 210, 80,
-      140, 210, 80,
-
-      // bottom
-      90, 130, 110,
-      90, 130, 110,
-      90, 130, 110,
-      90, 130, 110,
-      90, 130, 110,
-      90, 130, 110,
-
-      // left side
-      160, 160, 220,
-      160, 160, 220,
-      160, 160, 220,
-      160, 160, 220,
-      160, 160, 220,
-      160, 160, 220
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, Uint8List.fromList(colors), gl.STATIC_DRAW);
   }
 
   setNormals(gl) {
