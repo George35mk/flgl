@@ -44,6 +44,11 @@ class _LightingExamplesPageState extends State<LightingExamplesPage> {
       "description": "Example using point lighting with specular highlighting and shininess and light color",
       "route": 'point_light_4',
     },
+    '8': {
+      "name": "3D Spot Lighting 1",
+      "description": "Example using spot lighting",
+      "route": 'spot_light_1',
+    },
   };
 
   @override
