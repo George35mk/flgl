@@ -64,7 +64,7 @@ class _PointLight1State extends State<PointLight1> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 28 (3D Directional Lighting 3)"),
+        title: const Text("3D Point Lighting 1"),
       ),
       body: Column(
         children: [
