@@ -20,7 +20,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glScissor(x, y, z, w);
   }
 
-  viewport(int x, int y, int width, int height) {
+  void viewport(int x, int y, int width, int height) {
     return gl.glViewport(x, y, width, height);
   }
 
@@ -258,9 +258,9 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.getContextAttributes();
   // }
 
-  getProgramParameter(v0, v1) {
+  int getProgramParameter(int program, int pname) {
     final status = calloc<Int32>();
-    gl.glGetProgramiv(v0, v1, status);
+    gl.glGetProgramiv(program, pname, status);
     final _v = status.value;
     calloc.free(status);
     return _v;
@@ -308,9 +308,13 @@ class OpenGLContextES extends OpenGL30Constant {
     return ActiveInfo(_type, _name, _size);
   }
 
-  getUniformLocation(v0, String name) {
+  /// Returns the location of a uniform variable
+  /// - [program] Specifies the program object to be queried.
+  /// - [name] Points to a null terminated string containing the name of the uniform variable whose location is to be
+  ///   queried.
+  int getUniformLocation(int program, String name) {
     final locationName = name.toNativeUtf8();
-    final location = gl.glGetUniformLocation(v0, locationName.cast<Int8>());
+    final location = gl.glGetUniformLocation(program, locationName.cast<Int8>());
     calloc.free(locationName);
     return location;
   }
@@ -520,26 +524,33 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glCreateProgram();
   }
 
-  attachShader(v0, v1) {
-    return gl.glAttachShader(v0, v1);
+  /// Attaches a shader object to a program object
+  /// - [program] Specifies the program object to which a shader object will be attached.
+  /// - [shader] Specifies the shader object that is to be attached
+  attachShader(int program, int shader) {
+    return gl.glAttachShader(program, shader);
   }
 
-  isProgram(v0) {
-    return gl.glIsProgram(v0);
+  isProgram(int program) {
+    return gl.glIsProgram(program);
   }
 
-  bindAttribLocation(v0, v1, v2) {
-    return gl.glBindAttribLocation(v0, v1, v2);
+  bindAttribLocation(int program, int index, name) {
+    return gl.glBindAttribLocation(program, index, name);
   }
 
-  linkProgram(v0) {
-    return gl.glLinkProgram(v0);
+  /// Links a program object
+  /// - [program] Specifies the handle of the program object to be linked.
+  void linkProgram(int program) {
+    return gl.glLinkProgram(program);
   }
 
-  getProgramInfoLog(v0) {
+  /// Returns the information log for a program object
+  /// - [program] pecifies the program object whose information log is to be queried.
+  getProgramInfoLog(int program) {
     var infoLen = calloc<Int32>();
 
-    gl.glGetProgramiv(v0, INFO_LOG_LENGTH, infoLen);
+    gl.glGetProgramiv(program, INFO_LOG_LENGTH, infoLen);
 
     int _len = infoLen.value;
     calloc.free(infoLen);
@@ -548,7 +559,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
     if (infoLen.value > 0) {
       final infoLog = calloc<Int8>(_len);
-      gl.glGetProgramInfoLog(v0, _len, nullptr, infoLog);
+      gl.glGetProgramInfoLog(program, _len, nullptr, infoLog);
 
       message = "\nError compiling shader:\n${infoLog.cast<Utf8>().toDartString()}";
       calloc.free(infoLog);
@@ -558,9 +569,11 @@ class OpenGLContextES extends OpenGL30Constant {
     }
   }
 
-  getShaderInfoLog(v0) {
+  /// Returns the information log for a shader object
+  /// - [shader] Specifies the shader object whose information log is to be queried.
+  getShaderInfoLog(int shader) {
     final infoLen = calloc<Int32>();
-    gl.glGetShaderiv(v0, INFO_LOG_LENGTH, infoLen);
+    gl.glGetShaderiv(shader, INFO_LOG_LENGTH, infoLen);
 
     int _len = infoLen.value;
     calloc.free(infoLen);
@@ -569,7 +582,7 @@ class OpenGLContextES extends OpenGL30Constant {
     if (infoLen.value > 1) {
       final infoLog = calloc<Int8>(_len);
 
-      gl.glGetShaderInfoLog(v0, _len, nullptr, infoLog);
+      gl.glGetShaderInfoLog(shader, _len, nullptr, infoLog);
       message = "\nError compiling shader:\n${infoLog.cast<Utf8>().toDartString()}";
 
       calloc.free(infoLog);
@@ -581,18 +594,23 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glGetError();
   }
 
-  deleteShader(v0) {
-    return gl.glDeleteShader(v0);
+  /// Deletes a shader object
+  /// - [shader] Specifies the shader object to be deleted.
+  void deleteShader(int shader) {
+    return gl.glDeleteShader(shader);
   }
 
-  deleteProgram(v0) {
-    return gl.glDeleteProgram(v0);
+  /// Deletes a program object
+  /// - [program] Specifies the program object to be deleted.
+  void deleteProgram(int program) {
+    return gl.glDeleteProgram(program);
   }
 
-  bindVertexArray(v0) {
-    return gl.glBindVertexArray(v0);
+  bindVertexArray(int array) {
+    return gl.glBindVertexArray(array);
   }
 
+  /// Delete vertex array object
   deleteVertexArray(int v0) {
     var _list = [v0];
     final ptr = calloc<Uint32>(_list.length);
@@ -653,29 +671,37 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
+  /// Creates a shader object
+  /// - [type] the shader type
   int createShader(int type) {
     return gl.glCreateShader(type);
   }
 
-  shaderSource(v0, String shaderSource) {
+  /// Replaces the source code in a shader object
+  /// - [shader] Specifies the handle of the shader object whose source code is to be replaced.
+  /// - [shaderSource] Specifies an array of pointers to strings containing the source code to be loaded into the shader.
+  void shaderSource(int shader, String shaderSource) {
     var sourceString = shaderSource.toNativeUtf8();
     var arrayPointer = calloc<Pointer<Int8>>();
     arrayPointer.value = Pointer.fromAddress(sourceString.address);
-    gl.glShaderSource(v0, 1, arrayPointer, nullptr);
+    gl.glShaderSource(shader, 1, arrayPointer, nullptr);
     calloc.free(arrayPointer);
     calloc.free(sourceString);
   }
 
-  compileShader(v0) {
-    return gl.glCompileShader(v0);
+  /// Compiles a shader object
+  /// - Specifies the [shader] object to be compiled.
+  compileShader(int shader) {
+    return gl.glCompileShader(shader);
   }
 
-  getShaderParameter(v0, v1) {
-    var _pointer = calloc<Int32>();
-    gl.glGetShaderiv(v0, v1, _pointer);
+  /// Returns a parameter from a shader object
+  getShaderParameter(int shader, int pname) {
+    var params = calloc<Int32>();
+    gl.glGetShaderiv(shader, pname, params);
 
-    final _v = _pointer.value;
-    calloc.free(_pointer);
+    final _v = params.value;
+    calloc.free(params);
 
     return _v;
   }
@@ -690,15 +716,15 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(arrayPointer);
   }
 
-  uniform1i(v0, v1) {
-    return gl.glUniform1i(v0, v1);
+  uniform1i(int location, v0) {
+    return gl.glUniform1i(location, v0);
   }
 
-  uniform3f(v0, num v1, num v2, num v3) {
-    return gl.glUniform3f(v0, v1.toDouble(), v2.toDouble(), v3.toDouble());
+  uniform3f(int location, num v1, num v2, num v3) {
+    return gl.glUniform3f(location, v1.toDouble(), v2.toDouble(), v3.toDouble());
   }
 
-  uniform1fv(location, List<num> value) {
+  uniform1fv(int location, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniform1fv(location, value.length ~/ 1, arrayPointer);
@@ -726,7 +752,11 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  getAttribLocation(program, String name) {
+  /// Returns the location of an attribute variable.
+  /// - [program] Specifies the program object to be queried.
+  /// - [name] Points to a null terminated string containing the name of the attribute variable whose location is to be
+  ///   queried.
+  int getAttribLocation(int program, String name) {
     final locationName = name.toNativeUtf8();
     final location = gl.glGetAttribLocation(program, locationName.cast<Int8>());
     calloc.free(locationName);
