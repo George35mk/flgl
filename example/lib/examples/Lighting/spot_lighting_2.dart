@@ -32,7 +32,8 @@ class _SpotLight2State extends State<SpotLight2> {
   dynamic colorLocation;
   dynamic shininessLocation;
   dynamic lightDirectionLocation;
-  dynamic limitLocation;
+  dynamic innerLimitLocation;
+  dynamic outerLimitLocation;
   dynamic lightWorldPositionLocation;
   dynamic viewWorldPositionLocation;
   dynamic positionBuffer;
@@ -54,7 +55,8 @@ class _SpotLight2State extends State<SpotLight2> {
   double lightRotationX = 0.0;
   double lightRotationY = 0.0;
   List<double> lightDirection = [0.0, 0.0, 1.0]; // this is computed in updateScene
-  double limit = 10.0;
+  double innerLimit = 10.0;
+  double outerLimit = 20.0;
 
   TransformControlsManager? controlsManager;
 
@@ -68,7 +70,8 @@ class _SpotLight2State extends State<SpotLight2> {
     controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0.0));
     controlsManager!.add(TransformControl(name: 'lightRotationX', min: -2, max: 2, value: lightRotationX));
     controlsManager!.add(TransformControl(name: 'lightRotationy', min: -2, max: 2, value: lightRotationY));
-    controlsManager!.add(TransformControl(name: 'limit', min: 0, max: 180, value: limit));
+    controlsManager!.add(TransformControl(name: 'innerLimit', min: 0, max: 180, value: innerLimit));
+    controlsManager!.add(TransformControl(name: 'outerLimit', min: 0, max: 180, value: outerLimit));
   }
 
   @override
@@ -114,8 +117,11 @@ class _SpotLight2State extends State<SpotLight2> {
                         case 'lightRotationy':
                           lightRotationY = control.value;
                           break;
-                        case 'limit':
-                          limit = control.value;
+                        case 'innerLimit':
+                          innerLimit = control.value;
+                          break;
+                        case 'outerLimit':
+                          outerLimit = control.value;
                           break;
                         default:
                       }
@@ -161,7 +167,8 @@ class _SpotLight2State extends State<SpotLight2> {
     shininessLocation = gl.getUniformLocation(program, "u_shininess");
 
     lightDirectionLocation = gl.getUniformLocation(program, "u_lightDirection");
-    limitLocation = gl.getUniformLocation(program, "u_limit");
+    innerLimitLocation = gl.getUniformLocation(program, "u_innerLimit");
+    outerLimitLocation = gl.getUniformLocation(program, "u_outerLimit");
 
     lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
     viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
@@ -246,7 +253,7 @@ class _SpotLight2State extends State<SpotLight2> {
 
     // Compute the camera's matrix
     var camera = [100, 150, 200];
-    var target = [0, 0, 0];
+    var target = [0, 35, 0];
     var up = [0, 1, 0];
     var cameraMatrix = M4.lookAt(camera, target, up);
 
@@ -296,7 +303,8 @@ class _SpotLight2State extends State<SpotLight2> {
     }
 
     gl.uniform3fv(lightDirectionLocation, lightDirection);
-    gl.uniform1f(limitLocation, cos(MathUtils.degToRad(limit)));
+    gl.uniform1f(innerLimitLocation, cos(MathUtils.degToRad(innerLimit)));
+    gl.uniform1f(outerLimitLocation, cos(MathUtils.degToRad(outerLimit)));
 
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
@@ -356,7 +364,8 @@ class _SpotLight2State extends State<SpotLight2> {
     uniform vec4 u_color;
     uniform float u_shininess;
     uniform vec3 u_lightDirection;
-    uniform float u_limit;          // in dot space
+    uniform float u_innerLimit;          // in dot space
+    uniform float u_outerLimit;          // in dot space
 
     void main() {
       // because v_normal is a varying it's interpolated
@@ -368,17 +377,11 @@ class _SpotLight2State extends State<SpotLight2> {
       vec3 surfaceToViewDirection = normalize(v_surfaceToView);
       vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-      float light = 0.0;
-      float specular = 0.0;
-      float dotFromDirection = dot(surfaceToLightDirection, 
-                                  -u_lightDirection);
-      if (dotFromDirection >= u_limit) {
-        light = dot(normal, surfaceToLightDirection);
-        if (light > 0.0) {
-          specular = pow(dot(normal, halfVector), u_shininess);
-        }
-      }
-        
+      float dotFromDirection = dot(surfaceToLightDirection, -u_lightDirection);
+      float inLight = smoothstep(u_outerLimit, u_innerLimit, dotFromDirection);
+      float light = inLight * dot(normal, surfaceToLightDirection);
+      float specular = inLight * pow(dot(normal, halfVector), u_shininess);
+
       gl_FragColor = u_color;
 
       // Lets multiply just the color portion (not the alpha)
