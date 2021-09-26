@@ -11,6 +11,7 @@ class _LightingExamplesPageState extends State<LightingExamplesPage> {
   final Map<String, dynamic> _pages = {
     '1': {"name": "Lighting 1", "description": "OpenGLES: 3D Directional Lighting 1", "route": 'lighting_1'},
     '2': {"name": "Lighting 2", "description": "OpenGLES: 3D Directional Lighting 2", "route": 'lighting_2'},
+    '3': {"name": "Lighting 2", "description": "OpenGLES: 3D Directional Lighting 3", "route": 'lighting_3'},
   };
 
   @override
