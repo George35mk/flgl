@@ -37,6 +37,7 @@ import 'examples/3D/example_26.dart';
 import 'examples/Lighting/lighting_1.dart';
 import 'examples/Lighting/lighting_2.dart';
 import 'examples/Lighting/lighting_3.dart';
+import 'examples/Lighting/point_light_1.dart';
 
 void main() {
   runApp(const MyApp());
@@ -96,6 +97,7 @@ class _MyAppState extends State<MyApp> {
         '/lighting/lighting_1': (context) => const Lighting1(),
         '/lighting/lighting_2': (context) => const Lighting2(),
         '/lighting/lighting_3': (context) => const Lighting3(),
+        '/lighting/point_light_1': (context) => const PointLight1(),
       },
     );
   }

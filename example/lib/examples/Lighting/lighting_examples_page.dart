@@ -9,9 +9,22 @@ class LightingExamplesPage extends StatefulWidget {
 
 class _LightingExamplesPageState extends State<LightingExamplesPage> {
   final Map<String, dynamic> _pages = {
-    '1': {"name": "Lighting 1", "description": "OpenGLES: 3D Directional Lighting 1", "route": 'lighting_1'},
-    '2': {"name": "Lighting 2", "description": "OpenGLES: 3D Directional Lighting 2", "route": 'lighting_2'},
-    '3': {"name": "Lighting 2", "description": "OpenGLES: 3D Directional Lighting 3", "route": 'lighting_3'},
+    '1': {
+      "name": "3D Directional Lighting 1",
+      "description": "Example using directional lighting 1",
+      "route": 'lighting_1'
+    },
+    '2': {
+      "name": "3D Directional Lighting 2",
+      "description": "Example using directional lighting 2",
+      "route": 'lighting_2'
+    },
+    '3': {
+      "name": "3D Directional Lighting 3",
+      "description": "Example using directional lighting 3",
+      "route": 'lighting_3'
+    },
+    '4': {"name": "3D Point Lighting 1", "description": "Example using point lighting 1", "route": 'point_light_1'},
   };
 
   @override
