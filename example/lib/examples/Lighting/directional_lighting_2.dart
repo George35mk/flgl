@@ -62,7 +62,7 @@ class _DirectionalLighting2State extends State<DirectionalLighting2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 27 (3D Directional Lighting 2)"),
+        title: const Text("3D Directional Lighting 2"),
       ),
       body: Column(
         children: [
