@@ -27,6 +27,7 @@ class _Lighting3State extends State<Lighting3> {
   dynamic positionLocation;
   dynamic normalLocation;
   dynamic worldViewProjectionLocation;
+  dynamic worldInverseTransposeLocation;
   dynamic worldLocation;
   dynamic colorLocation;
   dynamic reverseLightDirectionLocation;
@@ -134,7 +135,7 @@ class _Lighting3State extends State<Lighting3> {
 
     // lookup uniforms
     worldViewProjectionLocation = gl.getUniformLocation(program, "u_worldViewProjection");
-    worldLocation = gl.getUniformLocation(program, "u_world");
+    worldInverseTransposeLocation = gl.getUniformLocation(program, "u_worldInverseTranspose");
     colorLocation = gl.getUniformLocation(program, "u_color");
     reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
 
@@ -216,7 +217,6 @@ class _Lighting3State extends State<Lighting3> {
     double aspect = (width * flgl.dpr) / (height * flgl.dpr);
     double zNear = 1;
     double zFar = 2000;
-
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
@@ -236,10 +236,12 @@ class _Lighting3State extends State<Lighting3> {
 
     // Multiply the matrices.
     var worldViewProjectionMatrix = M4.multiply(viewProjectionMatrix, worldMatrix);
+    var worldInverseMatrix = M4.inverse(worldMatrix);
+    var worldInverseTransposeMatrix = M4.transpose(worldInverseMatrix);
 
     // Set the matrices
     gl.uniformMatrix4fv(worldViewProjectionLocation, false, worldViewProjectionMatrix);
-    gl.uniformMatrix4fv(worldLocation, false, worldMatrix);
+    gl.uniformMatrix4fv(worldInverseTransposeLocation, false, worldInverseTransposeMatrix);
 
     // Set the color to use
     gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
@@ -263,7 +265,7 @@ class _Lighting3State extends State<Lighting3> {
     attribute vec3 a_normal;
 
     uniform mat4 u_worldViewProjection;
-    uniform mat4 u_world;
+    uniform mat4 u_worldInverseTranspose;
 
     varying vec3 v_normal;
 
@@ -272,7 +274,7 @@ class _Lighting3State extends State<Lighting3> {
       gl_Position = u_worldViewProjection * a_position;
 
       // orient the normals and pass to the fragment shader
-      v_normal = mat3(u_world) * a_normal;
+      v_normal = mat3(u_worldInverseTranspose) * a_normal;
     }
   """;
 
