@@ -13,6 +13,11 @@ class _StructureAndOrganizationState extends State<StructureAndOrganization> {
       "name": "Less Code, More Fun 1",
       "description": "Example of using Less Code, More Fun",
       "route": 'less_code_more_fun_1',
+    },
+    '2': {
+      "name": "Drawing Multiple Things 1",
+      "description": "Example of Drawing Multiple Things 1",
+      "route": 'drawing_multiple_things_1',
     }
   };
 

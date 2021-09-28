@@ -72,8 +72,8 @@ class OpenGLES {
       /// bind context to this thread. All following OpenGL calls from this thread will use this context
       eglMakeCurrent(_display, _surface, _surface, _context);
     } else if (Platform.isIOS) {
-      var _d = egl.eglTest();
-      var _result = egl.makeCurrent(_context);
+      egl.eglTest();
+      egl.makeCurrent(_context);
     }
   }
 
@@ -91,6 +91,6 @@ class OpenGLES {
 
   dispose() {
     eglMakeCurrent(_display, 0, 0, 0);
-    print(" OpenGLES dispose .... ");
+    // print(" OpenGLES dispose .... ");
   }
 }

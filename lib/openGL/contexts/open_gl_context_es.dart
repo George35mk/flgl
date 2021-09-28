@@ -5,8 +5,9 @@ import '../constants/open_gl_30_constant.dart';
 import '../bindings/gles_bindings.dart';
 
 class OpenGLContextES extends OpenGL30Constant {
-  // TODO need free memory
-  List<Pointer<Uint32>> _uint32pointers = [];
+  // ignore: todo
+  /// TODO need free memory
+  // List<Pointer<Uint32>> _uint32pointers = [];
 
   // late LibOpenGLES gl; // use this.
   late LibOpenGLES gl;
@@ -30,7 +31,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
   getExtension(String key) {
     Pointer _v = gl.glGetString(EXTENSIONS);
-    print("OpenGLES getExtension key: ${key} _v: ${_v} ");
+    // print("OpenGLES getExtension key: ${key} _v: ${_v} ");
 
     String _vstr = _v.cast<Utf8>().toDartString();
     List<String> _extensions = _vstr.split(" ");
@@ -67,7 +68,7 @@ class OpenGLContextES extends OpenGL30Constant {
       gl.glGetIntegerv(key, v);
       return v.value;
     } else {
-      throw (" OpenGL getParameter key: ${key} is not support ");
+      throw ("OpenGL getParameter key: $key is not support");
     }
   }
 
@@ -167,7 +168,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   blendEquationSeparate(var0, var1) {
-    print(" OpenGL blendEquationSeparate ...  ");
+    // print(" OpenGL blendEquationSeparate ...  ");
   }
 
   frontFace(v0) {
@@ -187,15 +188,15 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   stencilMask(v0) {
-    print(" OpenGL stencilMask ...  ");
+    // print(" OpenGL stencilMask ...  ");
   }
 
   stencilFunc(v0, v1, v2) {
-    print(" OpenGL stencilFunc ...  ");
+    // print(" OpenGL stencilFunc ...  ");
   }
 
   stencilOp(v0, v1, v2) {
-    print(" OpenGL stencilOp ...  ");
+    // print(" OpenGL stencilOp ...  ");
   }
 
   clearStencil(v0) {
@@ -259,25 +260,24 @@ class OpenGLContextES extends OpenGL30Constant {
   // }
 
   int getProgramParameter(int program, int pname) {
-    final status = calloc<Int32>();
+    Pointer<Int32> status = calloc<Int32>();
     gl.glGetProgramiv(program, pname, status);
-    final _v = status.value;
+    int _v = status.value;
     calloc.free(status);
     return _v;
   }
 
-  getActiveUniform(v0, v1) {
-    var length = calloc<Int32>();
-    var size = calloc<Int32>();
-    var type = calloc<Uint32>();
-    var name = calloc<Int8>(100);
+  getActiveUniform(int program, int index) {
+    Pointer<Int32> length = calloc<Int32>();
+    Pointer<Int32> size = calloc<Int32>();
+    Pointer<Uint32> type = calloc<Uint32>();
+    Pointer<Int8> name = calloc<Int8>(100);
 
-    gl.glGetActiveUniform(v0, v1, 99, length, size, type, name);
+    gl.glGetActiveUniform(program, index, 99, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
     int _size = size.value;
-    int _length = length.value;
 
     calloc.free(type);
     calloc.free(name);
@@ -298,7 +298,6 @@ class OpenGLContextES extends OpenGL30Constant {
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
     int _size = size.value;
-    int _length = length.value;
 
     calloc.free(type);
     calloc.free(name);
@@ -436,7 +435,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   copyTexImage2D(v0, v1, v2, v3, v4, v5, v6, v7) {
-    print(" OpenGL copyTexImage2D ...  ");
+    // print(" OpenGL copyTexImage2D ...  ");
   }
 
   texSubImage2D(target, level, x, y, width, height, format, type, Uint8List data) {
@@ -452,7 +451,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   compressedTexSubImage2D(v0, v1, v2, v3, v4, v5, v6, v7) {
-    print(" OpenGL compressedTexSubImage2D ...  ");
+    // print(" OpenGL compressedTexSubImage2D ...  ");
   }
 
   bindRenderbuffer(v0, v1) {
@@ -740,8 +739,15 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  uniform1f(int location, num v1) {
-    return gl.glUniform1f(location, v1.toDouble());
+  uniform1f(int location, num v0) {
+    return gl.glUniform1f(location, v0.toDouble());
+  }
+
+  uniformMatrix2fv(location, bool transpose, List<num> value) {
+    List<double> _list = value.map((e) => e.toDouble()).toList();
+    var arrayPointer = floatListToArrayPointer(_list);
+    gl.glUniformMatrix2fv(location, value.length ~/ 6, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
   }
 
   uniformMatrix3fv(location, bool transpose, List<num> value) {
@@ -749,7 +755,6 @@ class OpenGLContextES extends OpenGL30Constant {
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniformMatrix3fv(location, value.length ~/ 9, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
-    return;
   }
 
   /// Returns the location of an attribute variable.
@@ -783,17 +788,29 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  // uniform2iv(v0, v1) {
-  //   return gl.glUniform2iv(v0, v1);
-  // }
+  uniform2iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform2iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
-  // uniform3iv(v0, v1) {
-  //   return gl.glUniform3iv(v0, v1);
-  // }
+  uniform3iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform3iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
-  // uniform4iv(v0, v1) {
-  //   return gl.glUniform4iv(v0, v1);
-  // }
+  uniform4iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform4iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
   uniform4fv(location, List<num> value) {
     int count = value.length;

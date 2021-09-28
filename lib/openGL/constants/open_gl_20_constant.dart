@@ -224,7 +224,7 @@ class OpenGL20Constant extends OpenGLEXTConstant {
   int STENCIL_FAIL = 2964;
   int STENCIL_FUNC = 2962;
 
-  /** @deprecated */
+  /// @deprecated
   int STENCIL_INDEX = 6401;
   int STENCIL_INDEX8 = 36168;
   int STENCIL_PASS_DEPTH_FAIL = 2965;

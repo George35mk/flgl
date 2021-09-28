@@ -122,14 +122,12 @@ class Flgl {
     _gl.activeTexture(_gl.TEXTURE0);
 
     _gl.bindTexture(_gl.TEXTURE_2D, defaultFramebufferTexture);
-    _gl.texImage2D(
-        _gl.TEXTURE_2D, 0, _gl.RGBA, glWidth, glHeight, 0, _gl.RGBA, _gl.UNSIGNED_BYTE, null);
+    _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, glWidth, glHeight, 0, _gl.RGBA, _gl.UNSIGNED_BYTE, null);
     _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, _gl.LINEAR);
     _gl.texParameteri(_gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, _gl.LINEAR);
 
     _gl.bindFramebuffer(_gl.FRAMEBUFFER, defaultFramebuffer);
-    _gl.framebufferTexture2D(
-        _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, defaultFramebufferTexture, 0);
+    _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, defaultFramebufferTexture, 0);
 
     // ===================== Setup the Depth Buffer Start =====================
 
@@ -141,22 +139,21 @@ class Flgl {
 
     var frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      print("Framebuffer (color) check failed: $frameBufferCheck");
+      // print("Framebuffer (color) check failed: $frameBufferCheck");
     }
 
     Pointer<Int32> depthBuffer = calloc();
     _gl.gl.glGenRenderbuffers(1, depthBuffer.cast());
     _gl.gl.glBindRenderbuffer(_gl.RENDERBUFFER, depthBuffer.value);
     _gl.gl.glRenderbufferStorage(_gl.RENDERBUFFER, _gl.DEPTH_COMPONENT16, glWidth, glHeight);
-    _gl.gl.glFramebufferRenderbuffer(
-        _gl.FRAMEBUFFER, _gl.DEPTH_ATTACHMENT, _gl.RENDERBUFFER, depthBuffer.value);
+    _gl.gl.glFramebufferRenderbuffer(_gl.FRAMEBUFFER, _gl.DEPTH_ATTACHMENT, _gl.RENDERBUFFER, depthBuffer.value);
 
     int _v = depthBuffer.value; // just in case you need this value
     calloc.free(depthBuffer); // free
 
     frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      print("Framebuffer (depth) check failed: $frameBufferCheck");
+      // print("Framebuffer (depth) check failed: $frameBufferCheck");
     }
 
     // ===================== Setup the Depth Buffer End =====================
