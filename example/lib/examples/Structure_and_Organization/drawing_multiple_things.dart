@@ -152,8 +152,8 @@ class _DrawingMultipleThings1State extends State<DrawingMultipleThings1> {
 
   initGl() {
     var sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
-    // const cubeBufferInfo   = Primitives.createCubeWithVertexColorsBufferInfo(gl, 20);
-    // const coneBufferInfo   = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
+    var cubeBufferInfo = Primitives.createCubeWithVertexColorsBufferInfo(gl, 20);
+    var coneBufferInfo = Primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
 
     int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);

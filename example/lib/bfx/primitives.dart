@@ -72,6 +72,7 @@ class ArrayBuffer {
 
   /// The Array buffer data list.
   dynamic data;
+  int cursor = 0;
 
   ArrayBuffer(this.numComponents, this.numVertices, this.type) {
     if (type == 'Float32') {
@@ -89,6 +90,13 @@ class ArrayBuffer {
   /// Returns the number of elements.
   get numElements {
     return (data.length ~/ numComponents).toInt() | 0;
+  }
+
+  push(List<num> args) {
+    for (var i = 0; i < args.length; i++) {
+      var value = args[i];
+      data[cursor++] = value;
+    }
   }
 }
 
@@ -160,10 +168,11 @@ class Primitives {
     var numElements = vertices['position']!.numElements;
     // var vcolors = webglUtils.createAugmentedTypedArray(4, numElements, Uint8Array);
     var vcolors = ArrayBuffer(4, numElements, 'Uint8');
-    var rand = options.rand ??
-        (ndx, channel) {
-          return channel < 3 ? Random().nextInt(256) : 255;
-        };
+
+    rand(ndx, channel) {
+      return channel < 3 ? Random().nextInt(256) : 255;
+    }
+
     vertices['color'] = vcolors;
     if (vertices.containsKey('indices')) {
       // just make random colors if index
@@ -178,7 +187,7 @@ class Primitives {
       }
     } else {
       // make random colors per triangle
-      var numVertsPerColor = options.vertsPerColor | 3;
+      var numVertsPerColor = options.containsKey('vertsPerColor') ? options['vertsPerColor'] : 3;
       var numSets = numElements / numVertsPerColor;
 
       int index = 0;
@@ -201,19 +210,19 @@ class Primitives {
   // a_position:'position'
   // a_normal:'normal'
   // a_color:'color'
-  static createMapping(obj) {
-    const mapping = {};
+  static createMapping(Map<String, ArrayBuffer> obj) {
+    var mapping = {};
     obj.forEach((key, value) {
       if (key != 'indices') {
-        mapping['a_' + key] = key;
+        mapping['a_$key'] = key;
       }
     });
     return mapping;
   }
 
   static createBufferFromTypedArray(OpenGLContextES gl, ArrayBuffer array, [type, drawType]) {
-    type = type | gl.ARRAY_BUFFER;
-    drawType = drawType | gl.STATIC_DRAW;
+    type ??= gl.ARRAY_BUFFER;
+    drawType ??= gl.STATIC_DRAW;
     var buffer = gl.createBuffer();
     gl.bindBuffer(type, buffer);
     gl.bufferData(type, array.data, drawType);
@@ -256,27 +265,20 @@ class Primitives {
   }
 
   // change arrays with arrayBuffers.
-  static createAttribsFromArrays(OpenGLContextES gl, arrays, [opt_mapping]) {
-    var mapping = opt_mapping | createMapping(arrays);
+  static createAttribsFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [opt_mapping]) {
+    var mapping = opt_mapping ?? createMapping(arrays);
     var attribs = {};
-    attribs.forEach((attribName, value) {
+    mapping.forEach((attribName, value) {
       var bufferName = mapping[attribName];
       var origArray = arrays[bufferName];
-      if (origArray.value) {
-        attribs[attribName] = {
-          'value': origArray.value,
-        };
-      } else {
-        // var array = makeTypedArray(origArray, bufferName);
-        var array = origArray;
-        attribs[attribName] = {
-          'buffer': createBufferFromTypedArray(gl, array),
-          // 'numComponents': origArray.numComponents || array.numComponents || guessNumComponentsFromName(bufferName),
-          'numComponents': origArray.numComponents || array.numComponents,
-          'type': getGLTypeForTypedArray(gl, array),
-          'normalize': getNormalizationForTypedArray(array),
-        };
-      }
+      // var array = makeTypedArray(origArray, bufferName);
+      var array = origArray;
+      attribs[attribName] = {
+        'buffer': createBufferFromTypedArray(gl, array!),
+        'numComponents': origArray!.numComponents | array.numComponents,
+        'type': getGLTypeForTypedArray(gl, array),
+        'normalize': getNormalizationForTypedArray(array),
+      };
     });
     // Object.keys(mapping).forEach(function(attribName) {
     //   var bufferName = mapping[attribName];
@@ -311,7 +313,7 @@ class Primitives {
     }
 
     // else get the first key in arrays
-    key = key | arrays.keys.elementAt(0);
+    key = key ?? arrays.keys.elementAt(0);
     // arrays.keys.elementAt(0);
 
     var array = arrays[key] as ArrayBuffer;
@@ -324,12 +326,13 @@ class Primitives {
     return numElements;
   }
 
-  static createBufferInfoFromArrays(OpenGLContextES gl, arrays, [opt_mapping]) {
+  static createBufferInfoFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [opt_mapping]) {
     var bufferInfo = {
       'attribs': createAttribsFromArrays(gl, arrays, opt_mapping),
     };
-    var indices = arrays.indices;
-    if (indices) {
+    var indices = arrays['indices'];
+    if (indices != null) {
+      // you need to enable this code.
       // indices = makeTypedArray(indices, 'indices');
       // bufferInfo['indices'] = createBufferFromTypedArray(gl, indices, gl.ELEMENT_ARRAY_BUFFER);
       // bufferInfo['numElements'] = indices.length;
@@ -486,12 +489,18 @@ class Primitives {
     // deindex the vertices.
     vertices = deindexVertices(vertices);
     // add colors info
-    vertices = makeRandomVertexColors(vertices);
+    var options = {
+      'vertsPerColor': 6,
+      'rand': (ndx, channel) {
+        return channel < 3 ? Random().nextInt(256) : 255;
+      }
+    };
+    vertices = makeRandomVertexColors(vertices, options);
     // create buffer info from arrays.
     return createBufferInfoFromArrays(gl, vertices);
   }
 
-  createCubeVertices(num size) {
+  static createCubeVertices(num size) {
     double k = size / 2;
 
     List<List<num>> cornerVertices = [
@@ -521,7 +530,7 @@ class Primitives {
       [1, 1],
     ];
 
-    const numVertices = 6 * 4;
+    var numVertices = 6 * 4;
     var positions = ArrayBuffer(3, numVertices, 'Float32');
     var normals = ArrayBuffer(3, numVertices, 'Float32');
     var texCoords = ArrayBuffer(2, numVertices, 'Float32');
@@ -575,7 +584,7 @@ class Primitives {
     };
   }
 
-  createCubeWithVertexColorsBufferInfo(OpenGLContextES gl, int size) {
+  static createCubeWithVertexColorsBufferInfo(OpenGLContextES gl, int size) {
     // create the sphere vertices.
     var vertices = createCubeVertices(size); // createCubeGeometry.
     // deindex the vertices.
@@ -587,7 +596,179 @@ class Primitives {
         return channel < 3 ? Random().nextInt(256) : 255;
       }
     };
-    vertices = makeRandomVertexColors(vertices);
+    vertices = makeRandomVertexColors(vertices, options);
+    // create buffer info from arrays.
+    return createBufferInfoFromArrays(gl, vertices);
+  }
+
+  static createTruncatedConeVertices(
+    bottomRadius,
+    topRadius,
+    height,
+    radialSubdivisions,
+    verticalSubdivisions, [
+    topCap,
+    bottomCap,
+  ]) {
+    if (radialSubdivisions < 3) {
+      throw 'radialSubdivisions must be 3 or greater';
+    }
+
+    if (verticalSubdivisions < 1) {
+      throw 'verticalSubdivisions must be 1 or greater';
+    }
+
+    topCap ??= true;
+    bottomCap ??= true;
+
+    var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
+
+    var numVertices = (radialSubdivisions + 1) * (verticalSubdivisions + 1 + extra);
+    var positions = ArrayBuffer(3, numVertices, 'Float32');
+    var normals = ArrayBuffer(3, numVertices, 'Float32');
+    var texCoords = ArrayBuffer(2, numVertices, 'Float32');
+    var indices = ArrayBuffer(3, radialSubdivisions * (verticalSubdivisions + extra) * 2, 'Uint16');
+
+    var vertsAroundEdge = radialSubdivisions + 1;
+
+    // The slant of the cone is constant across its surface
+    var slant = atan2(bottomRadius - topRadius, height);
+    var cosSlant = cos(slant);
+    var sinSlant = sin(slant);
+
+    var start = topCap ? -2 : 0;
+    var end = verticalSubdivisions + (bottomCap ? 2 : 0);
+
+    for (var yy = start; yy <= end; ++yy) {
+      var v = yy / verticalSubdivisions;
+      var y = height * v;
+      var ringRadius;
+
+      if (yy < 0) {
+        y = 0;
+        v = 1;
+        ringRadius = bottomRadius;
+      } else if (yy > verticalSubdivisions) {
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        ringRadius = bottomRadius + (topRadius - bottomRadius) * (yy / verticalSubdivisions);
+      }
+      if (yy == -2 || yy == verticalSubdivisions + 2) {
+        ringRadius = 0;
+        v = 0;
+      }
+
+      y -= height / 2;
+
+      for (var ii = 0; ii < vertsAroundEdge; ++ii) {
+        var _sin = sin(ii * pi * 2 / radialSubdivisions);
+        var _cos = cos(ii * pi * 2 / radialSubdivisions);
+
+        // positions.push(_sin * ringRadius, y, _cos * ringRadius);
+        // normals.push(
+        //   (yy < 0 || yy > verticalSubdivisions) ? 0 : (_sin * cosSlant),
+        //   (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : sinSlant),
+        //   (yy < 0 || yy > verticalSubdivisions) ? 0 : (_cos * cosSlant),
+        // );
+        // texCoords.push((ii / radialSubdivisions), 1 - v);
+
+        positions.push([_sin * ringRadius, y, _cos * ringRadius]);
+
+        // positions.data[index + 0] = _sin * ringRadius;
+        // positions.data[index + 1] = y;
+        // positions.data[index + 2] = _cos * ringRadius;
+
+        normals.push([
+          (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_sin * cosSlant),
+          (yy < 0) ? -1.0 : (yy > verticalSubdivisions ? 1.0 : sinSlant),
+          (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_cos * cosSlant)
+        ]);
+
+        // normals.data[index + 0] = (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_sin * cosSlant);
+        // normals.data[index + 1] = (yy < 0) ? -1.0 : (yy > verticalSubdivisions ? 1.0 : sinSlant);
+        // normals.data[index + 2] = (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_cos * cosSlant);
+
+        texCoords.push([(ii / radialSubdivisions), 1 - v]);
+        // texCoords.data[index + 0] = (ii / radialSubdivisions);
+        // texCoords.data[index + 1] = 1 - v;
+      }
+    }
+
+    for (var yy = 0; yy < verticalSubdivisions + extra; ++yy) {
+      for (var ii = 0; ii < radialSubdivisions; ++ii) {
+        // indices.push(
+        //   vertsAroundEdge * (yy + 0) + 0 + ii,
+        //   vertsAroundEdge * (yy + 0) + 1 + ii,
+        //   vertsAroundEdge * (yy + 1) + 1 + ii,
+        // );
+        // indices.push(
+        //   vertsAroundEdge * (yy + 0) + 0 + ii,
+        //   vertsAroundEdge * (yy + 1) + 1 + ii,
+        //   vertsAroundEdge * (yy + 1) + 0 + ii,
+        // );
+        indices.push([
+          vertsAroundEdge * (yy + 0) + 0 + ii,
+          vertsAroundEdge * (yy + 0) + 1 + ii,
+          vertsAroundEdge * (yy + 1) + 1 + ii,
+        ]);
+
+        // indices.data[index + 0] = vertsAroundEdge * (yy + 0) + 0 + ii;
+        // indices.data[index + 1] = vertsAroundEdge * (yy + 0) + 1 + ii;
+        // indices.data[index + 2] = vertsAroundEdge * (yy + 1) + 1 + ii;
+
+        indices.push([
+          vertsAroundEdge * (yy + 0) + 0 + ii,
+          vertsAroundEdge * (yy + 1) + 1 + ii,
+          vertsAroundEdge * (yy + 1) + 0 + ii,
+        ]);
+
+        // indices.data[index + 3] = vertsAroundEdge * (yy + 0) + 0 + ii;
+        // indices.data[index + 4] = vertsAroundEdge * (yy + 1) + 1 + ii;
+        // indices.data[index + 5] = vertsAroundEdge * (yy + 1) + 0 + ii;
+      }
+    }
+
+    return {
+      'position': positions,
+      'normal': normals,
+      'texcoord': texCoords,
+      'indices': indices,
+    };
+  }
+
+  static createTruncatedConeWithVertexColorsBufferInfo(
+    OpenGLContextES gl,
+    bottomRadius,
+    topRadius,
+    height,
+    radialSubdivisions,
+    verticalSubdivisions, [
+    topCap,
+    bottomCap,
+  ]) {
+    // create the cone vertices.
+    var vertices = createTruncatedConeVertices(
+      bottomRadius,
+      topRadius,
+      height,
+      radialSubdivisions,
+      verticalSubdivisions,
+      topCap,
+      bottomCap,
+    );
+
+    // deindex the vertices.
+    vertices = deindexVertices(vertices);
+    // add colors info
+    var options = {
+      'vertsPerColor': 6,
+      'rand': (ndx, channel) {
+        return channel < 3 ? Random().nextInt(256) : 255;
+      }
+    };
+    vertices = makeRandomVertexColors(vertices, options);
     // create buffer info from arrays.
     return createBufferInfoFromArrays(gl, vertices);
   }
