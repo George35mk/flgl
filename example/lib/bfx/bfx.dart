@@ -1,18 +1,33 @@
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 class BFX {
-  static createProgram(OpenGLContextES gl, List<int> shaders, opt_attribs, opt_locations, opt_errorCallback) {
-    // var errFn = opt_errorCallback | error;
+  /// Creates a program, attaches shaders, binds attrib locations, links the
+  /// program and calls useProgram.
+  /// - @param {WebGLShader[]} shaders The shaders to attach
+  /// - @param {string[]} [opt_attribs] An array of attribs names. Locations will be assigned by index if not passed in
+  /// - @param {number[]} [opt_locations] The locations for the. A parallel array to opt_attribs letting you assign locations.
+  /// - @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors. By default it just prints an error to the console
+  ///        on error. If you want something else pass an callback. It's passed an error message.
+  /// - @memberOf module:webgl-utils
+  static int createProgram(
+    OpenGLContextES gl,
+    List<int> shaders, [
+    attribs,
+    locations,
+  ]) {
+    // Create a program.
     int program = gl.createProgram();
 
+    // for each shader attach the shader.
     for (var shader in shaders) {
       gl.attachShader(program, shader);
     }
 
-    if (opt_attribs) {
-      opt_attribs.forEachIndexed((index, element) {
+    // maybe an issue here. /= null maybe is better solution.
+    if (attribs != null) {
+      attribs.forEachIndexed((index, element) {
         print('index: $index, element: $element');
-        gl.bindAttribLocation(program, opt_locations ? opt_locations[index] : index, element);
+        gl.bindAttribLocation(program, locations ? locations[index] : index, element);
       });
     }
 
@@ -23,11 +38,10 @@ class BFX {
     if (linked == 0) {
       // something went wrong with the link
       var lastError = gl.getProgramInfoLog(program);
-      // errFn('Error in program linking:' + lastError);
-
       gl.deleteProgram(program);
-      return null;
+      throw ('Error in program linking: $lastError');
     }
+
     return program;
   }
 
@@ -38,7 +52,7 @@ class BFX {
     return null;
   }
 
-  static createUniformSetters(OpenGLContextES gl, program) {
+  static createUniformSetters(OpenGLContextES gl, int program) {
     var textureUnit = 0;
 
     // /**
@@ -48,12 +62,13 @@ class BFX {
     //  * @param {WebGLUniformInfo} uniformInfo
     //  * @returns {function} the created setter.
     //  */
-    createUniformSetter(program, uniformInfo) {
+    createUniformSetter(int program, uniformInfo) {
       var location = gl.getUniformLocation(program, uniformInfo.name);
       var type = uniformInfo.type;
+      String ufName = uniformInfo.name;
 
       // Check if this uniform is an array
-      var isArray = (uniformInfo.size > 1 && uniformInfo.name.substr(-3) == '[0]');
+      var isArray = (uniformInfo.size > 1 && ufName.substring(ufName.length - 3, ufName.length) == '[0]');
 
       if (type == gl.FLOAT && isArray) {
         return (v) => gl.uniform1fv(location, v);
@@ -151,7 +166,7 @@ class BFX {
     }
 
     /// a map of uniform setters.
-    const uniformSetters = {};
+    var uniformSetters = {};
 
     /// get how many uniforms are in the program shaders.
     var numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
@@ -162,13 +177,13 @@ class BFX {
     /// last add this uniform setter in the uniform setters map.
     for (var ii = 0; ii < numUniforms; ++ii) {
       var uniformInfo = gl.getActiveUniform(program, ii);
-      if (!uniformInfo) {
+      if (uniformInfo == null) {
         break;
       }
-      var name = uniformInfo.name;
+      String name = uniformInfo.name;
       // remove the array suffix.
-      if (name.substr(-3) == '[0]') {
-        name = name.substr(0, name.length - 3);
+      if (name.substring(name.length - 3, name.length) == '[0]') {
+        name = name.substring(0, name.length - 3);
       }
       var setter = createUniformSetter(program, uniformInfo);
       uniformSetters[name] = setter;
@@ -213,6 +228,7 @@ class BFX {
       var value = b.value;
       if (value) {
         gl.disableVertexAttribArray(index);
+
         switch (b.value.length) {
           case 4:
             gl.vertexAttrib4fv(index, b.value);
@@ -253,7 +269,7 @@ class BFX {
     /// For each active attribute in program shaders.
     for (var ii = 0; ii < numAttribs; ++ii) {
       var attribInfo = gl.getActiveAttrib(program, ii);
-      if (!attribInfo) {
+      if (attribInfo == null) {
         break;
       }
       var index = gl.getAttribLocation(program, attribInfo.name);
@@ -268,15 +284,13 @@ class BFX {
     'FRAGMENT_SHADER',
   ];
 
-  // /**
-  //  * Loads a shader.
-  //  * @param {WebGLRenderingContext} gl The WebGLRenderingContext to use.
-  //  * @param {string} shaderSource The shader source.
-  //  * @param {number} shaderType The type of shader.
-  //  * @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors.
-  //  * @return {WebGLShader} The created shader.
-  //  */
-  static int loadShader(OpenGLContextES gl, shaderSource, shaderType, opt_errorCallback) {
+  /// Loads a shader.
+  /// - @param {WebGLRenderingContext} gl The WebGLRenderingContext to use.
+  /// - @param {string} shaderSource The shader source.
+  /// - @param {number} shaderType The type of shader.
+  /// - @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors.
+  /// - @return {WebGLShader} The created shader.
+  static int loadShader(OpenGLContextES gl, String shaderSource, int shaderType, [opt_errorCallback]) {
     // const errFn = opt_errorCallback | error;
     // Create the shader object
     var shader = gl.createShader(shaderType);
@@ -289,48 +303,55 @@ class BFX {
 
     // Check the compile status
     var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (!compiled) {
+    if (compiled == 0 || compiled == false) {
       // Something went wrong during compilation; get the error
       var lastError = gl.getShaderInfoLog(shader);
       // errFn('*** Error compiling shader \' $shader' + '\':' + lastError + '\n' + shaderSource.split('\n').map((l,i) => '${i + 1}: ${l}').join('\n'));
+      print('*** Error compiling the shader, shader: $shader, lastError: $lastError');
       gl.deleteShader(shader);
-      // return null;
+      throw 'Failed to create the shader';
     }
 
     return shader;
   }
 
-  // /**
-  //  * Creates a program from 2 sources.
-  //  *
-  //  * @param {WebGLRenderingContext} gl The WebGLRenderingContext
-  //  *        to use.
-  //  * @param {string[]} shaderSourcess Array of sources for the
-  //  *        shaders. The first is assumed to be the vertex shader,
-  //  *        the second the fragment shader.
-  //  * @param {string[]} [opt_attribs] An array of attribs names. Locations will be assigned by index if not passed in
-  //  * @param {number[]} [opt_locations] The locations for the. A parallel array to opt_attribs letting you assign locations.
-  //  * @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors. By default it just prints an error to the console
-  //  *        on error. If you want something else pass an callback. It's passed an error message.
-  //  * @return {WebGLProgram} The created program.
-  //  * @memberOf module:webgl-utils
-  //  */
   /// Creates a program from 2 sources.
+  ///
+  /// - @param {WebGLRenderingContext} gl The WebGLRenderingContext
+  ///        to use.
+  /// - @param {string[]} shaderSourcess Array of sources for the
+  ///        shaders. The first is assumed to be the vertex shader,
+  ///        the second the fragment shader.
+  /// - @param {string[]} [opt_attribs] An array of attribs names. Locations will be assigned by index if not passed in
+  /// - @param {number[]} [opt_locations] The locations for the. A parallel array to opt_attribs letting you assign locations.
+  /// - @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors. By default it just prints an error to the console
+  ///        on error. If you want something else pass an callback. It's passed an error message.
+  /// - @return {WebGLProgram} The created program.
+  /// - @memberOf module:webgl-utils
   static createProgramFromSources(
-      OpenGLContextES gl, List<String> shaderSources, opt_attribs, opt_locations, opt_errorCallback) {
+    OpenGLContextES gl,
+    List<String> shaderSources, [
+    attribs,
+    locations,
+  ]) {
     List<int> shaders = []; // a list of shader id's.
     for (var ii = 0; ii < shaderSources.length; ++ii) {
-      var shader = loadShader(gl, shaderSources[ii], defaultShaderType[ii], opt_errorCallback);
+      int shaderType = defaultShaderType[ii] == 'VERTEX_SHADER' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER;
+      var shader = loadShader(gl, shaderSources[ii], shaderType);
       shaders.add(shader);
     }
-    return createProgram(gl, shaders, opt_attribs, opt_locations, opt_errorCallback);
+    return createProgram(gl, shaders, attribs, locations);
   }
 
   static createProgramInfo(
-      OpenGLContextES gl, List<String> shaderSources, opt_attribs, opt_locations, opt_errorCallback) {
-    var program = createProgramFromSources(gl, shaderSources, opt_attribs, opt_locations, opt_errorCallback);
-    if (!program) {
-      return null;
+    OpenGLContextES gl,
+    List<String> shaderSources, [
+    attribs,
+    locations,
+  ]) {
+    var program = createProgramFromSources(gl, shaderSources, attribs, locations);
+    if (program == 0) {
+      throw 'Failed the to create program from sources';
     }
 
     var uniformSetters = createUniformSetters(gl, program);

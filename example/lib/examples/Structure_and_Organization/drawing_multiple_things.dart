@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
+import 'package:flgl_example/bfx/bfx.dart';
 import 'package:flgl_example/bfx/primitives.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
@@ -151,9 +152,13 @@ class _DrawingMultipleThings1State extends State<DrawingMultipleThings1> {
   }
 
   initGl() {
+    // BFX bfx = BFX();
+
     var sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
     var cubeBufferInfo = Primitives.createCubeWithVertexColorsBufferInfo(gl, 20);
     var coneBufferInfo = Primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
+
+    var programInfo = BFX.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
 
     int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
