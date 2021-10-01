@@ -84,7 +84,6 @@ class ArrayBuffer {
     } else {
       throw 'Unsupported list type';
     }
-    // numElements = (data.length ~/ numComponents).toInt() | 0;
   }
 
   /// Returns the number of elements.
@@ -131,14 +130,11 @@ class Primitives {
       var numComponents = srcBuffer!.numComponents;
       // var dstBuffer = webglUtils.createAugmentedTypedArray(numComponents, numElements, srcBuffer.constructor);
       var dstBuffer = ArrayBuffer(numComponents, numElements, srcBuffer.type);
-      var index = 0;
       for (var ii = 0; ii < numElements; ++ii) {
         var ndx = indices.data[ii];
         var offset = ndx * numComponents;
         for (var jj = 0; jj < numComponents; ++jj) {
-          // dstBuffer.push(srcBuffer[offset + jj]);
-          dstBuffer.data[index] = srcBuffer.data[offset + jj];
-          index++;
+          dstBuffer.push([srcBuffer.data[offset + jj]]);
         }
       }
       newVertices[channel] = dstBuffer;
@@ -156,50 +152,43 @@ class Primitives {
   }
 
   /// Creates an augmentedTypedArray of random vertex colors.
+  ///
   /// If the vertices are indexed (have an indices array) then will
   /// just make random colors. Otherwise assumes they are triangless
   /// and makes one random color for every 3 vertices.
-  /// @param {Object.<string, augmentedTypedArray>} vertices Vertices as returned from one of the createXXXVertices functions.
-  /// @param {module:primitives.RandomVerticesOptions} [options] options.
-  /// @return {Object.<string, augmentedTypedArray>} same vertices as passed in with `color` added.
-  /// @memberOf module:primitives
+  /// - @param {Object.<string, augmentedTypedArray>} vertices Vertices as returned from one of the createXXXVertices functions.
+  /// - @param {module:primitives.RandomVerticesOptions} [options] options.
+  /// - @return {Object.<string, augmentedTypedArray>} same vertices as passed in with `color` added.
+  /// - @memberOf module:primitives
   static makeRandomVertexColors(Map<String, ArrayBuffer> vertices, [options]) {
     options ??= {};
     var numElements = vertices['position']!.numElements;
-    // var vcolors = webglUtils.createAugmentedTypedArray(4, numElements, Uint8Array);
     var vcolors = ArrayBuffer(4, numElements, 'Uint8');
 
-    rand(ndx, channel) {
+    rand(ndx, int channel) {
       return channel < 3 ? Random().nextInt(256) : 255;
     }
 
     vertices['color'] = vcolors;
     if (vertices.containsKey('indices')) {
       // just make random colors if index
-      int index = 0;
       for (var ii = 0; ii < numElements; ++ii) {
-        // vcolors.push(rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3));
-        vcolors.data[index + 0] = rand(ii, 0); // red
-        vcolors.data[index + 1] = rand(ii, 1); // green
-        vcolors.data[index + 2] = rand(ii, 2); // blue
-        vcolors.data[index + 3] = rand(ii, 3); // alpha
-        index++;
+        vcolors.push([
+          rand(ii, 0), // red
+          rand(ii, 1), // green
+          rand(ii, 2), // blue
+          rand(ii, 3), // alpha
+        ]);
       }
     } else {
       // make random colors per triangle
       var numVertsPerColor = options.containsKey('vertsPerColor') ? options['vertsPerColor'] : 3;
       var numSets = numElements / numVertsPerColor;
 
-      int index = 0;
       for (var ii = 0; ii < numSets; ++ii) {
         var color = [rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3)];
         for (var jj = 0; jj < numVertsPerColor; ++jj) {
-          // vcolors.push(color);
-          vcolors.data[index + 0] = color[0];
-          vcolors.data[index + 1] = color[1];
-          vcolors.data[index + 2] = color[2];
-          vcolors.data[index + 3] = color[3];
-          index++;
+          vcolors.push(color);
         }
       }
     }
@@ -317,9 +306,9 @@ class Primitives {
     // arrays.keys.elementAt(0);
 
     var array = arrays[key] as ArrayBuffer;
-    var length = array.data.length;
+    int length = array.data.length;
     var numComponents = array.numComponents;
-    var numElements = length / numComponents;
+    var numElements = (length ~/ numComponents).toInt();
     if (length % numComponents > 0) {
       throw 'numComponents $numComponents not correct for length $length';
     }
@@ -374,7 +363,7 @@ class Primitives {
 
     // Generate the individual vertices in our vertex buffer.
     // The goal here is to compute the spere positions, normals and texCoords.
-    int index = 0;
+    // int index = 0;
     for (var y = 0; y <= subdivisionsHeight; y++) {
       for (var x = 0; x <= subdivisionsAxis; x++) {
         // Generate a vertex based on its spherical coordinates
@@ -394,24 +383,27 @@ class Primitives {
         // texCoords.push(1 - u, v);
 
         // set the positions.
-        positions.data[index + 0] = radius * ux;
-        positions.data[index + 1] = radius * uy;
-        positions.data[index + 2] = radius * uz;
+        positions.push([radius * ux, radius * uy, radius * uz]);
+        // positions.data[index + 0] = radius * ux;
+        // positions.data[index + 1] = radius * uy;
+        // positions.data[index + 2] = radius * uz;
 
         // set the normals.
-        normals.data[index + 0] = ux;
-        normals.data[index + 1] = uy;
-        normals.data[index + 2] = uz;
+        normals.push([ux, uy, uz]);
+        // normals.data[index + 0] = ux;
+        // normals.data[index + 1] = uy;
+        // normals.data[index + 2] = uz;
 
         // set the texCoords.
-        texCoords.data[index + 0] = 1 - u;
-        texCoords.data[index + 1] = v;
+        texCoords.push([1 - u, v]);
+        // texCoords.data[index + 0] = 1 - u;
+        // texCoords.data[index + 1] = v;
 
-        index++;
+        // index++;
       }
     }
 
-    var indicesIndex = 0;
+    // var indicesIndex = 0;
     int numVertsAround = subdivisionsAxis + 1;
     // var indices = webglUtils.createAugmentedTypedArray(3, subdivisionsAxis * subdivisionsHeight * 2, Uint16Array);
     var indices = ArrayBuffer(3, subdivisionsAxis * subdivisionsHeight * 2, 'Uint16');
@@ -430,16 +422,26 @@ class Primitives {
         //     (y + 1) * numVertsAround + x + 1);
 
         // Make triangle 1 of quad.
-        indices.data[indicesIndex + 0] = (y + 0) * numVertsAround + x;
-        indices.data[indicesIndex + 1] = (y + 0) * numVertsAround + x + 1;
-        indices.data[indicesIndex + 2] = (y + 1) * numVertsAround + x;
+        indices.push([
+          (y + 0) * numVertsAround + x,
+          (y + 0) * numVertsAround + x + 1,
+          (y + 1) * numVertsAround + x,
+        ]);
+        // indices.data[indicesIndex + 0] = (y + 0) * numVertsAround + x;
+        // indices.data[indicesIndex + 1] = (y + 0) * numVertsAround + x + 1;
+        // indices.data[indicesIndex + 2] = (y + 1) * numVertsAround + x;
 
         // Make triangle 2 of quad.
-        indices.data[indicesIndex + 3] = (y + 1) * numVertsAround + x;
-        indices.data[indicesIndex + 4] = (y + 0) * numVertsAround + x + 1;
-        indices.data[indicesIndex + 5] = (y + 1) * numVertsAround + x + 1;
+        indices.push([
+          (y + 1) * numVertsAround + x,
+          (y + 0) * numVertsAround + x + 1,
+          (y + 1) * numVertsAround + x + 1,
+        ]);
+        // indices.data[indicesIndex + 3] = (y + 1) * numVertsAround + x;
+        // indices.data[indicesIndex + 4] = (y + 0) * numVertsAround + x + 1;
+        // indices.data[indicesIndex + 5] = (y + 1) * numVertsAround + x + 1;
 
-        indicesIndex++;
+        // indicesIndex++;
       }
     }
 
@@ -536,7 +538,6 @@ class Primitives {
     var texCoords = ArrayBuffer(2, numVertices, 'Float32');
     var indices = ArrayBuffer(3, 6 * 2, 'Uint16');
 
-    int index = 0;
     for (var f = 0; f < 6; ++f) {
       var faceIndices = CUBE_FACE_INDICES[f];
       for (var v = 0; v < 4; ++v) {
@@ -549,31 +550,23 @@ class Primitives {
         // positions.push(position);
         // normals.push(normal);
         // texCoords.push(uv);
+        positions.push(position);
 
-        positions.data[index + 0] = position[0].toDouble();
-        positions.data[index + 1] = position[1].toDouble();
-        positions.data[index + 2] = position[2].toDouble();
+        normals.push([
+          normal[0].toDouble(),
+          normal[1].toDouble(),
+          normal[2].toDouble(),
+        ]);
 
-        normals.data[index + 0] = normal[0].toDouble();
-        normals.data[index + 1] = normal[1].toDouble();
-        normals.data[index + 2] = normal[2].toDouble();
-
-        texCoords.data[index + 0] = uv[0].toDouble();
-        texCoords.data[index + 1] = uv[1].toDouble();
+        texCoords.push([
+          uv[0].toDouble(),
+          uv[1].toDouble(),
+        ]);
       }
       // Two triangles make a square face.
       var offset = 4 * f;
-      // indices.push(offset + 0, offset + 1, offset + 2);
-      // indices.push(offset + 0, offset + 2, offset + 3);
-
-      indices.data[index + 0] = offset + 0;
-      indices.data[index + 1] = offset + 1;
-      indices.data[index + 2] = offset + 2;
-      indices.data[index + 3] = offset + 0;
-      indices.data[index + 4] = offset + 2;
-      indices.data[index + 5] = offset + 3;
-
-      index++;
+      indices.push([offset + 0, offset + 1, offset + 2]);
+      indices.push([offset + 0, offset + 2, offset + 3]);
     }
 
     return {

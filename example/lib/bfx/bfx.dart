@@ -3,12 +3,12 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 class BFX {
   /// Creates a program, attaches shaders, binds attrib locations, links the
   /// program and calls useProgram.
+  ///
   /// - @param {WebGLShader[]} shaders The shaders to attach
   /// - @param {string[]} [opt_attribs] An array of attribs names. Locations will be assigned by index if not passed in
   /// - @param {number[]} [opt_locations] The locations for the. A parallel array to opt_attribs letting you assign locations.
   /// - @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors. By default it just prints an error to the console
   ///        on error. If you want something else pass an callback. It's passed an error message.
-  /// - @memberOf module:webgl-utils
   static int createProgram(
     OpenGLContextES gl,
     List<int> shaders, [
@@ -52,16 +52,21 @@ class BFX {
     return null;
   }
 
+  /// Creates setter functions for all uniforms of a shader
+  /// program.
+  ///
+  /// - @see {@link module:webgl-utils.setUniforms}
+  ///
+  /// - @param {WebGLProgram} program the program to create setters for.
+  /// - @returns {Object.<string, function>} an object with a setter by name for each uniform
   static createUniformSetters(OpenGLContextES gl, int program) {
     var textureUnit = 0;
 
-    // /**
-    //  * Creates a setter for a uniform of the given program with it's
-    //  * location embedded in the setter.
-    //  * @param {WebGLProgram} program
-    //  * @param {WebGLUniformInfo} uniformInfo
-    //  * @returns {function} the created setter.
-    //  */
+    /// Creates a setter for a uniform of the given program with it's
+    /// location embedded in the setter.
+    /// - @param {WebGLProgram} program
+    /// - @param {WebGLUniformInfo} uniformInfo
+    /// - @returns {function} the created setter.
     createUniformSetter(int program, uniformInfo) {
       var location = gl.getUniformLocation(program, uniformInfo.name);
       var type = uniformInfo.type;
@@ -105,9 +110,11 @@ class BFX {
       if (type == gl.INT_VEC3) {
         return (v) => gl.uniform3iv(location, v);
       }
+
       if (type == gl.INT_VEC4) {
         return (v) => gl.uniform4iv(location, v);
       }
+
       if (type == gl.BOOL) {
         return (v) => gl.uniform1iv(location, v);
       }
@@ -191,11 +198,12 @@ class BFX {
     return uniformSetters;
   }
 
-  static setAttributes(setters, Map<String, dynamic> attribs) {
-    setters = setters.attribSetters || setters;
+  static setAttributes(Map<String, dynamic> setters, Map<String, dynamic> attribs) {
+    // setters = Map<String, dynamic>.from(setters['attribSetters']) ?? setters;
+    setters = Map<String, dynamic>.from(setters['attribSetters']);
     attribs.forEach((key, value) {
       var setter = setters[key];
-      if (setter) {
+      if (setter != null) {
         setter(attribs[key]);
       }
     });
@@ -205,56 +213,53 @@ class BFX {
   /// - gl
   /// - setters the programInfo
   /// - buffers the 3d object buffers
-  static setBuffersAndAttributes(OpenGLContextES gl, setters, buffers) {
-    setAttributes(setters, buffers.attribs);
-    if (buffers.indices) {
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+  static setBuffersAndAttributes(OpenGLContextES gl, Map<String, dynamic> setters, Map<String, dynamic> buffers) {
+    Map<String, dynamic> attribs = Map<String, dynamic>.from(buffers['attribs']);
+    setAttributes(setters, attribs);
+    if (buffers.containsKey('indices') && buffers['indices']) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers['indices']);
     }
   }
 
-  // /**
-  //  * Creates setter functions for all attributes of a shader
-  //  * program. You can pass this to {@link module:webgl-utils.setBuffersAndAttributes} to set all your buffers and attributes.
-  //  *
-  //  * @see {@link module:webgl-utils.setAttributes} for example
-  //  * @param {WebGLProgram} program the program to create setters for.
-  //  * @return {Object.<string, function>} an object with a setter for each attribute by name.
-  //  * @memberOf module:webgl-utils
-  //  */
+  /// Creates setter functions for all attributes of a shader
+  /// program. You can pass this to {@link module:webgl-utils.setBuffersAndAttributes} to set all your buffers and attributes.
+  ///
+  /// - @see {@link module:webgl-utils.setAttributes} for example
+  /// - @param {WebGLProgram} program the program to create setters for.
+  /// - @return {Object.<string, function>} an object with a setter for each attribute by name.
   static createAttributeSetters(OpenGLContextES gl, program) {
-    const attribSetters = {};
+    var attribSetters = {};
 
     func2(b, [index]) {
-      var value = b.value;
-      if (value) {
+      if (b.containsKey('value')) {
         gl.disableVertexAttribArray(index);
 
-        switch (b.value.length) {
+        switch (b['value'].length) {
           case 4:
-            gl.vertexAttrib4fv(index, b.value);
+            gl.vertexAttrib4fv(index, b['value']);
             break;
           case 3:
-            gl.vertexAttrib3fv(index, b.value);
+            gl.vertexAttrib3fv(index, b['value']);
             break;
           case 2:
-            gl.vertexAttrib2fv(index, b.value);
+            gl.vertexAttrib2fv(index, b['value']);
             break;
           case 1:
-            gl.vertexAttrib1fv(index, b.value);
+            gl.vertexAttrib1fv(index, b['value']);
             break;
           default:
             throw ('the length of a float constant value must be between 1 and 4!');
         }
       } else {
-        gl.bindBuffer(gl.ARRAY_BUFFER, b.buffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, b['buffer']);
         gl.enableVertexAttribArray(index);
         gl.vertexAttribPointer(
           index,
-          b.numComponents | b.size,
-          b.type | gl.FLOAT,
-          b.normalize | false,
-          b.stride | 0,
-          b.offset | 0,
+          b['numComponents'] ?? b['size'],
+          b['type'] ?? gl.FLOAT,
+          b['normalize'] ?? false,
+          b['stride'] ?? 0,
+          b['offset'] ?? 0,
         );
       }
     }
@@ -358,9 +363,19 @@ class BFX {
     var attribSetters = createAttributeSetters(gl, program);
 
     return {
-      program: program,
-      uniformSetters: uniformSetters,
-      attribSetters: attribSetters,
+      'program': program,
+      'uniformSetters': uniformSetters,
+      'attribSetters': attribSetters,
     };
+  }
+
+  static setUniforms(setters, Map<String, dynamic> values) {
+    setters = setters['uniformSetters'] ?? setters;
+    values.forEach((key, value) {
+      var setter = setters[key];
+      if (setter != null) {
+        setter(values[key]); // value
+      }
+    });
   }
 }
