@@ -52,9 +52,9 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
     'u_colorMult': [0.5, 0.5, 1, 1],
     'u_matrix': M4.identity(),
   };
-  var sphereTranslation = [0, 0, 0];
-  var cubeTranslation = [-40, 0, 0];
-  var coneTranslation = [40, 0, 0];
+  List<double> sphereTranslation = [0.0, 0.0, 0.0];
+  List<double> cubeTranslation = [-40.0, 0.0, 0.0];
+  List<double> coneTranslation = [40.0, 0.0, 0.0];
 
   computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation) {
     var matrix = M4.translate(
@@ -77,6 +77,10 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
   List<Map<String, dynamic>> objectsToDraw = [];
 
   TransformControlsManager? controlsManager;
+
+  double x = 0;
+  double y = 0;
+  double z = 0;
 
   @override
   void initState() {
@@ -101,47 +105,67 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
       ),
       body: Column(
         children: [
-          Stack(
-            children: [
-              FLGLViewport(
-                width: width,
-                height: height,
-                onInit: (Flgl _flgl) {
-                  setState(() {
-                    initialized = true;
-                    flgl = _flgl;
-                    gl = flgl.gl;
+          GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              cubeTranslation[0] += details.delta.dx / 20;
+              draw();
+            },
+            onVerticalDragUpdate: (details) {
+              cubeTranslation[1] += (-details.delta.dy) / 20;
+              draw();
+            },
+            // onPanUpdate: (details) {
+            //   y = y - details.delta.dx / 100;
+            //   x = x + details.delta.dy / 100;
+            //   z = z - details.delta.dx / 100;
+            //   print('x: $x, y: $y');
 
-                    initGl();
-                    draw();
-                    // Draw 50 frames per second.
-                    timer = Timer.periodic(const Duration(milliseconds: 20), (Timer t) => {draw()});
-                  });
-                },
-              ),
-              Positioned(
-                width: 420,
-                // height: 150,
-                top: 10,
-                right: 10,
-                child: GLControls(
-                  transformControlsManager: controlsManager,
-                  onChange: (TransformControl control) {
+            //   cubeTranslation[0] += details.delta.dx / 5;
+            //   cubeTranslation[1] += (-details.delta.dy) / 5;
+            //   draw();
+            // },
+            child: Stack(
+              children: [
+                FLGLViewport(
+                  width: width,
+                  height: height,
+                  onInit: (Flgl _flgl) {
                     setState(() {
-                      switch (control.name) {
-                        case 'fRotation':
-                          fRotationRadians = MathUtils.degToRad(control.value);
-                          break;
-                        default:
-                      }
+                      initialized = true;
+                      flgl = _flgl;
+                      gl = flgl.gl;
+
+                      initGl();
                       draw();
+                      // Draw 50 frames per second.
+                      // timer = Timer.periodic(const Duration(milliseconds: 20), (Timer t) => {draw()});
                     });
                   },
                 ),
-              )
+                Positioned(
+                  width: 420,
+                  // height: 150,
+                  top: 10,
+                  right: 10,
+                  child: GLControls(
+                    transformControlsManager: controlsManager,
+                    onChange: (TransformControl control) {
+                      setState(() {
+                        switch (control.name) {
+                          case 'fRotation':
+                            fRotationRadians = MathUtils.degToRad(control.value);
+                            break;
+                          default:
+                        }
+                        draw();
+                      });
+                    },
+                  ),
+                )
 
-              // GLControls(),
-            ],
+                // GLControls(),
+              ],
+            ),
           ),
           Row(
             children: [
@@ -185,7 +209,7 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
   }
 
   draw() {
-    time += 0.01;
+    // time += 0.01;
 
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, (width * flgl.dpr).toInt(), (height * flgl.dpr).toInt());
