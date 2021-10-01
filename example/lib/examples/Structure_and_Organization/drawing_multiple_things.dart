@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
