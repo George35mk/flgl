@@ -18,6 +18,11 @@ class _StructureAndOrganizationState extends State<StructureAndOrganization> {
       "name": "Drawing Multiple Things 1",
       "description": "Example of Drawing Multiple Things 1",
       "route": 'drawing_multiple_things_1',
+    },
+    '3': {
+      "name": "Drawing Multiple Things 2",
+      "description": "Example of Drawing Multiple Things 2",
+      "route": 'drawing_multiple_things_2',
     }
   };
 
