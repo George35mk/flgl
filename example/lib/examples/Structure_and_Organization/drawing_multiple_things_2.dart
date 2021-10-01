@@ -35,10 +35,8 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
   /// The viewport height
   late int height = 752 - 80 - 48;
 
-  // double fieldOfViewRadians = 60.0;
-  double fRotationRadians = 0.0;
-
   double time = 0;
+  double fRotationRadians = 0.0;
   double fieldOfViewRadians = 60;
 
   // Uniforms for each object.
@@ -76,6 +74,8 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
   dynamic cubeBufferInfo;
   dynamic coneBufferInfo;
 
+  List<Map<String, dynamic>> objectsToDraw = [];
+
   TransformControlsManager? controlsManager;
 
   @override
@@ -84,7 +84,7 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
 
     // init control manager.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0.0));
+    // controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0.0));
   }
 
   @override
@@ -159,13 +159,29 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
   }
 
   initGl() {
-    // BFX bfx = BFX();
-
     sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
     cubeBufferInfo = Primitives.createCubeWithVertexColorsBufferInfo(gl, 20);
     coneBufferInfo = Primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
 
     programInfo = BFX.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
+
+    objectsToDraw = [
+      {
+        'programInfo': programInfo,
+        'bufferInfo': sphereBufferInfo,
+        'uniforms': sphereUniforms,
+      },
+      {
+        'programInfo': programInfo,
+        'bufferInfo': cubeBufferInfo,
+        'uniforms': cubeUniforms,
+      },
+      {
+        'programInfo': programInfo,
+        'bufferInfo': coneBufferInfo,
+        'uniforms': coneUniforms,
+      },
+    ];
   }
 
   draw() {
@@ -212,29 +228,15 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
     var coneYRotation = -time;
 
     // Tell it to use our program (pair of shaders)
-    gl.useProgram(programInfo['program']);
+    // gl.useProgram(programInfo['program']);
 
-    // ------ Draw the sphere --------
-
-    // Setup all the needed attributes.
-    BFX.setBuffersAndAttributes(gl, programInfo, sphereBufferInfo);
-
+    // Compute the matrix for each uniforms.
     sphereUniforms['u_matrix'] = computeMatrix(
       viewProjectionMatrix,
       sphereTranslation,
       sphereXRotation,
       sphereYRotation,
     );
-
-    // Set the uniforms we just computed
-    BFX.setUniforms(programInfo, sphereUniforms);
-
-    gl.drawArrays(gl.TRIANGLES, 0, sphereBufferInfo['numElements']);
-
-    // ------ Draw the cube --------
-
-    // Setup all the needed attributes.
-    BFX.setBuffersAndAttributes(gl, programInfo, cubeBufferInfo);
 
     cubeUniforms['u_matrix'] = computeMatrix(
       viewProjectionMatrix,
@@ -243,16 +245,6 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
       cubeYRotation,
     );
 
-    // Set the uniforms we just computed
-    BFX.setUniforms(programInfo, cubeUniforms);
-
-    gl.drawArrays(gl.TRIANGLES, 0, cubeBufferInfo['numElements']);
-
-    // ------ Draw the cone --------
-
-    // Setup all the needed attributes.
-    BFX.setBuffersAndAttributes(gl, programInfo, coneBufferInfo);
-
     coneUniforms['u_matrix'] = computeMatrix(
       viewProjectionMatrix,
       coneTranslation,
@@ -260,10 +252,23 @@ class _DrawingMultipleThings2State extends State<DrawingMultipleThings2> {
       coneYRotation,
     );
 
-    // Set the uniforms we just computed
-    BFX.setUniforms(programInfo, coneUniforms);
+    // ------ Draw the objects --------
 
-    gl.drawArrays(gl.TRIANGLES, 0, coneBufferInfo['numElements']);
+    for (var object in objectsToDraw) {
+      var programInfo = object['programInfo'];
+      var bufferInfo = object['bufferInfo'];
+
+      gl.useProgram(programInfo['program']);
+
+      // Setup all the needed attributes.
+      BFX.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+
+      // Set the uniforms.
+      BFX.setUniforms(programInfo, object['uniforms']);
+
+      // Draw
+      gl.drawArrays(gl.TRIANGLES, 0, bufferInfo['numElements']);
+    }
 
     // !super important.
     gl.finish();
