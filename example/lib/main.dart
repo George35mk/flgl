@@ -46,7 +46,7 @@ import 'examples/Lighting/spot_lighting_1.dart';
 import 'examples/Lighting/spot_lighting_2.dart';
 
 import 'examples/Structure_and_Organization/less_code_more_fun_1.dart';
-import 'examples/Structure_and_Organization/drawing_multiple_things.dart';
+import 'examples/Structure_and_Organization/drawing_multiple_things_1.dart';
 
 void main() {
   runApp(const MyApp());
