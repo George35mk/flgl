@@ -2,60 +2,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
-// class AugmentTypedArray {}
-
-// class PositionsData {
-//   int numComponents = 0;
-//   int numVertices = 0;
-//   int numElements = 0;
-//   late Float32List data;
-//   String type = 'Float32';
-
-//   PositionsData(this.numComponents, this.numVertices) {
-//     data = Float32List(numComponents * numVertices);
-//     numElements = (data.length ~/ numComponents).toInt() | 0;
-//   }
-// }
-
-// class NormalsData {
-//   int numComponents = 0;
-//   int numVertices = 0;
-//   int numElements = 0;
-//   late Float32List data;
-//   String type = 'Float32';
-
-//   NormalsData(this.numComponents, this.numVertices) {
-//     data = Float32List(numComponents * numVertices);
-//     numElements = (data.length ~/ numComponents).toInt() | 0;
-//   }
-// }
-
-// class TexCoordsData {
-//   int numComponents = 0;
-//   int numVertices = 0;
-//   int numElements = 0;
-//   late Float32List data;
-//   String type = 'Float32';
-
-//   TexCoordsData(this.numComponents, this.numVertices) {
-//     data = Float32List(numComponents * numVertices);
-//     numElements = (data.length ~/ numComponents).toInt() | 0;
-//   }
-// }
-
-// class IndicesData {
-//   int numComponents = 0;
-//   int numVertices = 0;
-//   int numElements = 0;
-//   late Uint16List data;
-//   String type = 'Uint16';
-
-//   IndicesData(this.numComponents, this.numVertices) {
-//     data = Uint16List(numComponents * numVertices);
-//     numElements = (data.length ~/ numComponents).toInt() | 0;
-//   }
-// }
-
 class ArrayBuffer {
   /// The number of [components].
   int numComponents = 0;
@@ -128,8 +74,8 @@ class Primitives {
     expandToUnindexed(String channel) {
       var srcBuffer = vertices[channel];
       var numComponents = srcBuffer!.numComponents;
-      // var dstBuffer = webglUtils.createAugmentedTypedArray(numComponents, numElements, srcBuffer.constructor);
       var dstBuffer = ArrayBuffer(numComponents, numElements, srcBuffer.type);
+
       for (var ii = 0; ii < numElements; ++ii) {
         var ndx = indices.data[ii];
         var offset = ndx * numComponents;
@@ -139,8 +85,6 @@ class Primitives {
       }
       newVertices[channel] = dstBuffer;
     }
-
-    // Object.keys(vertices).filter(allButIndices).forEach(expandToUnindexed);
 
     vertices.forEach((key, value) {
       if (key != 'indices') {
@@ -171,7 +115,6 @@ class Primitives {
 
     vertices['color'] = vcolors;
     if (vertices.containsKey('indices')) {
-      // just make random colors if index
       for (var ii = 0; ii < numElements; ++ii) {
         vcolors.push([
           rand(ii, 0), // red
@@ -254,8 +197,8 @@ class Primitives {
   }
 
   // change arrays with arrayBuffers.
-  static createAttribsFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [opt_mapping]) {
-    var mapping = opt_mapping ?? createMapping(arrays);
+  static createAttribsFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [optMapping]) {
+    var mapping = optMapping ?? createMapping(arrays);
     var attribs = {};
     mapping.forEach((attribName, value) {
       var bufferName = mapping[attribName];
@@ -269,23 +212,6 @@ class Primitives {
         'normalize': getNormalizationForTypedArray(array),
       };
     });
-    // Object.keys(mapping).forEach(function(attribName) {
-    //   var bufferName = mapping[attribName];
-    //   var origArray = arrays[bufferName];
-    //   if (origArray.value) {
-    //     attribs[attribName] = {
-    //       'value': origArray.value,
-    //     };
-    //   } else {
-    //     const array = makeTypedArray(origArray, bufferName);
-    //     attribs[attribName] = {
-    //       'buffer':        createBufferFromTypedArray(gl, array),
-    //       'numComponents': origArray.numComponents || array.numComponents || guessNumComponentsFromName(bufferName),
-    //       'type':          getGLTypeForTypedArray(gl, array),
-    //       'normalize':     getNormalizationForTypedArray(array),
-    //     };
-    //   }
-    // });
     return attribs;
   }
 
@@ -303,21 +229,21 @@ class Primitives {
 
     // else get the first key in arrays
     key = key ?? arrays.keys.elementAt(0);
-    // arrays.keys.elementAt(0);
 
     var array = arrays[key] as ArrayBuffer;
     int length = array.data.length;
     var numComponents = array.numComponents;
     var numElements = (length ~/ numComponents).toInt();
+
     if (length % numComponents > 0) {
       throw 'numComponents $numComponents not correct for length $length';
     }
     return numElements;
   }
 
-  static createBufferInfoFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [opt_mapping]) {
+  static createBufferInfoFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [optMapping]) {
     var bufferInfo = {
-      'attribs': createAttribsFromArrays(gl, arrays, opt_mapping),
+      'attribs': createAttribsFromArrays(gl, arrays, optMapping),
     };
     var indices = arrays['indices'];
     if (indices != null) {
@@ -339,16 +265,11 @@ class Primitives {
     double optStartLatitudeInRadians = 0.0,
     double optEndLatitudeInRadians = pi,
     double optStartLongitudeInRadians = 0.0,
-    double optEndLongitudeInRadians = (pi * 2),
+    double optEndLongitudeInRadians = pi * 2,
   ]) {
     if (subdivisionsAxis <= 0 || subdivisionsHeight <= 0) {
       throw ('subdivisionAxis and subdivisionHeight must be > 0');
     }
-
-    // optStartLatitudeInRadians ??= 0;
-    // optEndLatitudeInRadians ??= pi;
-    // optStartLongitudeInRadians ??= 0;
-    // optEndLongitudeInRadians ??= (pi * 2);
 
     var latRange = optEndLatitudeInRadians - optStartLatitudeInRadians;
     var longRange = optEndLongitudeInRadians - optStartLongitudeInRadians;
@@ -363,7 +284,6 @@ class Primitives {
 
     // Generate the individual vertices in our vertex buffer.
     // The goal here is to compute the spere positions, normals and texCoords.
-    // int index = 0;
     for (var y = 0; y <= subdivisionsHeight; y++) {
       for (var x = 0; x <= subdivisionsAxis; x++) {
         // Generate a vertex based on its spherical coordinates
@@ -378,58 +298,24 @@ class Primitives {
         var ux = cosTheta * sinPhi;
         var uy = cosPhi;
         var uz = sinTheta * sinPhi;
-        // positions.push(radius * ux, radius * uy, radius * uz);
-        // normals.push(ux, uy, uz);
-        // texCoords.push(1 - u, v);
 
-        // set the positions.
         positions.push([radius * ux, radius * uy, radius * uz]);
-        // positions.data[index + 0] = radius * ux;
-        // positions.data[index + 1] = radius * uy;
-        // positions.data[index + 2] = radius * uz;
-
-        // set the normals.
         normals.push([ux, uy, uz]);
-        // normals.data[index + 0] = ux;
-        // normals.data[index + 1] = uy;
-        // normals.data[index + 2] = uz;
-
-        // set the texCoords.
         texCoords.push([1 - u, v]);
-        // texCoords.data[index + 0] = 1 - u;
-        // texCoords.data[index + 1] = v;
-
-        // index++;
       }
     }
 
-    // var indicesIndex = 0;
     int numVertsAround = subdivisionsAxis + 1;
     // var indices = webglUtils.createAugmentedTypedArray(3, subdivisionsAxis * subdivisionsHeight * 2, Uint16Array);
     var indices = ArrayBuffer(3, subdivisionsAxis * subdivisionsHeight * 2, 'Uint16');
     for (var x = 0; x < subdivisionsAxis; x++) {
       for (var y = 0; y < subdivisionsHeight; y++) {
         // Make triangle 1 of quad.
-        // indices.push(
-        //     (y + 0) * numVertsAround + x,
-        //     (y + 0) * numVertsAround + x + 1,
-        //     (y + 1) * numVertsAround + x);
-
-        // Make triangle 2 of quad.
-        // indices.push(
-        //     (y + 1) * numVertsAround + x,
-        //     (y + 0) * numVertsAround + x + 1,
-        //     (y + 1) * numVertsAround + x + 1);
-
-        // Make triangle 1 of quad.
         indices.push([
           (y + 0) * numVertsAround + x,
           (y + 0) * numVertsAround + x + 1,
           (y + 1) * numVertsAround + x,
         ]);
-        // indices.data[indicesIndex + 0] = (y + 0) * numVertsAround + x;
-        // indices.data[indicesIndex + 1] = (y + 0) * numVertsAround + x + 1;
-        // indices.data[indicesIndex + 2] = (y + 1) * numVertsAround + x;
 
         // Make triangle 2 of quad.
         indices.push([
@@ -437,11 +323,6 @@ class Primitives {
           (y + 0) * numVertsAround + x + 1,
           (y + 1) * numVertsAround + x + 1,
         ]);
-        // indices.data[indicesIndex + 3] = (y + 1) * numVertsAround + x;
-        // indices.data[indicesIndex + 4] = (y + 0) * numVertsAround + x + 1;
-        // indices.data[indicesIndex + 5] = (y + 1) * numVertsAround + x + 1;
-
-        // indicesIndex++;
       }
     }
 
@@ -452,21 +333,6 @@ class Primitives {
       'indices': indices,
     };
   }
-
-  // createFlattenedFunc(vertFunc) {
-  //   return (gl, ...args) => {
-  //     var vertices = vertFunc(...args);
-  //     vertices = deindexVertices(vertices);
-  //     // add colors
-  //     vertices = makeRandomVertexColors(vertices, {
-  //         vertsPerColor: 6,
-  //         rand: function(ndx, channel) {
-  //           return channel < 3 ? ((128 + Math.random() * 128) | 0) : 255;
-  //         },
-  //       });
-  //     return webglUtils.createBufferInfoFromArrays(gl, vertices);
-  //   };
-  // }
 
   static createSphereWithVertexColorsBufferInfo(
     OpenGLContextES gl,
@@ -488,8 +354,10 @@ class Primitives {
       startLongitudeInRadians,
       endLongitudeInRadians,
     );
+
     // deindex the vertices.
     vertices = deindexVertices(vertices);
+
     // add colors info
     var options = {
       'vertsPerColor': 6,
@@ -498,6 +366,7 @@ class Primitives {
       }
     };
     vertices = makeRandomVertexColors(vertices, options);
+
     // create buffer info from arrays.
     return createBufferInfoFromArrays(gl, vertices);
   }
@@ -547,17 +416,12 @@ class Primitives {
 
         // Each face needs all four vertices because the normals and texture
         // coordinates are not all the same.
-        // positions.push(position);
-        // normals.push(normal);
-        // texCoords.push(uv);
         positions.push(position);
-
         normals.push([
           normal[0].toDouble(),
           normal[1].toDouble(),
           normal[2].toDouble(),
         ]);
-
         texCoords.push([
           uv[0].toDouble(),
           uv[1].toDouble(),
@@ -578,11 +442,8 @@ class Primitives {
   }
 
   static createCubeWithVertexColorsBufferInfo(OpenGLContextES gl, int size) {
-    // create the sphere vertices.
     var vertices = createCubeVertices(size); // createCubeGeometry.
-    // deindex the vertices.
     vertices = deindexVertices(vertices);
-    // add colors info
     var options = {
       'vertsPerColor': 6,
       'rand': (ndx, channel) {
@@ -590,7 +451,6 @@ class Primitives {
       }
     };
     vertices = makeRandomVertexColors(vertices, options);
-    // create buffer info from arrays.
     return createBufferInfoFromArrays(gl, vertices);
   }
 
@@ -659,19 +519,7 @@ class Primitives {
         var _sin = sin(ii * pi * 2 / radialSubdivisions);
         var _cos = cos(ii * pi * 2 / radialSubdivisions);
 
-        // positions.push(_sin * ringRadius, y, _cos * ringRadius);
-        // normals.push(
-        //   (yy < 0 || yy > verticalSubdivisions) ? 0 : (_sin * cosSlant),
-        //   (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : sinSlant),
-        //   (yy < 0 || yy > verticalSubdivisions) ? 0 : (_cos * cosSlant),
-        // );
-        // texCoords.push((ii / radialSubdivisions), 1 - v);
-
         positions.push([_sin * ringRadius, y, _cos * ringRadius]);
-
-        // positions.data[index + 0] = _sin * ringRadius;
-        // positions.data[index + 1] = y;
-        // positions.data[index + 2] = _cos * ringRadius;
 
         normals.push([
           (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_sin * cosSlant),
@@ -679,47 +527,23 @@ class Primitives {
           (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_cos * cosSlant)
         ]);
 
-        // normals.data[index + 0] = (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_sin * cosSlant);
-        // normals.data[index + 1] = (yy < 0) ? -1.0 : (yy > verticalSubdivisions ? 1.0 : sinSlant);
-        // normals.data[index + 2] = (yy < 0 || yy > verticalSubdivisions) ? 0.0 : (_cos * cosSlant);
-
         texCoords.push([(ii / radialSubdivisions), 1 - v]);
-        // texCoords.data[index + 0] = (ii / radialSubdivisions);
-        // texCoords.data[index + 1] = 1 - v;
       }
     }
 
     for (var yy = 0; yy < verticalSubdivisions + extra; ++yy) {
       for (var ii = 0; ii < radialSubdivisions; ++ii) {
-        // indices.push(
-        //   vertsAroundEdge * (yy + 0) + 0 + ii,
-        //   vertsAroundEdge * (yy + 0) + 1 + ii,
-        //   vertsAroundEdge * (yy + 1) + 1 + ii,
-        // );
-        // indices.push(
-        //   vertsAroundEdge * (yy + 0) + 0 + ii,
-        //   vertsAroundEdge * (yy + 1) + 1 + ii,
-        //   vertsAroundEdge * (yy + 1) + 0 + ii,
-        // );
         indices.push([
           vertsAroundEdge * (yy + 0) + 0 + ii,
           vertsAroundEdge * (yy + 0) + 1 + ii,
           vertsAroundEdge * (yy + 1) + 1 + ii,
         ]);
 
-        // indices.data[index + 0] = vertsAroundEdge * (yy + 0) + 0 + ii;
-        // indices.data[index + 1] = vertsAroundEdge * (yy + 0) + 1 + ii;
-        // indices.data[index + 2] = vertsAroundEdge * (yy + 1) + 1 + ii;
-
         indices.push([
           vertsAroundEdge * (yy + 0) + 0 + ii,
           vertsAroundEdge * (yy + 1) + 1 + ii,
           vertsAroundEdge * (yy + 1) + 0 + ii,
         ]);
-
-        // indices.data[index + 3] = vertsAroundEdge * (yy + 0) + 0 + ii;
-        // indices.data[index + 4] = vertsAroundEdge * (yy + 1) + 1 + ii;
-        // indices.data[index + 5] = vertsAroundEdge * (yy + 1) + 0 + ii;
       }
     }
 
