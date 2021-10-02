@@ -48,6 +48,7 @@ import 'examples/Lighting/spot_lighting_2.dart';
 import 'examples/Structure_and_Organization/less_code_more_fun_1.dart';
 import 'examples/Structure_and_Organization/drawing_multiple_things_1.dart';
 import 'examples/Structure_and_Organization/drawing_multiple_things_2.dart';
+import 'examples/Structure_and_Organization/scene_graph_1.dart';
 
 void main() {
   runApp(const MyApp());
@@ -117,6 +118,7 @@ class _MyAppState extends State<MyApp> {
         '/structure_and_organization/less_code_more_fun_1': (context) => const LessCodeMoreFun1(),
         '/structure_and_organization/drawing_multiple_things_1': (context) => const DrawingMultipleThings1(),
         '/structure_and_organization/drawing_multiple_things_2': (context) => const DrawingMultipleThings2(),
+        '/structure_and_organization/scene_graph_1': (context) => const SceneGraph1(),
       },
     );
   }
