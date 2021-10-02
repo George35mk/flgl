@@ -14,14 +14,14 @@ import 'package:flutter/material.dart';
 
 import '../controls/gl_controls.dart';
 
-class SceneGraph2 extends StatefulWidget {
-  const SceneGraph2({Key? key}) : super(key: key);
+class SceneGraph3 extends StatefulWidget {
+  const SceneGraph3({Key? key}) : super(key: key);
 
   @override
-  _SceneGraph2State createState() => _SceneGraph2State();
+  _SceneGraph3State createState() => _SceneGraph3State();
 }
 
-class _SceneGraph2State extends State<SceneGraph2> {
+class _SceneGraph3State extends State<SceneGraph3> {
   bool initialized = false;
 
   dynamic program;
@@ -82,7 +82,7 @@ class _SceneGraph2State extends State<SceneGraph2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("3D Scene graph 2"),
+        title: const Text("3D Scene graph 3"),
       ),
       body: Column(
         children: [

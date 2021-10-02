@@ -50,6 +50,7 @@ import 'examples/Structure_and_Organization/drawing_multiple_things_1.dart';
 import 'examples/Structure_and_Organization/drawing_multiple_things_2.dart';
 import 'examples/Structure_and_Organization/scene_graph_1.dart';
 import 'examples/Structure_and_Organization/scene_graph_2.dart';
+import 'examples/Structure_and_Organization/scene_graph_3.dart';
 
 void main() {
   runApp(const MyApp());
@@ -121,6 +122,7 @@ class _MyAppState extends State<MyApp> {
         '/structure_and_organization/drawing_multiple_things_2': (context) => const DrawingMultipleThings2(),
         '/structure_and_organization/scene_graph_1': (context) => const SceneGraph1(),
         '/structure_and_organization/scene_graph_2': (context) => const SceneGraph2(),
+        '/structure_and_organization/scene_graph_3': (context) => const SceneGraph3(),
       },
     );
   }
