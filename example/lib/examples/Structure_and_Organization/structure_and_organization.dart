@@ -28,6 +28,11 @@ class _StructureAndOrganizationState extends State<StructureAndOrganization> {
       "name": "Scene graph 1",
       "description": "Example of Scene graph 1",
       "route": 'scene_graph_1',
+    },
+    '5': {
+      "name": "Scene graph 2",
+      "description": "Example of Scene graph 2",
+      "route": 'scene_graph_2',
     }
   };
 
