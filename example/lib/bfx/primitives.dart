@@ -4,17 +4,6 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import 'array_buffer.dart';
 
-///  Array of the indices of corners of each face of a cube.
-///  @type {Array.<number[]>}
-const CUBE_FACE_INDICES = [
-  [3, 7, 5, 1], // right
-  [6, 2, 0, 4], // left
-  [6, 7, 3, 2], // ??
-  [0, 1, 5, 4], // ??
-  [7, 6, 4, 5], // front
-  [2, 3, 1, 0], // back
-];
-
 class Primitives {
   /// Given indexed vertices creates a new set of vertices unindexed by expanding the indexed vertices.
   /// @param {Object.<string, TypedArray>} vertices The indexed vertices to deindex
@@ -353,6 +342,17 @@ class Primitives {
       [0, 0],
       [0, 1],
       [1, 1],
+    ];
+
+    ///  Array of the indices of corners of each face of a cube.
+    ///  @type {Array.<number[]>}
+    const List<List<int>> CUBE_FACE_INDICES = [
+      [3, 7, 5, 1], // right
+      [6, 2, 0, 4], // left
+      [6, 7, 3, 2], // ??
+      [0, 1, 5, 4], // ??
+      [7, 6, 4, 5], // front
+      [2, 3, 1, 0], // back
     ];
 
     var numVertices = 6 * 4;
