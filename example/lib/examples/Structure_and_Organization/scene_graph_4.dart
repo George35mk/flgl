@@ -350,7 +350,7 @@ class _SceneGraph4State extends State<SceneGraph4> {
     scene.updateWorldMatrix();
 
     var adjust;
-    var speed = 1;
+    var speed = 2;
     var c = time * speed;
 
     adjust = sin(c).abs();
