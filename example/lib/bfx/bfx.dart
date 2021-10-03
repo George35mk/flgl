@@ -295,10 +295,9 @@ class BFX {
   /// - @param {number} shaderType The type of shader.
   /// - @param {module:webgl-utils.ErrorCallback} opt_errorCallback callback for errors.
   /// - @return {WebGLShader} The created shader.
-  static int loadShader(OpenGLContextES gl, String shaderSource, int shaderType, [opt_errorCallback]) {
-    // const errFn = opt_errorCallback | error;
+  static int loadShader(OpenGLContextES gl, String shaderSource, int shaderType) {
     // Create the shader object
-    var shader = gl.createShader(shaderType);
+    int shader = gl.createShader(shaderType);
 
     // Load the shader source
     gl.shaderSource(shader, shaderSource);
