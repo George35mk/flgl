@@ -6,9 +6,8 @@ import 'array_buffer.dart';
 
 class Primitives {
   /// Given indexed vertices creates a new set of vertices unindexed by expanding the indexed vertices.
-  /// @param {Object.<string, TypedArray>} vertices The indexed vertices to deindex
-  /// @return {Object.<string, TypedArray>} The deindexed vertices
-  /// @memberOf module:primitives
+  /// - @param Map<String, ArrayBuffer> [vertices] The indexed vertices to deindex
+  /// - @return Map<String, ArrayBuffer> The deindexed vertices
   static deindexVertices(Map<String, ArrayBuffer> vertices) {
     var indices = vertices['indices']; // get the indices list.
     Map<String, ArrayBuffer> newVertices = {}; // create an empty map
@@ -46,13 +45,13 @@ class Primitives {
   /// - @param {Object.<string, augmentedTypedArray>} vertices Vertices as returned from one of the createXXXVertices functions.
   /// - @param {module:primitives.RandomVerticesOptions} [options] options.
   /// - @return {Object.<string, augmentedTypedArray>} same vertices as passed in with `color` added.
-  /// - @memberOf module:primitives
   static makeRandomVertexColors(Map<String, ArrayBuffer> vertices, [options]) {
     options ??= {};
     var numElements = vertices['position']!.numElements;
     var vcolors = ArrayBuffer(4, numElements, 'Uint8');
 
-    rand(ndx, int channel) {
+    /// returns a random int between 0-256
+    int rand(ndx, int channel) {
       return channel < 3 ? Random().nextInt(256) : 255;
     }
 
@@ -72,7 +71,7 @@ class Primitives {
       var numSets = numElements / numVertsPerColor;
 
       for (var ii = 0; ii < numSets; ++ii) {
-        var color = [rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3)];
+        List<int> color = [rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3)];
         for (var jj = 0; jj < numVertsPerColor; ++jj) {
           vcolors.push(color);
         }
@@ -85,8 +84,8 @@ class Primitives {
   // a_position:'position'
   // a_normal:'normal'
   // a_color:'color'
-  static createMapping(Map<String, ArrayBuffer> obj) {
-    var mapping = {};
+  static Map<String, String> createMapping(Map<String, ArrayBuffer> obj) {
+    Map<String, String> mapping = {};
     obj.forEach((key, value) {
       if (key != 'indices') {
         mapping['a_$key'] = key;
@@ -141,7 +140,7 @@ class Primitives {
 
   // change arrays with arrayBuffers.
   static createAttribsFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [optMapping]) {
-    var mapping = optMapping ?? createMapping(arrays);
+    Map<String, String> mapping = optMapping ?? createMapping(arrays);
     var attribs = {};
     mapping.forEach((attribName, value) {
       var bufferName = mapping[attribName];
