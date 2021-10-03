@@ -16,11 +16,6 @@ const CUBE_FACE_INDICES = [
 ];
 
 class Primitives {
-  List<dynamic> getAllExceptInticesList(List<dynamic> vertices) {
-    List outputList = vertices.where((o) => o['category_id'] == '1').toList();
-    return outputList;
-  }
-
   /// Given indexed vertices creates a new set of vertices unindexed by expanding the indexed vertices.
   /// @param {Object.<string, TypedArray>} vertices The indexed vertices to deindex
   /// @return {Object.<string, TypedArray>} The deindexed vertices
