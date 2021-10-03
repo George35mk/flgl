@@ -59,6 +59,9 @@ class _SceneGraph3State extends State<SceneGraph3> {
   List<Map<String, dynamic>> objectsToDraw = [];
   List<Node> objects = [];
 
+  late Node solarSystemNode;
+  late Node earthOrbitNode;
+  late Node moonOrbitNode;
   late Node sunNode;
   late Node earthNode;
   late Node moonNode;
@@ -169,8 +172,17 @@ class _SceneGraph3State extends State<SceneGraph3> {
     programInfo = BFX.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
 
     // Let's make all the nodes
+    solarSystemNode = Node();
+    earthOrbitNode = Node();
+    moonOrbitNode = Node();
+
+    earthOrbitNode.localMatrix = M4.translation(100, 0, 0); // earth orbit 100 units from the sun
+    moonOrbitNode.localMatrix = M4.translation(30, 0, 0); // moon 20 units from the earth
+
+    // Let's make all the nodes
     sunNode = Node();
     sunNode.localMatrix = M4.translation(0, 0, 0); // sun a the center
+    sunNode.localMatrix = M4.scale(sunNode.localMatrix, 2, 2, 2);
     sunNode.drawInfo = {
       'uniforms': {
         'u_colorOffset': [0.6, 0.6, 0, 1], // yellow
@@ -181,9 +193,7 @@ class _SceneGraph3State extends State<SceneGraph3> {
     };
 
     earthNode = Node();
-    earthNode.localMatrix = M4.translation(80, 0, 0); // earth 100 units from the sun
-    // make the earth twice as large
-    earthNode.localMatrix = M4.scale(earthNode.localMatrix, 2, 2, 2);
+    earthNode.localMatrix = M4.scale(earthNode.localMatrix, 1.2, 1.2, 1.2); // make the earth twice as large
     earthNode.drawInfo = {
       'uniforms': {
         'u_colorOffset': [0.2, 0.5, 0.8, 1], // blue-green
@@ -194,7 +204,7 @@ class _SceneGraph3State extends State<SceneGraph3> {
     };
 
     moonNode = Node();
-    moonNode.localMatrix = M4.translation(25, 0, 0); // moon 20 units from the earth
+    moonNode.localMatrix = M4.scale(moonNode.localMatrix, 0.8, 0.8, 0.8);
     moonNode.drawInfo = {
       'uniforms': {
         'u_colorOffset': [0.6, 0.6, 0.6, 1], // gray
@@ -205,8 +215,11 @@ class _SceneGraph3State extends State<SceneGraph3> {
     };
 
     // connect the celetial objects
-    moonNode.setParent(earthNode);
-    earthNode.setParent(sunNode);
+    sunNode.setParent(solarSystemNode);
+    earthOrbitNode.setParent(solarSystemNode);
+    earthNode.setParent(earthOrbitNode);
+    moonOrbitNode.setParent(earthOrbitNode);
+    moonNode.setParent(moonOrbitNode);
 
     objects = [
       sunNode,
@@ -259,12 +272,11 @@ class _SceneGraph3State extends State<SceneGraph3> {
     var viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
 
     // update the local matrices for each object.
-    M4.multiply(M4.yRotation(0.01), sunNode.localMatrix, sunNode.localMatrix);
-    M4.multiply(M4.yRotation(0.01), earthNode.localMatrix, earthNode.localMatrix);
-    M4.multiply(M4.yRotation(0.05), moonNode.localMatrix, moonNode.localMatrix);
+    M4.multiply(M4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);
+    M4.multiply(M4.yRotation(0.05), moonOrbitNode.localMatrix, moonOrbitNode.localMatrix);
 
     // Update all world matrices in the scene graph
-    sunNode.updateWorldMatrix();
+    solarSystemNode.updateWorldMatrix();
 
     // Compute all the matrices for rendering
     for (var object in objects) {
