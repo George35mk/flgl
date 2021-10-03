@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flgl/flgl.dart';
-import 'package:flgl/viewport_gl.dart';
+import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
@@ -68,16 +68,16 @@ class _Example15State extends State<Example15> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Example 15 (Orthographic 3D)"),
+        title: const Text("Example 15 (Orthographic 3D 1)"),
       ),
       body: Column(
         children: [
           Stack(
             children: [
-              ViewportGL(
+              FLGLViewport(
                 width: width,
                 height: height,
-                onChange: (Flgl _flgl) {
+                onInit: (Flgl _flgl) {
                   setState(() {
                     initialized = true;
                     flgl = _flgl;
@@ -266,7 +266,7 @@ class _Example15State extends State<Example15> {
     // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
     var offset_ = 0;
-    var count = 18;
+    var count = 18; // 6 triangles in the 'F', 3 points per triangle
     gl.drawArrays(primitiveType, offset_, count);
 
     // !super important.

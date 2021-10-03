@@ -5,8 +5,9 @@ import '../constants/open_gl_30_constant.dart';
 import '../bindings/gles_bindings.dart';
 
 class OpenGLContextES extends OpenGL30Constant {
-  // TODO need free memory
-  List<Pointer<Uint32>> _uint32pointers = [];
+  // ignore: todo
+  /// TODO need free memory
+  // List<Pointer<Uint32>> _uint32pointers = [];
 
   // late LibOpenGLES gl; // use this.
   late LibOpenGLES gl;
@@ -20,8 +21,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glScissor(x, y, z, w);
   }
 
-  viewport(x, y, z, w) {
-    return gl.glViewport(x, y, z, w);
+  void viewport(int x, int y, int width, int height) {
+    return gl.glViewport(x, y, width, height);
   }
 
   getShaderPrecisionFormat() {
@@ -30,7 +31,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
   getExtension(String key) {
     Pointer _v = gl.glGetString(EXTENSIONS);
-    print("OpenGLES getExtension key: ${key} _v: ${_v} ");
+    // print("OpenGLES getExtension key: ${key} _v: ${_v} ");
 
     String _vstr = _v.cast<Utf8>().toDartString();
     List<String> _extensions = _vstr.split(" ");
@@ -54,7 +55,12 @@ class OpenGLContextES extends OpenGL30Constant {
       MAX_SAMPLES,
       MAX_COMBINED_TEXTURE_IMAGE_UNITS,
       GL_SCISSOR_BOX,
-      GL_VIEWPORT
+      GL_VIEWPORT,
+      CULL_FACE,
+      DEPTH_TEST,
+      VERSION,
+      SHADING_LANGUAGE_VERSION,
+      VENDOR
     ];
 
     if (_intValues.indexOf(key) >= 0) {
@@ -62,7 +68,7 @@ class OpenGLContextES extends OpenGL30Constant {
       gl.glGetIntegerv(key, v);
       return v.value;
     } else {
-      throw (" OpenGL getParameter key: ${key} is not support ");
+      throw ("OpenGL getParameter key: $key is not support");
     }
   }
 
@@ -100,8 +106,7 @@ class OpenGLContextES extends OpenGL30Constant {
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type,
-          nativeBuffer.cast<Void>());
+      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nativeBuffer.cast<Void>());
       calloc.free(nativeBuffer);
     } else {
       gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nullptr);
@@ -112,18 +117,17 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.texImage2D(target, level, internalformat, format, type, data);
   // }
 
-  texImage3D(int target, int level, int internalformat, int width, int height, int depth,
-      int border, int format, int type, data) {
+  texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format,
+      int type, data) {
     Pointer<Int8> nativeBuffer;
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type,
-          nativeBuffer.cast<Void>());
+      gl.glTexImage3D(
+          target, level, internalformat, width, height, depth, border, format, type, nativeBuffer.cast<Void>());
       calloc.free(nativeBuffer);
     } else {
-      gl.glTexImage3D(
-          target, level, internalformat, width, height, depth, border, format, type, nullptr);
+      gl.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, nullptr);
     }
   }
 
@@ -135,8 +139,12 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glDepthMask(v0 ? 1 : 0);
   }
 
-  enable(v0) {
-    return gl.glEnable(v0);
+  /// ### enable or disable server-side GL capabilities
+  /// #### Parameters
+  ///
+  /// - [cap] Specifies a symbolic constant indicating a GL capability.
+  void enable(int cap) {
+    return gl.glEnable(cap);
   }
 
   disable(v0) {
@@ -160,7 +168,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   blendEquationSeparate(var0, var1) {
-    print(" OpenGL blendEquationSeparate ...  ");
+    // print(" OpenGL blendEquationSeparate ...  ");
   }
 
   frontFace(v0) {
@@ -180,15 +188,15 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   stencilMask(v0) {
-    print(" OpenGL stencilMask ...  ");
+    // print(" OpenGL stencilMask ...  ");
   }
 
   stencilFunc(v0, v1, v2) {
-    print(" OpenGL stencilFunc ...  ");
+    // print(" OpenGL stencilFunc ...  ");
   }
 
   stencilOp(v0, v1, v2) {
-    print(" OpenGL stencilOp ...  ");
+    // print(" OpenGL stencilOp ...  ");
   }
 
   clearStencil(v0) {
@@ -251,26 +259,25 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.getContextAttributes();
   // }
 
-  getProgramParameter(v0, v1) {
-    final status = calloc<Int32>();
-    gl.glGetProgramiv(v0, v1, status);
-    final _v = status.value;
+  int getProgramParameter(int program, int pname) {
+    Pointer<Int32> status = calloc<Int32>();
+    gl.glGetProgramiv(program, pname, status);
+    int _v = status.value;
     calloc.free(status);
     return _v;
   }
 
-  getActiveUniform(v0, v1) {
-    var length = calloc<Int32>();
-    var size = calloc<Int32>();
-    var type = calloc<Uint32>();
-    var name = calloc<Int8>(100);
+  getActiveUniform(int program, int index) {
+    Pointer<Int32> length = calloc<Int32>();
+    Pointer<Int32> size = calloc<Int32>();
+    Pointer<Uint32> type = calloc<Uint32>();
+    Pointer<Int8> name = calloc<Int8>(100);
 
-    gl.glGetActiveUniform(v0, v1, 99, length, size, type, name);
+    gl.glGetActiveUniform(program, index, 99, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
     int _size = size.value;
-    int _length = length.value;
 
     calloc.free(type);
     calloc.free(name);
@@ -291,7 +298,6 @@ class OpenGLContextES extends OpenGL30Constant {
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
     int _size = size.value;
-    int _length = length.value;
 
     calloc.free(type);
     calloc.free(name);
@@ -301,15 +307,19 @@ class OpenGLContextES extends OpenGL30Constant {
     return ActiveInfo(_type, _name, _size);
   }
 
-  getUniformLocation(v0, String name) {
+  /// Returns the location of a uniform variable
+  /// - [program] Specifies the program object to be queried.
+  /// - [name] Points to a null terminated string containing the name of the uniform variable whose location is to be
+  ///   queried.
+  int getUniformLocation(int program, String name) {
     final locationName = name.toNativeUtf8();
-    final location = gl.glGetUniformLocation(v0, locationName.cast<Int8>());
+    final location = gl.glGetUniformLocation(program, locationName.cast<Int8>());
     calloc.free(locationName);
     return location;
   }
 
-  clear(v0) {
-    return gl.glClear(v0);
+  clear(int mask) {
+    return gl.glClear(mask);
   }
 
   createBuffer() {
@@ -328,20 +338,46 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(ptr);
   }
 
-  bindBuffer(v0, v1) {
-    return gl.glBindBuffer(v0, v1.bufferId);
+  bindBuffer(int target, dynamic buffer) {
+    return gl.glBindBuffer(target, buffer.bufferId);
   }
 
   // bufferData(int target, int size, data, int usage) {
   //   gl.glBufferData(target, size, data.cast<Void>(), usage);
   // }
 
-  bufferData(int target, data, int usage) {
+  /// ### Creates and initializes a buffer object's data store
+  ///
+  /// #### Parameters
+  /// - target
+  ///
+  ///   Specifies the target buffer object. The symbolic constant must be
+  ///   - GL_ARRAY_BUFFER, GL_ATOMIC_COUNTER_BUFFER, GL_COPY_READ_BUFFER,
+  ///   - GL_COPY_WRITE_BUFFER, GL_DRAW_INDIRECT_BUFFER,
+  ///   - GL_DISPATCH_INDIRECT_BUFFER, GL_ELEMENT_ARRAY_BUFFER,
+  ///   - GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER,
+  ///   - GL_SHADER_STORAGE_BUFFER, GL_TRANSFORM_FEEDBACK_BUFFER, or
+  ///   - GL_UNIFORM_BUFFER.
+  ///
+  /// - data
+  ///
+  ///   Specifies a pointer to data that will be copied into the data store for initialization,
+  ///   or NULL if no data is to be copied.
+  ///
+  /// - usage
+  ///
+  ///   Specifies the expected usage pattern of the data store. The symbolic constant must be
+  ///   GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY, GL_STATIC_DRAW, GL_STATIC_READ,
+  ///   GL_STATIC_COPY, GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, or GL_DYNAMIC_COPY.
+  void bufferData(int target, dynamic data, int usage) {
     late Pointer<Void> nativeData;
     late int size;
     if (data is List<double> || data is Float32List) {
       nativeData = floatListToArrayPointer(data as List<double>).cast();
       size = data.length * sizeOf<Float>();
+    } else if (data is Uint8List) {
+      nativeData = uint8ListToArrayPointer(data).cast();
+      size = data.length * sizeOf<Uint8>();
     } else if (data is Int32List) {
       nativeData = int32ListToArrayPointer(data).cast();
       size = data.length * sizeOf<Int32>();
@@ -366,8 +402,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
   vertexAttribPointer(int index, int size, int type, bool normalized, int stride, int offset) {
     var offsetPointer = Pointer<Void>.fromAddress(offset);
-    gl.glVertexAttribPointer(
-        index, size, type, normalized ? 1 : 0, stride, offsetPointer.cast<Void>());
+    gl.glVertexAttribPointer(index, size, type, normalized ? 1 : 0, stride, offsetPointer.cast<Void>());
   }
 
   drawArrays(int mode, int first, int count) {
@@ -382,8 +417,13 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glCheckFramebufferStatus(v0);
   }
 
-  framebufferTexture2D(v0, v1, v2, v3, v4) {
-    return gl.glFramebufferTexture2D(v0, v1, v2, v3, v4);
+  // int target,
+  // int attachment,
+  // int textarget,
+  // int texture,
+  // int level,
+  framebufferTexture2D(target, attachment, textarget, texture, level) {
+    return gl.glFramebufferTexture2D(target, attachment, textarget, texture, level);
   }
 
   readPixels(int x, int y, int width, int height, int format, int type, Uint8List data) {
@@ -395,7 +435,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   copyTexImage2D(v0, v1, v2, v3, v4, v5, v6, v7) {
-    print(" OpenGL copyTexImage2D ...  ");
+    // print(" OpenGL copyTexImage2D ...  ");
   }
 
   texSubImage2D(target, level, x, y, width, height, format, type, Uint8List data) {
@@ -411,7 +451,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   compressedTexSubImage2D(v0, v1, v2, v3, v4, v5, v6, v7) {
-    print(" OpenGL compressedTexSubImage2D ...  ");
+    // print(" OpenGL compressedTexSubImage2D ...  ");
   }
 
   bindRenderbuffer(v0, v1) {
@@ -455,8 +495,7 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter) {
-    return gl.glBlitFramebuffer(
-        srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    return gl.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
   }
 
   createVertexArray() {
@@ -467,7 +506,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  /// ### glCreateProgram — Creates a program object
+  /// ### Creates a program object
   ///
   /// #### Description
   /// glCreateProgram creates an empty program object and returns a non-zero
@@ -484,26 +523,33 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glCreateProgram();
   }
 
-  attachShader(v0, v1) {
-    return gl.glAttachShader(v0, v1);
+  /// Attaches a shader object to a program object
+  /// - [program] Specifies the program object to which a shader object will be attached.
+  /// - [shader] Specifies the shader object that is to be attached
+  attachShader(int program, int shader) {
+    return gl.glAttachShader(program, shader);
   }
 
-  isProgram(v0) {
-    return gl.glIsProgram(v0);
+  isProgram(int program) {
+    return gl.glIsProgram(program);
   }
 
-  bindAttribLocation(v0, v1, v2) {
-    return gl.glBindAttribLocation(v0, v1, v2);
+  bindAttribLocation(int program, int index, name) {
+    return gl.glBindAttribLocation(program, index, name);
   }
 
-  linkProgram(v0) {
-    return gl.glLinkProgram(v0);
+  /// Links a program object
+  /// - [program] Specifies the handle of the program object to be linked.
+  void linkProgram(int program) {
+    return gl.glLinkProgram(program);
   }
 
-  getProgramInfoLog(v0) {
+  /// Returns the information log for a program object
+  /// - [program] pecifies the program object whose information log is to be queried.
+  getProgramInfoLog(int program) {
     var infoLen = calloc<Int32>();
 
-    gl.glGetProgramiv(v0, INFO_LOG_LENGTH, infoLen);
+    gl.glGetProgramiv(program, INFO_LOG_LENGTH, infoLen);
 
     int _len = infoLen.value;
     calloc.free(infoLen);
@@ -512,7 +558,7 @@ class OpenGLContextES extends OpenGL30Constant {
 
     if (infoLen.value > 0) {
       final infoLog = calloc<Int8>(_len);
-      gl.glGetProgramInfoLog(v0, _len, nullptr, infoLog);
+      gl.glGetProgramInfoLog(program, _len, nullptr, infoLog);
 
       message = "\nError compiling shader:\n${infoLog.cast<Utf8>().toDartString()}";
       calloc.free(infoLog);
@@ -522,9 +568,11 @@ class OpenGLContextES extends OpenGL30Constant {
     }
   }
 
-  getShaderInfoLog(v0) {
+  /// Returns the information log for a shader object
+  /// - [shader] Specifies the shader object whose information log is to be queried.
+  getShaderInfoLog(int shader) {
     final infoLen = calloc<Int32>();
-    gl.glGetShaderiv(v0, INFO_LOG_LENGTH, infoLen);
+    gl.glGetShaderiv(shader, INFO_LOG_LENGTH, infoLen);
 
     int _len = infoLen.value;
     calloc.free(infoLen);
@@ -533,7 +581,7 @@ class OpenGLContextES extends OpenGL30Constant {
     if (infoLen.value > 1) {
       final infoLog = calloc<Int8>(_len);
 
-      gl.glGetShaderInfoLog(v0, _len, nullptr, infoLog);
+      gl.glGetShaderInfoLog(shader, _len, nullptr, infoLog);
       message = "\nError compiling shader:\n${infoLog.cast<Utf8>().toDartString()}";
 
       calloc.free(infoLog);
@@ -545,18 +593,23 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glGetError();
   }
 
-  deleteShader(v0) {
-    return gl.glDeleteShader(v0);
+  /// Deletes a shader object
+  /// - [shader] Specifies the shader object to be deleted.
+  void deleteShader(int shader) {
+    return gl.glDeleteShader(shader);
   }
 
-  deleteProgram(v0) {
-    return gl.glDeleteProgram(v0);
+  /// Deletes a program object
+  /// - [program] Specifies the program object to be deleted.
+  void deleteProgram(int program) {
+    return gl.glDeleteProgram(program);
   }
 
-  bindVertexArray(v0) {
-    return gl.glBindVertexArray(v0);
+  bindVertexArray(int array) {
+    return gl.glBindVertexArray(array);
   }
 
+  /// Delete vertex array object
   deleteVertexArray(int v0) {
     var _list = [v0];
     final ptr = calloc<Uint32>(_list.length);
@@ -617,29 +670,37 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
+  /// Creates a shader object
+  /// - [type] the shader type
   int createShader(int type) {
     return gl.glCreateShader(type);
   }
 
-  shaderSource(v0, String shaderSource) {
+  /// Replaces the source code in a shader object
+  /// - [shader] Specifies the handle of the shader object whose source code is to be replaced.
+  /// - [shaderSource] Specifies an array of pointers to strings containing the source code to be loaded into the shader.
+  void shaderSource(int shader, String shaderSource) {
     var sourceString = shaderSource.toNativeUtf8();
     var arrayPointer = calloc<Pointer<Int8>>();
     arrayPointer.value = Pointer.fromAddress(sourceString.address);
-    gl.glShaderSource(v0, 1, arrayPointer, nullptr);
+    gl.glShaderSource(shader, 1, arrayPointer, nullptr);
     calloc.free(arrayPointer);
     calloc.free(sourceString);
   }
 
-  compileShader(v0) {
-    return gl.glCompileShader(v0);
+  /// Compiles a shader object
+  /// - Specifies the [shader] object to be compiled.
+  compileShader(int shader) {
+    return gl.glCompileShader(shader);
   }
 
-  getShaderParameter(v0, v1) {
-    var _pointer = calloc<Int32>();
-    gl.glGetShaderiv(v0, v1, _pointer);
+  /// Returns a parameter from a shader object
+  getShaderParameter(int shader, int pname) {
+    var params = calloc<Int32>();
+    gl.glGetShaderiv(shader, pname, params);
 
-    final _v = _pointer.value;
-    calloc.free(_pointer);
+    final _v = params.value;
+    calloc.free(params);
 
     return _v;
   }
@@ -654,15 +715,15 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(arrayPointer);
   }
 
-  uniform1i(v0, v1) {
-    return gl.glUniform1i(v0, v1);
+  uniform1i(int location, v0) {
+    return gl.glUniform1i(location, v0);
   }
 
-  uniform3f(v0, num v1, num v2, num v3) {
-    return gl.glUniform3f(v0, v1.toDouble(), v2.toDouble(), v3.toDouble());
+  uniform3f(int location, num v1, num v2, num v3) {
+    return gl.glUniform3f(location, v1.toDouble(), v2.toDouble(), v3.toDouble());
   }
 
-  uniform1fv(location, List<num> value) {
+  uniform1fv(int location, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniform1fv(location, value.length ~/ 1, arrayPointer);
@@ -678,8 +739,15 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  uniform1f(v0, num v1) {
-    return gl.glUniform1f(v0, v1.toDouble());
+  uniform1f(int location, num v0) {
+    return gl.glUniform1f(location, v0.toDouble());
+  }
+
+  uniformMatrix2fv(location, bool transpose, List<num> value) {
+    List<double> _list = value.map((e) => e.toDouble()).toList();
+    var arrayPointer = floatListToArrayPointer(_list);
+    gl.glUniformMatrix2fv(location, value.length ~/ 6, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
   }
 
   uniformMatrix3fv(location, bool transpose, List<num> value) {
@@ -687,10 +755,13 @@ class OpenGLContextES extends OpenGL30Constant {
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniformMatrix3fv(location, value.length ~/ 9, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
-    return;
   }
 
-  getAttribLocation(program, String name) {
+  /// Returns the location of an attribute variable.
+  /// - [program] Specifies the program object to be queried.
+  /// - [name] Points to a null terminated string containing the name of the attribute variable whose location is to be
+  ///   queried.
+  int getAttribLocation(int program, String name) {
     final locationName = name.toNativeUtf8();
     final location = gl.glGetAttribLocation(program, locationName.cast<Int8>());
     calloc.free(locationName);
@@ -717,17 +788,29 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  // uniform2iv(v0, v1) {
-  //   return gl.glUniform2iv(v0, v1);
-  // }
+  uniform2iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform2iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
-  // uniform3iv(v0, v1) {
-  //   return gl.glUniform3iv(v0, v1);
-  // }
+  uniform3iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform3iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
-  // uniform4iv(v0, v1) {
-  //   return gl.glUniform4iv(v0, v1);
-  // }
+  uniform4iv(int location, value) {
+    int count = value.length;
+    final valuePtr = calloc<Int32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform4iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
 
   uniform4fv(location, List<num> value) {
     int count = value.length;
