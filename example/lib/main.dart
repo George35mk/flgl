@@ -5,6 +5,7 @@ import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
 import 'package:flgl_example/examples/Structure_and_Organization/structure_and_organization.dart';
+import 'package:flgl_example/examples/drawing_objects/drawing_objects.dart';
 
 import 'examples/Fundamentals/example_1.dart';
 import 'examples/Fundamentals/example_2.dart';
@@ -52,6 +53,8 @@ import 'examples/Structure_and_Organization/scene_graph_1.dart';
 import 'examples/Structure_and_Organization/scene_graph_2.dart';
 import 'examples/Structure_and_Organization/scene_graph_3.dart';
 import 'examples/Structure_and_Organization/scene_graph_4.dart';
+
+import 'package:flgl_example/examples/drawing_objects/cube_example.dart';
 
 void main() {
   runApp(const MyApp());
@@ -135,6 +138,10 @@ class _MyAppState extends State<MyApp> {
         '/structure_and_organization/scene_graph_2': (context) => const SceneGraph2(),
         '/structure_and_organization/scene_graph_3': (context) => const SceneGraph3(),
         '/structure_and_organization/scene_graph_4': (context) => const SceneGraph4(),
+
+        // drawing_objects
+        '/drawing_objects': (context) => const DrawingObjects(),
+        '/drawing_objects/cube_example': (context) => const CubeExample(),
       },
     );
   }
