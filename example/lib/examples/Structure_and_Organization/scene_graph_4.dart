@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
@@ -44,6 +45,7 @@ class _SceneGraph4State extends State<SceneGraph4> {
 
   Timer? timer;
 
+  dynamic cubeBufferInfo;
   dynamic programInfo;
   dynamic sphereBufferInfo;
 
@@ -58,13 +60,102 @@ class _SceneGraph4State extends State<SceneGraph4> {
 
   List<Map<String, dynamic>> objectsToDraw = [];
   List<Node> objects = [];
+  var nodeInfosByName = {};
+  var scene;
 
-  late Node solarSystemNode;
-  late Node earthOrbitNode;
-  late Node moonOrbitNode;
-  late Node sunNode;
-  late Node earthNode;
-  late Node moonNode;
+  // Let's make all the nodes
+  var blockGuyNodeDescriptions = {
+    'name': "point between feet",
+    'draw': false,
+    'children': [
+      {
+        'name': "waist",
+        'translation': [0, 3, 0],
+        'children': [
+          {
+            'name': "torso",
+            'translation': [0, 2, 0],
+            'children': [
+              {
+                'name': "neck",
+                'translation': [0, 1, 0],
+                'children': [
+                  {
+                    'name': "head",
+                    'translation': [0, 1, 0],
+                  },
+                ],
+              },
+              {
+                'name': "left-arm",
+                'translation': [-1, 0, 0],
+                'children': [
+                  {
+                    'name': "left-forearm",
+                    'translation': [-1, 0, 0],
+                    'children': [
+                      {
+                        'name': "left-hand",
+                        'translation': [-1, 0, 0],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                'name': "right-arm",
+                'translation': [1, 0, 0],
+                'children': [
+                  {
+                    'name': "right-forearm",
+                    'translation': [1, 0, 0],
+                    'children': [
+                      {
+                        'name': "right-hand",
+                        'translation': [1, 0, 0],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            'name': "left-leg",
+            'translation': [-1, -1, 0],
+            'children': [
+              {
+                'name': "left-calf",
+                'translation': [0, -1, 0],
+                'children': [
+                  {
+                    'name': "left-foot",
+                    'translation': [0, -1, 0],
+                  },
+                ],
+              }
+            ],
+          },
+          {
+            'name': "right-leg",
+            'translation': [1, -1, 0],
+            'children': [
+              {
+                'name': "right-calf",
+                'translation': [0, -1, 0],
+                'children': [
+                  {
+                    'name': "right-foot",
+                    'translation': [0, -1, 0],
+                  },
+                ],
+              }
+            ],
+          },
+        ],
+      },
+    ],
+  };
 
   @override
   void initState() {
@@ -166,72 +257,54 @@ class _SceneGraph4State extends State<SceneGraph4> {
     );
   }
 
-  initGl() {
-    sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
+  makeNodes(List nodeChildren) {
+    if (nodeChildren != null) {
+      // return nodeDescriptions.map(makeNode);
+      return nodeChildren.map((node) => makeNode(node));
+    } else {
+      return [];
+    }
+    // return nodeDescriptions ? nodeDescriptions.map(makeNode) : [];
+  }
 
+  makeNode(nodeDescription) {
+    var trs = TRS();
+    var node = Node(trs);
+
+    nodeInfosByName[nodeDescription['name']] = {
+      'trs': trs,
+      'node': node,
+    };
+
+    trs.translation = nodeDescription['translation'] ?? trs.translation;
+
+    if (nodeDescription['draw'] != false) {
+      node.drawInfo = {
+        'uniforms': {
+          'u_colorOffset': [0, 0, 0.6, 0],
+          'u_colorMult': [0.4, 0.4, 0.4, 1],
+        },
+        'programInfo': programInfo,
+        'bufferInfo': cubeBufferInfo,
+      };
+      objectsToDraw.add(node.drawInfo);
+      objects.add(node);
+    }
+
+    if (nodeDescription['children'] != null) {
+      makeNodes(nodeDescription['children']).forEach((child) {
+        child.setParent(node);
+      });
+    }
+
+    return node;
+  }
+
+  initGl() {
+    cubeBufferInfo = Primitives.createCubeWithVertexColorsBufferInfo(gl, 1);
     programInfo = BFX.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
 
-    // Let's make all the nodes
-    solarSystemNode = Node();
-    earthOrbitNode = Node();
-    moonOrbitNode = Node();
-
-    earthOrbitNode.localMatrix = M4.translation(100, 0, 0); // earth orbit 100 units from the sun
-    moonOrbitNode.localMatrix = M4.translation(30, 0, 0); // moon 20 units from the earth
-
-    // Let's make all the nodes
-    sunNode = Node();
-    sunNode.localMatrix = M4.translation(0, 0, 0); // sun a the center
-    sunNode.localMatrix = M4.scale(sunNode.localMatrix, 2, 2, 2);
-    sunNode.drawInfo = {
-      'uniforms': {
-        'u_colorOffset': [0.6, 0.6, 0, 1], // yellow
-        'u_colorMult': [0.4, 0.4, 0, 1],
-      },
-      'programInfo': programInfo,
-      'bufferInfo': sphereBufferInfo,
-    };
-
-    earthNode = Node();
-    earthNode.localMatrix = M4.scale(earthNode.localMatrix, 1.2, 1.2, 1.2); // make the earth twice as large
-    earthNode.drawInfo = {
-      'uniforms': {
-        'u_colorOffset': [0.2, 0.5, 0.8, 1], // blue-green
-        'u_colorMult': [0.8, 0.5, 0.2, 1],
-      },
-      'programInfo': programInfo,
-      'bufferInfo': sphereBufferInfo,
-    };
-
-    moonNode = Node();
-    moonNode.localMatrix = M4.scale(moonNode.localMatrix, 0.8, 0.8, 0.8);
-    moonNode.drawInfo = {
-      'uniforms': {
-        'u_colorOffset': [0.6, 0.6, 0.6, 1], // gray
-        'u_colorMult': [0.1, 0.1, 0.1, 1],
-      },
-      'programInfo': programInfo,
-      'bufferInfo': sphereBufferInfo,
-    };
-
-    // connect the celetial objects
-    sunNode.setParent(solarSystemNode);
-    earthOrbitNode.setParent(solarSystemNode);
-    earthNode.setParent(earthOrbitNode);
-    moonOrbitNode.setParent(earthOrbitNode);
-    moonNode.setParent(moonOrbitNode);
-
-    objects = [
-      sunNode,
-      earthNode,
-      moonNode,
-    ];
-
-    objectsToDraw = [
-      sunNode.drawInfo,
-      earthNode.drawInfo,
-      moonNode.drawInfo,
-    ];
+    scene = makeNode(blockGuyNodeDescriptions);
   }
 
   draw() {
@@ -260,9 +333,9 @@ class _SceneGraph4State extends State<SceneGraph4> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var cameraPosition = [0, -200, 0];
-    var cameraTarget = [0, 0, 0];
-    var cameraUp = [0, 0, 1];
+    var cameraPosition = [4, 3.5, 10];
+    var cameraTarget = [0, 3.5, 0];
+    var cameraUp = [0, 1, 0];
     var cameraMatrix = M4.lookAt(cameraPosition, cameraTarget, cameraUp);
 
     // Make a view matrix from the camera matrix.
@@ -271,12 +344,56 @@ class _SceneGraph4State extends State<SceneGraph4> {
     // Compute a view projection matrix
     var viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
 
-    // update the local matrices for each object.
-    M4.multiply(M4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);
-    M4.multiply(M4.yRotation(0.05), moonOrbitNode.localMatrix, moonOrbitNode.localMatrix);
+    // Draw objects
 
     // Update all world matrices in the scene graph
-    solarSystemNode.updateWorldMatrix();
+    scene.updateWorldMatrix();
+
+    var adjust;
+    var speed = 1;
+    var c = time * speed;
+
+    adjust = sin(c).abs();
+    nodeInfosByName["point between feet"]['trs'].translation[1] = adjust;
+
+    adjust = sin(c);
+    nodeInfosByName["left-leg"]['trs'].rotation[0] = adjust;
+    nodeInfosByName["right-leg"]['trs'].rotation[0] = -adjust;
+
+    adjust = sin(c + 0.1) * 0.4;
+    nodeInfosByName["left-calf"]['trs'].rotation[0] = -adjust;
+    nodeInfosByName["right-calf"]['trs'].rotation[0] = adjust;
+
+    adjust = sin(c + 0.1) * 0.4;
+    nodeInfosByName["left-foot"]['trs'].rotation[0] = -adjust;
+    nodeInfosByName["right-foot"]['trs'].rotation[0] = adjust;
+
+    adjust = sin(c) * 0.4;
+    nodeInfosByName["left-arm"]['trs'].rotation[2] = adjust;
+    nodeInfosByName["right-arm"]['trs'].rotation[2] = adjust;
+
+    adjust = sin(c + 0.1) * 0.4;
+    nodeInfosByName["left-forearm"]['trs'].rotation[2] = adjust;
+    nodeInfosByName["right-forearm"]['trs'].rotation[2] = adjust;
+
+    adjust = sin(c - 0.1) * 0.4;
+    nodeInfosByName["left-hand"]['trs'].rotation[2] = adjust;
+    nodeInfosByName["right-hand"]['trs'].rotation[2] = adjust;
+
+    adjust = sin(c) * 0.4;
+    nodeInfosByName["waist"]['trs'].rotation[1] = adjust;
+
+    adjust = sin(c) * 0.4;
+    nodeInfosByName["torso"]['trs'].rotation[1] = adjust;
+
+    adjust = sin(c + 0.25) * 0.4;
+    nodeInfosByName["neck"]['trs'].rotation[1] = adjust;
+
+    adjust = sin(c + 0.5) * 0.4;
+    nodeInfosByName["head"]['trs'].rotation[1] = adjust;
+
+    adjust = cos(c * 2) * 0.4;
+    nodeInfosByName["head"]['trs'].rotation[0] = adjust;
 
     // Compute all the matrices for rendering
     for (var object in objects) {
@@ -354,12 +471,38 @@ class _SceneGraph4State extends State<SceneGraph4> {
   """;
 }
 
+class TRS {
+  List<num> translation = [0, 0, 0];
+  List<num> rotation = [0, 0, 0];
+  List<num> scale = [1, 1, 1];
+
+  List<num> getMatrix([dst]) {
+    dst ??= M4.identity();
+
+    var t = this.translation;
+    var r = this.rotation;
+    var s = this.scale;
+
+    dst = M4.identity();
+    dst = M4.translate(dst, t[0], t[1], t[2]);
+    dst = M4.xRotate(dst, r[0]);
+    dst = M4.yRotate(dst, r[1]);
+    dst = M4.zRotate(dst, r[2]);
+    dst = M4.scale(dst, s[0], s[1], s[2]);
+
+    return dst;
+  }
+}
+
 class Node {
   List<Node> children = [];
   List<num> localMatrix = M4.identity();
   List<num> worldMatrix = M4.identity();
   Map<String, dynamic> drawInfo = {};
   Node? parent;
+  TRS source;
+
+  Node(this.source);
 
   setParent(Node parent) {
     // if the node has a parent
@@ -380,6 +523,11 @@ class Node {
   }
 
   updateWorldMatrix([parentWorldMatrix]) {
+    var source = this.source;
+    if (source != null) {
+      this.localMatrix = source.getMatrix(this.localMatrix);
+    }
+
     if (parentWorldMatrix != null) {
       // a matrix was passed in so do the math
       M4.multiply(parentWorldMatrix, this.localMatrix, this.worldMatrix);
