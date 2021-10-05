@@ -267,7 +267,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  getActiveUniform(int program, int index) {
+  ActiveInfo getActiveUniform(int program, int index) {
     Pointer<Int32> length = calloc<Int32>();
     Pointer<Int32> size = calloc<Int32>();
     Pointer<Uint32> type = calloc<Uint32>();

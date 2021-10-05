@@ -167,7 +167,8 @@ class _SceneGraph3State extends State<SceneGraph3> {
   }
 
   initGl() {
-    sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
+    // sphereBufferInfo = Primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
+    sphereBufferInfo = Primitives.createCubeWithVertexColorsBufferInfo(gl, 10);
 
     programInfo = BFX.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
 
