@@ -2,8 +2,18 @@ import 'dart:math';
 import 'quaternion.dart';
 import 'vector3.dart';
 
+var _v1 = Vector3();
+var _m1 = Matrix4();
+var _zero = Vector3(0, 0, 0);
+var _one = Vector3(1, 1, 1);
+var _x = Vector3();
+var _y = Vector3();
+var _z = Vector3();
+
 class Matrix4 {
-  List<num> elements = [
+  bool isMatrix4 = true;
+
+  List<double> elements = [
     1, 0, 0, 0, //
     0, 1, 0, 0, //
     0, 0, 1, 0, //
@@ -12,6 +22,7 @@ class Matrix4 {
 
   Matrix4();
 
+  /// Sets this matrix elements.
   set(
     double n11,
     double n12,
@@ -54,8 +65,17 @@ class Matrix4 {
   }
 
   identity() {
-    set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    set(
+      1, 0, 0, 0, //
+      0, 1, 0, 0, //
+      0, 0, 1, 0, //
+      0, 0, 0, 1, //
+    );
     return this;
+  }
+
+  clone() {
+    return Matrix4().fromArray(elements);
   }
 
   copy(Matrix4 m) {
@@ -77,6 +97,82 @@ class Matrix4 {
     te[13] = me[13];
     te[14] = me[14];
     te[15] = me[15];
+    return this;
+  }
+
+  copyPosition(Matrix4 m) {
+    var te = elements;
+    var me = m.elements;
+
+    te[12] = me[12];
+    te[13] = me[13];
+    te[14] = me[14];
+
+    return this;
+  }
+
+  setFromMatrix3(Matrix4 m) {
+    var me = m.elements;
+
+    set(
+      me[0], me[3], me[6], 0, //
+      me[1], me[4], me[7], 0, //
+      me[2], me[5], me[8], 0, //
+      0, 0, 0, 1, //
+    );
+
+    return this;
+  }
+
+  extractBasis(xAxis, yAxis, zAxis) {
+    xAxis.setFromMatrixColumn(this, 0);
+    yAxis.setFromMatrixColumn(this, 1);
+    zAxis.setFromMatrixColumn(this, 2);
+
+    return this;
+  }
+
+  makeBasis(Vector3 xAxis, Vector3 yAxis, Vector3 zAxis) {
+    set(
+      xAxis.x, yAxis.x, zAxis.x, 0, //
+      xAxis.y, yAxis.y, zAxis.y, 0, //
+      xAxis.z, yAxis.z, zAxis.z, 0, //
+      0, 0, 0, 1, //
+    );
+
+    return this;
+  }
+
+  extractRotation(Matrix4 m) {
+    // this method does not support reflection matrices
+
+    var te = elements;
+    var me = m.elements;
+
+    var scaleX = 1 / _v1.setFromMatrixColumn(m, 0).length();
+    var scaleY = 1 / _v1.setFromMatrixColumn(m, 1).length();
+    var scaleZ = 1 / _v1.setFromMatrixColumn(m, 2).length();
+
+    te[0] = me[0] * scaleX;
+    te[1] = me[1] * scaleX;
+    te[2] = me[2] * scaleX;
+    te[3] = 0;
+
+    te[4] = me[4] * scaleY;
+    te[5] = me[5] * scaleY;
+    te[6] = me[6] * scaleY;
+    te[7] = 0;
+
+    te[8] = me[8] * scaleZ;
+    te[9] = me[9] * scaleZ;
+    te[10] = me[10] * scaleZ;
+    te[11] = 0;
+
+    te[12] = 0;
+    te[13] = 0;
+    te[14] = 0;
+    te[15] = 1;
+
     return this;
   }
 
@@ -312,5 +408,42 @@ class Matrix4 {
       a.z * b.x - a.x * b.z,
       a.x * b.y - a.y * b.x,
     );
+  }
+
+  fromArray(array, [offset = 0]) {
+    for (var i = 0; i < 16; i++) {
+      elements[i] = array[i + offset];
+    }
+    return this;
+  }
+
+  toArray([array = List, offset = 0]) {
+    var te = elements;
+
+    array[offset] = te[0];
+    array[offset + 1] = te[1];
+    array[offset + 2] = te[2];
+    array[offset + 3] = te[3];
+
+    array[offset + 4] = te[4];
+    array[offset + 5] = te[5];
+    array[offset + 6] = te[6];
+    array[offset + 7] = te[7];
+
+    array[offset + 8] = te[8];
+    array[offset + 9] = te[9];
+    array[offset + 10] = te[10];
+    array[offset + 11] = te[11];
+
+    array[offset + 12] = te[12];
+    array[offset + 13] = te[13];
+    array[offset + 14] = te[14];
+    array[offset + 15] = te[15];
+
+    return array;
+  }
+
+  makeRotationFromQuaternion(Quaternion q) {
+    return compose(_zero, q, _one);
   }
 }
