@@ -1,7 +1,7 @@
 import 'package:flgl_example/bfx/math/quaternion.dart';
 
 import '../math/matrix4.dart';
-import '../math/vector_3.dart';
+import '../math/vector3.dart';
 
 class Object3D {
   /// the object uniqu hash id. c24f3sd2

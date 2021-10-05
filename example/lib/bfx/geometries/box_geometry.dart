@@ -1,6 +1,6 @@
 import 'package:flgl_example/bfx/core/buffer_geometry.dart';
 
-import '../math/vector_3.dart';
+import '../math/vector3.dart';
 
 class BoxGeometry extends BufferGeometry {
   /// The box width
