@@ -1,6 +1,6 @@
 import 'dart:math';
 import '../quaternion.dart';
-import '../vector_3.dart';
+import 'vector_3.dart';
 
 class Matrix4 {
   List<num> elements = [
