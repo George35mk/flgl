@@ -5,7 +5,7 @@ import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/bfx/geometries/box_geometry.dart';
 import 'package:flgl_example/bfx/mesh.dart';
-import 'package:flgl_example/bfx/mesh_basic_material.dart';
+import 'package:flgl_example/bfx/materials/mesh_basic_material.dart';
 import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
