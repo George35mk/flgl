@@ -1,6 +1,6 @@
-import 'package:flgl_example/bfx/object_3d.dart';
+import 'package:flgl_example/bfx/core/object_3d.dart';
 
-import 'buffer_geometry.dart';
+import 'core/buffer_geometry.dart';
 import 'fbx_material.dart';
 
 class Mesh extends Object3D {
