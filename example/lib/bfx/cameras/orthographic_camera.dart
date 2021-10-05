@@ -1,4 +1,4 @@
-import 'package:flgl_example/bfx/camera.dart';
+import 'package:flgl_example/bfx/cameras/camera.dart';
 
 class OrthographicCamera extends Camera {
   OrthographicCamera() : super() {

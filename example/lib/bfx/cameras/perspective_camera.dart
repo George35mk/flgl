@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:flgl_example/bfx/camera.dart';
+import 'package:flgl_example/bfx/cameras/camera.dart';
 import 'package:flgl_example/examples/math/m4.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
 
-import 'matrix4.dart';
+import '../matrix4.dart';
 
-const DEG2RAD = 0.017453292519943295;
+const double DEG2RAD = 0.017453292519943295;
 
 class PerspectiveCamera extends Camera {
   /// The camera FoV
@@ -22,7 +22,7 @@ class PerspectiveCamera extends Camera {
   double far = 2000;
 
   double zoom = 1;
-  dynamic view = null;
+  dynamic view;
   dynamic filmOffset = 0;
   dynamic filmGauge = 35;
 

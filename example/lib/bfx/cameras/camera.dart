@@ -1,7 +1,7 @@
 import 'package:flgl_example/bfx/matrix4.dart';
 
-import 'object_3d.dart';
-import 'vector_3.dart';
+import '../object_3d.dart';
+import '../vector_3.dart';
 
 class Camera extends Object3D {
   /// The camera position
