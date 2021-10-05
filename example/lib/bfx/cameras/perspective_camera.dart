@@ -4,7 +4,7 @@ import 'package:flgl_example/bfx/cameras/camera.dart';
 import 'package:flgl_example/examples/math/m4.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
 
-import '../matrix4.dart';
+import '../math/matrix4.dart';
 
 const double DEG2RAD = 0.017453292519943295;
 

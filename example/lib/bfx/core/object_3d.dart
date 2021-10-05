@@ -1,6 +1,6 @@
 import 'package:flgl_example/bfx/quaternion.dart';
 
-import '../matrix4.dart';
+import '../math/matrix4.dart';
 import '../vector_3.dart';
 
 class Object3D {
