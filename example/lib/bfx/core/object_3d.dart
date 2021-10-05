@@ -1,4 +1,4 @@
-import 'package:flgl_example/bfx/quaternion.dart';
+import 'package:flgl_example/bfx/math/quaternion.dart';
 
 import '../math/matrix4.dart';
 import '../math/vector_3.dart';

@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../quaternion.dart';
+import 'quaternion.dart';
 import 'vector_3.dart';
 
 class Matrix4 {
