@@ -5,7 +5,8 @@ class Renderer {
   late Scene scene;
   late Camera camera;
 
-  Renderer();
+  // OpenGLContextES gl
+  Renderer(gl);
 
   /// on render init you must get the program info
   /// for each object in scene get the geometry and material

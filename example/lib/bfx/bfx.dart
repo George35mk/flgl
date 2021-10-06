@@ -271,7 +271,8 @@ class BFX {
     /// count the active attributes in program shaders.
     var numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
 
-    /// For each active attribute in program shaders.
+    /// For each active attribute in program shaders get the attribute info.
+    /// and create the attrubute setter.
     for (var ii = 0; ii < numAttribs; ++ii) {
       var attribInfo = gl.getActiveAttrib(program, ii);
       if (attribInfo == null) {

@@ -173,7 +173,7 @@ class _CubeExampleState extends State<CubeExample> {
     var aspect = (width * flgl.dpr) / (height * flgl.dpr);
     camera = PerspectiveCamera(fov, aspect, 1, 2000);
 
-    renderer = Renderer();
+    renderer = Renderer(gl);
 
     var geometry = BoxGeometry();
     var material = MeshBasicMaterial(color: 0xff00ff);
