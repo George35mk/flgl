@@ -63,7 +63,7 @@ class _CubeExampleState extends State<CubeExample> {
 
   late Scene scene;
   late PerspectiveCamera camera;
-  late Renderer renderer;
+  late OpenGLESRenderer renderer;
 
   @override
   void initState() {
@@ -173,7 +173,7 @@ class _CubeExampleState extends State<CubeExample> {
     var aspect = (width * flgl.dpr) / (height * flgl.dpr);
     camera = PerspectiveCamera(fov, aspect, 1, 2000);
 
-    renderer = Renderer(gl);
+    renderer = OpenGLESRenderer(gl);
 
     var geometry = BoxGeometry();
     var material = MeshBasicMaterial(color: 0xff00ff);

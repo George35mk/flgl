@@ -1,12 +1,12 @@
 import 'package:flgl_example/bfx/cameras/camera.dart';
 import 'package:flgl_example/bfx/scene.dart';
 
-class Renderer {
+class OpenGLESRenderer {
   late Scene scene;
   late Camera camera;
 
   // OpenGLContextES gl
-  Renderer(gl);
+  OpenGLESRenderer(gl);
 
   /// on render init you must get the program info
   /// for each object in scene get the geometry and material
