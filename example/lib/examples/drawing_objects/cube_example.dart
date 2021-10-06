@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flgl_example/bfx/cameras/perspective_camera.dart';
 import 'package:flgl_example/bfx/scene.dart';
-import 'package:flgl_example/bfx/renderer.dart';
+import 'package:flgl_example/bfx/renderers/renderer.dart';
 
 import '../controls/gl_controls.dart';
 
