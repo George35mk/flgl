@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'matrix4.dart';
+import 'vector3.dart';
 
 class Matrix3 {
   bool isMatrix3 = true;
@@ -14,7 +15,27 @@ class Matrix3 {
 
   Matrix3();
 
-  set(n11, n12, n13, n21, n22, n23, n31, n32, n33) {
+  /// Sets the 3x3 matrix values to the given row-major sequence of values.
+  ///
+  /// ```
+  /// n11 - value to put in row 1, col 1.
+  /// n12 - value to put in row 1, col 2.
+  /// ...
+  /// ...
+  /// n32 - value to put in row 3, col 2.
+  /// n33 - value to put in row 3, col 3.
+  /// ```
+  Matrix3 set(
+    double n11,
+    double n12,
+    double n13,
+    double n21,
+    double n22,
+    double n23,
+    double n31,
+    double n32,
+    double n33,
+  ) {
     var te = elements;
 
     te[0] = n11;
@@ -30,7 +51,14 @@ class Matrix3 {
     return this;
   }
 
-  identity() {
+  /// Resets this matrix to the 3x3 identity matrix:
+  ///
+  /// ```
+  /// 1, 0, 0
+  /// 0, 1, 0
+  /// 0, 0, 1
+  /// ```
+  Matrix3 identity() {
     set(
       1, 0, 0, //
       0, 1, 0, //
@@ -40,7 +68,8 @@ class Matrix3 {
     return this;
   }
 
-  copy(Matrix3 m) {
+  /// Copies the elements of matrix m into this matrix.
+  Matrix3 copy(Matrix3 m) {
     var te = elements;
     var me = m.elements;
 
@@ -57,7 +86,20 @@ class Matrix3 {
     return this;
   }
 
-  extractBasis(xAxis, yAxis, zAxis) {
+  /// Extracts the basis of this matrix into the three axis vectors provided. If this matrix is:
+  ///
+  /// ```dart
+  /// a, b, c,
+  /// d, e, f,
+  /// g, h, i
+  ///
+  /// then the xAxis, yAxis, zAxis will be set to:
+  ///
+  /// xAxis = (a, d, g)
+  /// yAxis = (b, e, h)
+  /// zAxis = (c, f, i)
+  /// ```
+  Matrix3 extractBasis(Vector3 xAxis, Vector3 yAxis, Vector3 zAxis) {
     xAxis.setFromMatrix3Column(this, 0);
     yAxis.setFromMatrix3Column(this, 1);
     zAxis.setFromMatrix3Column(this, 2);
@@ -65,7 +107,8 @@ class Matrix3 {
     return this;
   }
 
-  setFromMatrix4(Matrix4 m) {
+  /// Set this matrix to the upper 3x3 matrix of the Matrix4 m.
+  Matrix3 setFromMatrix4(Matrix4 m) {
     var me = m.elements;
 
     set(
@@ -77,15 +120,18 @@ class Matrix3 {
     return this;
   }
 
-  multiply(Matrix3 m) {
+  /// Post-multiplies this matrix by [m].
+  Matrix3 multiply(Matrix3 m) {
     return multiplyMatrices(this, m);
   }
 
-  premultiply(Matrix3 m) {
+  /// Pre-multiplies this matrix by [m].
+  Matrix3 premultiply(Matrix3 m) {
     return multiplyMatrices(m, this);
   }
 
-  multiplyMatrices(Matrix3 a, Matrix3 b) {
+  /// Sets this matrix to a x b.
+  Matrix3 multiplyMatrices(Matrix3 a, Matrix3 b) {
     var ae = a.elements;
     var be = b.elements;
     var te = elements;
@@ -113,7 +159,8 @@ class Matrix3 {
     return this;
   }
 
-  multiplyScalar(s) {
+  /// Multiplies every component of the matrix by the scalar value s.
+  Matrix3 multiplyScalar(double s) {
     var te = elements;
 
     te[0] *= s;
@@ -129,7 +176,8 @@ class Matrix3 {
     return this;
   }
 
-  determinant() {
+  /// Computes and returns the determinant of this matrix.
+  double determinant() {
     var te = elements;
 
     var a = te[0];
@@ -145,7 +193,11 @@ class Matrix3 {
     return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
   }
 
-  invert() {
+  /// Inverts this matrix, using the analytic method.
+  /// You can not invert with a determinant of zero.
+  /// If you attempt this, the method produces a zero
+  /// matrix instead.
+  Matrix3 invert() {
     var te = elements;
 
     var n11 = te[0], n21 = te[1], n31 = te[2];
@@ -177,7 +229,8 @@ class Matrix3 {
     return this;
   }
 
-  transpose() {
+  /// Transposes this matrix in place.
+  Matrix3 transpose() {
     var tmp;
     var m = elements;
 
@@ -194,11 +247,21 @@ class Matrix3 {
     return this;
   }
 
-  getNormalMatrix(matrix4) {
+  /// Sets this matrix as the upper left 3x3 of the normal matrix of
+  /// the passed matrix4. The normal matrix is the inverse transpose
+  /// of the matrix m.
+  ///
+  /// - [m] - Matrix4
+  ///
+  Matrix3 getNormalMatrix(Matrix4 matrix4) {
     return setFromMatrix4(matrix4).invert().transpose();
   }
 
-  transposeIntoArray(r) {
+  /// Transposes this matrix into the supplied array, and returns
+  /// itself unchanged.
+  ///
+  /// - [r] - array to store the resulting vector in.
+  Matrix3 transposeIntoArray(List<double> r) {
     var m = elements;
 
     r[0] = m[0];
@@ -214,7 +277,16 @@ class Matrix3 {
     return this;
   }
 
-  setUvTransform(tx, ty, sx, sy, rotation, cx, cy) {
+  /// Sets the UV transform matrix from offset, repeat, rotation, and center.
+  ///
+  /// - [tx] - offset x
+  /// - [ty] - offset y
+  /// - [sx] - repeat x
+  /// - [sy] - repeat y
+  /// - [rotation] - rotation (in radians)
+  /// - [cx] - center x of rotation
+  /// - [cy] - center y of rotation
+  Matrix3 setUvTransform(double tx, double ty, double sx, double sy, double rotation, double cx, double cy) {
     var c = cos(rotation);
     var s = sin(rotation);
 
@@ -227,7 +299,7 @@ class Matrix3 {
     return this;
   }
 
-  scale(sx, sy) {
+  Matrix3 scale(sx, sy) {
     var te = elements;
 
     te[0] *= sx;
@@ -240,7 +312,7 @@ class Matrix3 {
     return this;
   }
 
-  rotate(theta) {
+  Matrix3 rotate(theta) {
     var c = cos(theta);
     var s = sin(theta);
 
@@ -260,7 +332,7 @@ class Matrix3 {
     return this;
   }
 
-  translate(tx, ty) {
+  Matrix3 translate(tx, ty) {
     var te = elements;
 
     te[0] += tx * te[2];
@@ -273,7 +345,8 @@ class Matrix3 {
     return this;
   }
 
-  equals(matrix) {
+  /// Return true if this matrix and m are equal.
+  bool equals(Matrix3 matrix) {
     var te = elements;
     var me = matrix.elements;
 
@@ -284,7 +357,11 @@ class Matrix3 {
     return true;
   }
 
-  fromArray(array, [offset = 0]) {
+  /// Sets the elements of this matrix based on an array in column-major format.
+  ///
+  /// - [array] - the array to read the elements from.
+  /// - [offset] - (optional) index of first element in the array. Default is 0.
+  Matrix3 fromArray(List<double> array, [int offset = 0]) {
     for (var i = 0; i < 9; i++) {
       elements[i] = array[i + offset];
     }
@@ -292,7 +369,11 @@ class Matrix3 {
     return this;
   }
 
-  toArray([array = List, offset = 0]) {
+  /// Writes the elements of this matrix to an array in column-major format.
+  ///
+  /// - [array] - (optional) array to store the resulting vector in. If not given a new array will be created.
+  /// - [offset] - (optional) offset in the array at which to put the result.
+  List toArray([List array = const [], int offset = 0]) {
     var te = elements;
 
     array[offset] = te[0];
@@ -310,7 +391,8 @@ class Matrix3 {
     return array;
   }
 
-  clone() {
+  /// Creates a new Matrix3 and with identical elements to this one.
+  Matrix3 clone() {
     return Matrix3().fromArray(elements);
   }
 }

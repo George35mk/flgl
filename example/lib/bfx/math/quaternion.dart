@@ -130,10 +130,10 @@ class Quaternion {
       throw ('THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.');
     }
 
-    var x = euler.x;
-    var y = euler.y;
-    var z = euler.z;
-    var order = euler.order;
+    var _x = euler.x;
+    var _y = euler.y;
+    var _z = euler.z;
+    var _order = euler.order;
 
     // http://www.mathworks.com/matlabcentral/fileexchange/
     // 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
@@ -142,15 +142,15 @@ class Quaternion {
     var cos = math.cos;
     var sin = math.sin;
 
-    var c1 = cos(x / 2);
-    var c2 = cos(y / 2);
-    var c3 = cos(z / 2);
+    var c1 = cos(_x / 2);
+    var c2 = cos(_y / 2);
+    var c3 = cos(_z / 2);
 
-    var s1 = sin(x / 2);
-    var s2 = sin(y / 2);
-    var s3 = sin(z / 2);
+    var s1 = sin(_x / 2);
+    var s2 = sin(_y / 2);
+    var s3 = sin(_z / 2);
 
-    switch (order) {
+    switch (_order) {
       case 'XYZ':
         this.x = s1 * c2 * c3 + c1 * s2 * s3;
         this.y = c1 * s2 * c3 - s1 * c2 * s3;
@@ -187,14 +187,14 @@ class Quaternion {
         break;
 
       case 'XZY':
-        x = s1 * c2 * c3 - c1 * s2 * s3;
-        y = c1 * s2 * c3 - s1 * c2 * s3;
-        z = c1 * c2 * s3 + s1 * s2 * c3;
-        w = c1 * c2 * c3 + s1 * s2 * s3;
+        this.x = s1 * c2 * c3 - c1 * s2 * s3;
+        this.y = c1 * s2 * c3 - s1 * c2 * s3;
+        this.z = c1 * c2 * s3 + s1 * s2 * c3;
+        this.w = c1 * c2 * c3 + s1 * s2 * s3;
         break;
 
       default:
-        print('THREE.Quaternion: .setFromEuler() encountered an unknown order: ' + order);
+        print('THREE.Quaternion: .setFromEuler() encountered an unknown order: $_order');
     }
 
     // if (update != false) _onChangeCallback();

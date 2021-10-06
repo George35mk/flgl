@@ -1,3 +1,4 @@
+import 'package:flgl_example/bfx/core/buffer_attribute.dart';
 import 'package:flgl_example/bfx/core/buffer_geometry.dart';
 
 import '../math/vector3.dart';
