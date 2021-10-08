@@ -205,10 +205,10 @@ class Euler {
     }
   }
 
-  // _onChange(callback) {
-  //   this._onChangeCallback = callback;
-  //   return this;
-  // }
+  onChange(Function callback) {
+    // onChangeCallback = callback;
+    return this;
+  }
 
-  // _onChangeCallback() {}
+  onChangeCallback() {}
 }

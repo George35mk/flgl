@@ -25,8 +25,22 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glViewport(x, y, width, height);
   }
 
-  getShaderPrecisionFormat() {
-    return {'rangeMin': 1, 'rangeMax': 1, 'precision': 1};
+  ShaderPrecisionFormat getShaderPrecisionFormat(int shadertype, int precisiontype) {
+    // old code
+    // return {'rangeMin': 1, 'rangeMax': 1, 'precision': 1};
+
+    // new code
+    Pointer<Int32> range = calloc<Int32>();
+    Pointer<Int32> precision = calloc<Int32>();
+    gl.glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+
+    int _range = range.value;
+    int _precision = precision.value;
+
+    calloc.free(range);
+    calloc.free(precision);
+
+    return ShaderPrecisionFormat(_range, _precision);
   }
 
   getExtension(String key) {
@@ -215,9 +229,9 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glClearColor(r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble());
   }
 
-  // compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data) {
-  //   return gl.texImage2D(target, level, internalformat, width, height, border, imageSize, data);
-  // }
+  compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data) {
+    return gl.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+  }
 
   generateMipmap(v0) {
     return gl.glGenerateMipmap(v0);
@@ -907,4 +921,10 @@ Pointer<Uint8> uint8ListToArrayPointer(Uint8List list) {
   final ptr = calloc<Uint8>(list.length);
   ptr.asTypedList(list.length).setAll(0, list.map((e) => e));
   return ptr;
+}
+
+class ShaderPrecisionFormat {
+  dynamic range; // fix the types
+  dynamic precision; // fix the types
+  ShaderPrecisionFormat(this.range, this.precision);
 }

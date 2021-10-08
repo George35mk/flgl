@@ -514,11 +514,11 @@ class Quaternion {
     return this;
   }
 
-  // _onChange(callback) {
-  //   _onChangeCallback = callback;
+  onChange(callback) {
+    // onChangeCallback = callback;
 
-  //   return this;
-  // }
+    return this;
+  }
 
-  // _onChangeCallback() {}
+  onChangeCallback() {}
 }

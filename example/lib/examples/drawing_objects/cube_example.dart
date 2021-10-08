@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flgl_example/bfx/cameras/perspective_camera.dart';
 import 'package:flgl_example/bfx/scene.dart';
-import 'package:flgl_example/bfx/renderers/opengles_renderer.dart';
+import 'package:flgl_example/bfx/renderers/opengl_renderer.dart';
 
 import '../controls/gl_controls.dart';
 
@@ -63,7 +63,7 @@ class _CubeExampleState extends State<CubeExample> {
 
   late Scene scene;
   late PerspectiveCamera camera;
-  late OpenGLESRenderer renderer;
+  late OpenGLRenderer renderer;
 
   @override
   void initState() {
@@ -173,7 +173,7 @@ class _CubeExampleState extends State<CubeExample> {
     var aspect = (width * flgl.dpr) / (height * flgl.dpr);
     camera = PerspectiveCamera(fov, aspect, 1, 2000);
 
-    renderer = OpenGLESRenderer(gl);
+    renderer = OpenGLRenderer(gl: gl);
 
     var geometry = BoxGeometry();
     var material = MeshBasicMaterial(color: 0xff00ff);
