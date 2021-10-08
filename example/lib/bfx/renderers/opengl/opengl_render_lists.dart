@@ -1,9 +1,13 @@
 import 'package:weak_map/weak_map.dart';
 
+import 'opengl_properties.dart';
+
 class OpenGLRenderLists {
   WeakMap lists = WeakMap();
 
-  OpenGLRenderLists(scene, renderCallDepth);
+  OpenGLProperties properties;
+
+  OpenGLRenderLists(this.properties);
 
   get() {}
 

@@ -148,7 +148,7 @@ class Euler {
     return this;
   }
 
-  Euler setFromQuaternion(Quaternion q, String order, [update]) {
+  Euler setFromQuaternion(Quaternion q, dynamic order, [update]) {
     _matrix.makeRotationFromQuaternion(q);
     return setFromRotationMatrix(_matrix, order, update);
   }

@@ -1,5 +1,7 @@
 import 'package:flgl_example/bfx/cameras/camera.dart';
+import 'package:flgl_example/bfx/core/layers.dart';
 import 'package:flgl_example/bfx/math/euler.dart';
+import 'package:flgl_example/bfx/math/matrix3.dart';
 import 'package:flgl_example/bfx/math/quaternion.dart';
 
 import '../math/matrix4.dart';
@@ -30,8 +32,8 @@ class Object3D {
   String name = '';
   String type = 'Object3D';
 
-  /// the parent of this object.
-  late Object3D parent; // null
+  /// the parent of this object can be null or Object3D
+  dynamic parent; // null
 
   /// A list of Object3D children
   List<Object3D> children = [];
@@ -55,16 +57,27 @@ class Object3D {
   /// The worldMatrix
   Matrix4 matrixWorld = Matrix4();
 
+  Matrix4 modelViewMatrix = Matrix4();
+  Matrix3 normalMatrix = Matrix3();
+
   bool matrixAutoUpdate = true;
   bool matrixWorldNeedsUpdate = false;
 
+  Layers layers = Layers();
   bool visible = true;
+
   bool castShadow = false;
   bool receiveShadow = false;
+
   bool frustumCulled = true;
   int renderOrder = 0;
+
   List animations = [];
+
+  // the user data.
   var userData = {};
+
+  dynamic isImmediateRenderObject;
 
   Object3D() {
     rotation.onChange(onRotationChange);
@@ -78,6 +91,10 @@ class Object3D {
   onQuaternionChange() {
     rotation.setFromQuaternion(quaternion, null, false);
   }
+
+  onBeforeRender(/* renderer, scene, camera, geometry, material, group */) {}
+
+  onAfterRender(/* renderer, scene, camera, geometry, material, group */) {}
 
   applyMatrix4(Matrix4 matrix) {
     if (matrixAutoUpdate) updateMatrix();

@@ -1,11 +1,16 @@
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/bfx/cameras/camera.dart';
+import 'package:flgl_example/bfx/core/buffer_geometry.dart';
+import 'package:flgl_example/bfx/core/object_3d.dart';
+import 'package:flgl_example/bfx/materials/fbx_material.dart';
 import 'package:flgl_example/bfx/math/vector4.dart';
 import 'package:flgl_example/bfx/scene.dart';
 
-import 'opengl/opengl_info.dart';
 import 'opengl/opengl_capabilities.dart';
 import 'opengl/opengl_extensions.dart';
+import 'opengl/opengl_info.dart';
+import 'opengl/opengl_properties.dart';
+import 'opengl/opengl_render_lists.dart';
 import 'opengl/opengl_state.dart';
 import 'opengl/opengl_utils.dart';
 
@@ -99,6 +104,10 @@ class OpenGLRenderer {
   late OpenGLUtils utils;
   late OpenGLState state;
   late OpenGLInfo info;
+  late OpenGLProperties properties;
+  late OpenGLRenderLists renderLists;
+
+  late OpenGLRenderer _this;
 
   // OpenGLContextES gl
   OpenGLRenderer({
@@ -112,6 +121,7 @@ class OpenGLRenderer {
     this.powerPreference = 'default',
     this.failIfMajorPerformanceCaveat = false,
   }) {
+    _this = this;
     _viewport = Vector4(0, 0, _width, _height);
     _scissor = Vector4(0, 0, _width, _height);
 
@@ -128,6 +138,25 @@ class OpenGLRenderer {
     _currentDrawBuffers[0] = gl!.BACK;
 
     info = OpenGLInfo(gl!);
+    properties = OpenGLProperties();
+    // textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info);
+    // cubemaps = new WebGLCubeMaps(_this);
+    // cubeuvmaps = new WebGLCubeUVMaps(_this);
+    // attributes = new WebGLAttributes(_gl, capabilities);
+    // bindingStates = new WebGLBindingStates(_gl, extensions, attributes, capabilities);
+    // geometries = new WebGLGeometries(_gl, attributes, info, bindingStates);
+    // objects = new WebGLObjects(_gl, geometries, attributes, info);
+    // morphtargets = new WebGLMorphtargets(_gl, capabilities, textures);
+    // clipping = new WebGLClipping(properties);
+    // programCache = new WebGLPrograms(_this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping);
+    // materials = new WebGLMaterials(properties);
+    renderLists = OpenGLRenderLists(properties);
+    // renderStates = new WebGLRenderStates(extensions, capabilities);
+    // background = new WebGLBackground(_this, cubemaps, state, objects, _premultipliedAlpha);
+    // shadowMap = new WebGLShadowMap(_this, objects, capabilities);
+    // bufferRenderer = new WebGLBufferRenderer(_gl, extensions, info, capabilities);
+    // indexedBufferRenderer = new WebGLIndexedBufferRenderer(_gl, extensions, info, capabilities);
+    // info.programs = programCache.programs;
   }
 
   /// on render init you must:
@@ -165,22 +194,93 @@ class OpenGLRenderer {
       scene.updateMatrixWorld();
     }
     if (camera.parent == null) camera.updateMatrixWorld();
+
+    currentRenderList = renderLists.get(scene, renderListStack.length);
+    currentRenderList.init();
+    renderListStack.add(currentRenderList);
+    projectObject(scene, camera, 0, _this.sortObjects);
+    currentRenderList.finish();
+
+    if (_this.sortObjects == true) {
+      currentRenderList.sort(_opaqueSort, _transparentSort);
+    } //
+
+    renderScene(currentRenderList, scene, camera);
   }
 
-  renderScene() {
-    // renderObjects()
+  renderScene(currentRenderList, Scene scene, Camera camera, [viewport]) {
+    var opaqueObjects = currentRenderList.opaque;
+    // var transmissiveObjects = currentRenderList.transmissive;
+    // var transparentObjects = currentRenderList.transparent;
+    currentRenderState.setupLightsView(camera);
+    // if (transmissiveObjects.length > 0) renderTransmissionPass(opaqueObjects, scene, camera); // not for now
+    if (viewport) state.viewport(_currentViewport.copy(viewport));
+    if (opaqueObjects.length > 0) renderObjects(opaqueObjects, scene, camera);
+    // if (transmissiveObjects.length > 0) renderObjects(transmissiveObjects, scene, camera);
+    // if (transparentObjects.length > 0) renderObjects(transparentObjects, scene, camera);
   }
 
-  renderObjects() {
-    /// For each object in render list call renderObject()
+  /// renderList can be:
+  /// - opaqueObjects list
+  /// - transmissiveObjects list
+  /// - transparentObjects list
+  renderObjects(renderList, Scene scene, Camera camera) {
+    var overrideMaterial = scene.isScene == true ? scene.overrideMaterial : null;
+
+    for (var i = 0, l = renderList.length; i < l; i++) {
+      final renderItem = renderList[i];
+      final Object3D object = renderItem.object;
+      final BufferGeometry geometry = renderItem.geometry;
+      final FBXMaterial material = overrideMaterial ?? renderItem.material;
+      final group = renderItem.group;
+
+      if (object.layers.test(camera.layers)) {
+        renderObject(object, scene, camera, geometry, material, group);
+      }
+    }
   }
 
-  renderObject() {
-    // renderBufferDirect()
+  renderObject(Object3D object, Scene scene, Camera camera, BufferGeometry geometry, FBXMaterial material, group) {
+    // object.onBeforeRender(_this, scene, camera, geometry, material, group);
+    object.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, object.matrixWorld);
+    object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
+    // material.onBeforeRender(_this, scene, camera, geometry, object, group);
+
+    // if (object.isImmediateRenderObject) {
+    //   var program = setProgram(camera, scene, material, object);
+    //   state.setMaterial(material);
+    //   bindingStates.reset();
+    //   renderObjectImmediate(object, program);
+    // } else {
+    //   if (material.transparent == true && material.side == DoubleSide) {
+    //     material.side = BackSide;
+    //     material.needsUpdate = true;
+
+    //     _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+
+    //     material.side = FrontSide;
+    //     material.needsUpdate = true;
+
+    //     _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+
+    //     material.side = DoubleSide;
+    //   } else {
+    //     _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+    //   }
+    // }
+
+    _this.renderBufferDirect(camera, scene, geometry, material, object, group);
   }
 
-  renderBufferDirect() {
-    //
+  renderBufferDirect(
+    Camera camera,
+    Scene scene,
+    BufferGeometry geometry,
+    FBXMaterial material,
+    Object3D object,
+    group,
+  ) {
+    // edo emina
   }
 }
 
