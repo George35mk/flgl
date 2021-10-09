@@ -8,9 +8,16 @@ import 'math_utils.dart';
 import 'vector3.dart';
 
 class Quaternion {
+  /// x coordinate
   double x;
+
+  /// y coordinate
   double y;
+
+  /// z coordinate
   double z;
+
+  /// w coordinate
   double w;
 
   Quaternion([this.x = 0, this.y = 0, this.z = 0, this.w = 0]);
@@ -20,6 +27,15 @@ class Quaternion {
     return qm.slerpQuaternions(qa, qb, t);
   }
 
+  /// Like the static slerp method above, but operates directly on flat arrays of numbers.
+  ///
+  /// - [dst] - The output array.
+  /// - [dstOffset] - An offset into the output array.
+  /// - [src0] - The source array of the starting quaternion.
+  /// - [srcOffset0] - An offset into the array src0.
+  /// - [src1] - The source array of the target quatnerion.
+  /// - [srcOffset1] - An offset into the array src1.
+  /// - [t] - Normalized interpolation factor (between 0 and 1).
   static slerpFlat(List dst, int dstOffset, List src0, int srcOffset0, List src1, int srcOffset1, double t) {
     // fuzz-free, array-based Quaternion SLERP operation
 
@@ -106,6 +122,7 @@ class Quaternion {
     return dst;
   }
 
+  /// Sets x, y, z, w properties of this quaternion.
   Quaternion set(double x, double y, double z, double w) {
     this.x = x;
     this.y = y;
@@ -115,10 +132,12 @@ class Quaternion {
     return this;
   }
 
+  /// Creates a new Quaternion with identical x, y, z and w properties to this one.
   Quaternion clone() {
     return Quaternion(x, y, z, w);
   }
 
+  /// Copies the x, y, z and w properties of q into this quaternion.
   Quaternion copy(Quaternion quaternion) {
     x = quaternion.x;
     y = quaternion.y;
@@ -128,6 +147,7 @@ class Quaternion {
     return this;
   }
 
+  /// Sets this quaternion from the rotation specified by Euler angle.
   Quaternion setFromEuler(Euler euler, [update]) {
     if (!(euler != null && euler.isEuler)) {
       throw ('THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.');
@@ -155,45 +175,45 @@ class Quaternion {
 
     switch (_order) {
       case 'XYZ':
-        this.x = s1 * c2 * c3 + c1 * s2 * s3;
-        this.y = c1 * s2 * c3 - s1 * c2 * s3;
-        this.z = c1 * c2 * s3 + s1 * s2 * c3;
-        this.w = c1 * c2 * c3 - s1 * s2 * s3;
+        x = s1 * c2 * c3 + c1 * s2 * s3;
+        y = c1 * s2 * c3 - s1 * c2 * s3;
+        z = c1 * c2 * s3 + s1 * s2 * c3;
+        w = c1 * c2 * c3 - s1 * s2 * s3;
         break;
 
       case 'YXZ':
-        this.x = s1 * c2 * c3 + c1 * s2 * s3;
-        this.y = c1 * s2 * c3 - s1 * c2 * s3;
-        this.z = c1 * c2 * s3 - s1 * s2 * c3;
-        this.w = c1 * c2 * c3 + s1 * s2 * s3;
+        x = s1 * c2 * c3 + c1 * s2 * s3;
+        y = c1 * s2 * c3 - s1 * c2 * s3;
+        z = c1 * c2 * s3 - s1 * s2 * c3;
+        w = c1 * c2 * c3 + s1 * s2 * s3;
         break;
 
       case 'ZXY':
-        this.x = s1 * c2 * c3 - c1 * s2 * s3;
-        this.y = c1 * s2 * c3 + s1 * c2 * s3;
-        this.z = c1 * c2 * s3 + s1 * s2 * c3;
-        this.w = c1 * c2 * c3 - s1 * s2 * s3;
+        x = s1 * c2 * c3 - c1 * s2 * s3;
+        y = c1 * s2 * c3 + s1 * c2 * s3;
+        z = c1 * c2 * s3 + s1 * s2 * c3;
+        w = c1 * c2 * c3 - s1 * s2 * s3;
         break;
 
       case 'ZYX':
-        this.x = s1 * c2 * c3 - c1 * s2 * s3;
-        this.y = c1 * s2 * c3 + s1 * c2 * s3;
-        this.z = c1 * c2 * s3 - s1 * s2 * c3;
-        this.w = c1 * c2 * c3 + s1 * s2 * s3;
+        x = s1 * c2 * c3 - c1 * s2 * s3;
+        y = c1 * s2 * c3 + s1 * c2 * s3;
+        z = c1 * c2 * s3 - s1 * s2 * c3;
+        w = c1 * c2 * c3 + s1 * s2 * s3;
         break;
 
       case 'YZX':
-        this.x = s1 * c2 * c3 + c1 * s2 * s3;
-        this.y = c1 * s2 * c3 + s1 * c2 * s3;
-        this.z = c1 * c2 * s3 - s1 * s2 * c3;
-        this.w = c1 * c2 * c3 - s1 * s2 * s3;
+        x = s1 * c2 * c3 + c1 * s2 * s3;
+        y = c1 * s2 * c3 + s1 * c2 * s3;
+        z = c1 * c2 * s3 - s1 * s2 * c3;
+        w = c1 * c2 * c3 - s1 * s2 * s3;
         break;
 
       case 'XZY':
-        this.x = s1 * c2 * c3 - c1 * s2 * s3;
-        this.y = c1 * s2 * c3 - s1 * c2 * s3;
-        this.z = c1 * c2 * s3 + s1 * s2 * c3;
-        this.w = c1 * c2 * c3 + s1 * s2 * s3;
+        x = s1 * c2 * c3 - c1 * s2 * s3;
+        y = c1 * s2 * c3 - s1 * c2 * s3;
+        z = c1 * c2 * s3 + s1 * s2 * c3;
+        w = c1 * c2 * c3 + s1 * s2 * s3;
         break;
 
       default:
@@ -205,6 +225,9 @@ class Quaternion {
     return this;
   }
 
+  /// Sets this quaternion from rotation specified by axis and angle.
+  /// Adapted from the method here.
+  /// Axis is assumed to be normalized, angle is in radians.
   Quaternion setFromAxisAngle(Vector3 axis, double angle) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
 
@@ -222,6 +245,10 @@ class Quaternion {
     return this;
   }
 
+  /// Sets this quaternion from rotation component of m.
+  /// Adapted from the method here.
+  ///
+  /// - [m] - a Matrix4 of which the upper 3x3 of matrix is a pure rotation matrix (i.e. unscaled).
   Quaternion setFromRotationMatrix(Matrix4 m) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 
@@ -274,6 +301,9 @@ class Quaternion {
     return this;
   }
 
+  /// Sets this quaternion to the rotation required to rotate direction vector vFrom to direction vector vTo.
+  /// Adapted from the method here.
+  /// vFrom and vTo are assumed to be normalized.
   Quaternion setFromUnitVectors(Vector3 vFrom, Vector3 vTo) {
     // assumes direction vectors vFrom and vTo are normalized
 
@@ -308,6 +338,7 @@ class Quaternion {
     return normalize();
   }
 
+  /// Returns the angle between this quaternion and quaternion q in radians.
   double angleTo(Quaternion q) {
     return 2 * math.acos(MathUtils.clamp(dot(q), -1, 1).abs());
   }
@@ -315,8 +346,8 @@ class Quaternion {
   /// Rotates this quaternion by a given angular step to the defined quaternion q.
   /// The method ensures that the final quaternion will not overshoot q.
   ///
-  /// - q - The target quaternion.
-  /// - step - The angular step in radians.
+  /// - [q] - The target quaternion.
+  /// - [step] - The angular step in radians.
   Quaternion rotateTowards(Quaternion q, double step) {
     var angle = angleTo(q);
 
@@ -329,15 +360,22 @@ class Quaternion {
     return this;
   }
 
+  /// Sets this quaternion to the identity quaternion; that is, to the quaternion
+  /// that represents "no rotation".
   Quaternion identity() {
     return set(0, 0, 0, 1);
   }
 
+  /// Inverts this quaternion - calculates the conjugate.
+  /// The quaternion is assumed to have unit length.
   Quaternion invert() {
     // quaternion is assumed to have unit length
     return conjugate();
   }
 
+  /// Returns the rotational conjugate of this quaternion. The conjugate of a
+  /// quaternion represents the same rotation in the opposite direction about
+  /// the rotational axis.
   Quaternion conjugate() {
     x *= -1;
     y *= -1;
@@ -345,18 +383,27 @@ class Quaternion {
     return this;
   }
 
+  /// Calculates the dot product of quaternions v and this one.
   double dot(Quaternion v) {
     return x * v.x + y * v.y + z * v.z + w * v.w;
   }
 
+  /// Computes the squared Euclidean length (straight-line length) of this
+  /// quaternion, considered as a 4 dimensional vector. This can be useful
+  /// if you are comparing the lengths of two quaternions, as this is a
+  /// slightly more efficient calculation than length().
   double lengthSq() {
     return x * x + y * y + z * z + w * w;
   }
 
+  /// Computes the Euclidean length (straight-line length) of this quaternion,
+  /// considered as a 4 dimensional vector.
   double length() {
     return math.sqrt(x * x + y * y + z * z + w * w);
   }
 
+  /// Normalizes this quaternion - that is, calculated the quaternion that
+  /// performs the same rotation as this one, but has length equal to 1.
   Quaternion normalize() {
     var l = length();
 
@@ -377,6 +424,7 @@ class Quaternion {
     return this;
   }
 
+  /// Multiplies this quaternion by q.
   Quaternion multiply(Quaternion q, [Quaternion? p]) {
     if (p != null) {
       print('THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.');
@@ -386,10 +434,13 @@ class Quaternion {
     return multiplyQuaternions(this, q);
   }
 
+  /// Pre-multiplies this quaternion by q.
   Quaternion premultiply(Quaternion q) {
     return multiplyQuaternions(q, this);
   }
 
+  /// Sets this quaternion to a x b.
+  /// Adapted from the method outlined here.
   Quaternion multiplyQuaternions(Quaternion a, Quaternion b) {
     // from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
 
@@ -404,6 +455,12 @@ class Quaternion {
     return this;
   }
 
+  /// Handles the spherical linear interpolation between quaternions. t represents the
+  /// amount of rotation between this quaternion (where t is 0) and qb (where t is 1).
+  /// This quaternion is set to the result. Also see the static version of the slerp below.
+  ///
+  /// - [qb] - The other quaternion rotation
+  /// - [t] - interpolation factor in the closed interval [0, 1].
   Quaternion slerp(Quaternion qb, double t) {
     if (t == 0) return this;
     if (t == 1) return copy(qb);
@@ -466,6 +523,7 @@ class Quaternion {
     copy(qa).slerp(qb, t);
   }
 
+  /// Sets this quaternion to a uniformly random, normalized quaternion.
   Quaternion random() {
     // Derived from http://planning.cs.uiuc.edu/node198.html
     // Note, this source uses w, x, y, z ordering,
@@ -486,10 +544,18 @@ class Quaternion {
     );
   }
 
+  /// Compares the x, y, z and w properties of v to the equivalent properties
+  /// of this quaternion to determine if they represent the same rotation.
+  ///
+  /// - [v] - Quaternion that this quaternion will be compared to.
   bool equals(Quaternion quaternion) {
     return (quaternion.x == x) && (quaternion.y == y) && (quaternion.z == z) && (quaternion.w == w);
   }
 
+  /// Sets this quaternion's x, y, z and w properties from an array.
+  ///
+  /// - [array] - array of format (x, y, z, w) used to construct the quaternion.
+  /// - [offset] - (optional) an offset into the array.
   Quaternion fromArray(List<double> array, [int offset = 0]) {
     x = array[offset];
     y = array[offset + 1];
@@ -499,6 +565,10 @@ class Quaternion {
     return this;
   }
 
+  /// Returns the numerical elements of this quaternion in an array of format [x, y, z, w].
+  ///
+  /// - [array] - An optional array to store the quaternion. If not specified, a new array will be created.
+  /// - [offset] - (optional) if specified, the result will be copied into this Array.
   List<double> toArray([array = List, int offset = 0]) {
     array[offset] = x;
     array[offset + 1] = y;
@@ -508,6 +578,10 @@ class Quaternion {
     return array;
   }
 
+  /// Sets x, y, z, w properties of this quaternion from the attribute.
+  ///
+  /// - [attribute] - the source attribute.
+  /// - [index] - index in the attribute.
   Quaternion fromBufferAttribute(BufferAttribute attribute, int index) {
     x = attribute.getX(index);
     y = attribute.getY(index);
