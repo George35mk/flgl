@@ -14,17 +14,12 @@ final _normal = Vector3();
 // const defaultOrigin = Vector3();
 
 class Ray {
-  // Vector3 origin;
-  // Vector3 direction;
+  Vector3 origin = Vector3(0, 0, 0);
+  Vector3 direction = Vector3(0, 0, -1);
 
-  dynamic origin;
-  dynamic direction;
-
-  Ray([this.origin, this.direction]) {
-    // origin ??= Vector3();
-
-    origin ??= Vector3(0, 0, 0);
-    direction ??= Vector3(0, 0, -1);
+  Ray([Vector3? origin, Vector3? direction]) {
+    this.origin = origin ?? Vector3(0, 0, 0);
+    this.direction = direction ?? Vector3(0, 0, -1);
   }
 
   set(Vector3 origin, Vector3 direction) {

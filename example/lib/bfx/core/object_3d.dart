@@ -187,7 +187,7 @@ class Object3D {
     return vector.applyMatrix4(_m1.copy(matrixWorld).invert());
   }
 
-  lookAt(x, y, z) {
+  lookAt(x, [y, z]) {
     // This method does not support objects having non-uniformly-scaled parent(s)
 
     if (x.isVector3) {

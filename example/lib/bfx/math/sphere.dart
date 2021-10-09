@@ -13,8 +13,8 @@ class Sphere {
   double radius = -1;
 
   Sphere([Vector3? center, double radius = -1]) {
-    center ??= Vector3();
-    radius = -1;
+    this.center = center ?? Vector3();
+    this.radius = radius ?? -1;
   }
 
   Sphere set(center, radius) {
@@ -33,7 +33,7 @@ class Sphere {
       _box.setFromPoints(points).getCenter(center);
     }
 
-    var maxRadiusSq = 0;
+    double maxRadiusSq = 0;
 
     for (var i = 0, il = points.length; i < il; i++) {
       maxRadiusSq = math.max(maxRadiusSq, center.distanceToSquared(points[i]));

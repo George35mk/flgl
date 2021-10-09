@@ -212,7 +212,7 @@ class BufferGeometry {
       position.add(point.z ?? 0);
     }
 
-    this.setAttribute('position', new Float32BufferAttribute(position, 3));
+    setAttribute('position', Float32BufferAttribute(position, 3));
 
     return this;
   }
