@@ -31,10 +31,14 @@ class BufferAttribute {
     // version = 0;
   }
 
-  set needsUpdate(value) {
+  /// Flag to indicate that this attribute has changed and should be re-sent to the GPU. Set this to true when you modify the value of the array.
+  ///
+  /// Setting this to true also increments the version.
+  set needsUpdate(bool value) {
     if (value == true) version++;
   }
 
+  /// Set usage to value. See usage constants for all possible input values.
   BufferAttribute setUsage(value) {
     usage = value;
 
@@ -53,7 +57,8 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute copyAt(index1, attribute, index2) {
+  /// Copy a vector from bufferAttribute[index2] to array[index1].
+  BufferAttribute copyAt(int index1, BufferAttribute attribute, int index2) {
     index1 *= itemSize;
     index2 *= attribute.itemSize;
 
@@ -64,6 +69,7 @@ class BufferAttribute {
     return this;
   }
 
+  /// Copy the array given here (which can be a normal array or TypedArray) into array.
   BufferAttribute copyArray(array) {
     /// problem here
     array.set(array);
@@ -71,7 +77,8 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute copyColorsArray(colors) {
+  /// Copy an array representing RGB color values into array.
+  BufferAttribute copyColorsArray(List colors) {
     var array = this.array;
     var offset = 0;
 
@@ -91,7 +98,8 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute copyVector2sArray(vectors) {
+  /// Copy an array representing Vector2s into array.
+  BufferAttribute copyVector2sArray(List<Vector2> vectors) {
     var array = this.array;
     var offset = 0;
 
@@ -110,7 +118,8 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute copyVector3sArray(vectors) {
+  /// Copy an array representing Vector3s into array.
+  BufferAttribute copyVector3sArray(List<Vector3> vectors) {
     var array = this.array;
     var offset = 0;
 
@@ -130,8 +139,9 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute copyVector4sArray(vectors) {
-    var array = this.array;
+  /// Copy an array representing Vector4s into array.
+  BufferAttribute copyVector4sArray(List<Vector4> vectors) {
+    final array = this.array;
     var offset = 0;
 
     for (var i = 0, l = vectors.length; i < l; i++) {
@@ -151,6 +161,7 @@ class BufferAttribute {
     return this;
   }
 
+  /// Applies matrix m to every Vector3 element of this BufferAttribute.
   BufferAttribute applyMatrix3(Matrix3 m) {
     if (itemSize == 2) {
       for (var i = 0, l = count; i < l; i++) {
@@ -171,6 +182,7 @@ class BufferAttribute {
     return this;
   }
 
+  /// Applies matrix m to every Vector3 element of this BufferAttribute.
   BufferAttribute applyMatrix4(Matrix4 m) {
     for (var i = 0, l = count; i < l; i++) {
       _vector.x = getX(i);
@@ -185,7 +197,8 @@ class BufferAttribute {
     return this;
   }
 
-  BufferAttribute applyNormalMatrix(m) {
+  /// Applies normal matrix m to every Vector3 element of this BufferAttribute.
+  BufferAttribute applyNormalMatrix(Matrix3 m) {
     for (var i = 0, l = count; i < l; i++) {
       _vector.x = getX(i);
       _vector.y = getY(i);
@@ -199,7 +212,9 @@ class BufferAttribute {
     return this;
   }
 
-  transformDirection(m) {
+  /// Applies matrix m to every Vector3 element of this BufferAttribute,
+  /// interpreting the elements as a direction vectors.
+  BufferAttribute transformDirection(Matrix4 m) {
     for (var i = 0, l = count; i < l; i++) {
       _vector.x = getX(i);
       _vector.y = getY(i);
@@ -213,53 +228,68 @@ class BufferAttribute {
     return this;
   }
 
-  set(value, [offset = 0]) {
-    // array.set(value, offset);
+  /// Calls TypedArray.set( value, offset ) on the array.
+  /// In particular, see that page for requirements on value being a TypedArray.
+  ///
+  /// - [value] -- an Array or TypedArray from which to copy values.
+  /// - [offset] -- (optional) index of the array at which to start copying.
+  /// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set
+  set(List value, [int offset = 0]) {
+    // array.set(value, offset); // problem here
 
     return this;
   }
 
-  getX(index) {
+  /// Returns the x component of the vector at the given index.
+  getX(int index) {
     return array[index * itemSize];
   }
 
-  setX(index, x) {
+  /// Sets the x component of the vector at the given index.
+  BufferAttribute setX(int index, double x) {
     array[index * itemSize] = x;
 
     return this;
   }
 
-  getY(index) {
+  /// Returns the y component of the vector at the given index.
+  getY(int index) {
     return array[index * itemSize + 1];
   }
 
-  setY(index, y) {
+  /// Sets the y component of the vector at the given index.
+  BufferAttribute setY(int index, double y) {
     array[index * itemSize + 1] = y;
 
     return this;
   }
 
-  getZ(index) {
+  /// Returns the z component of the vector at the given index
+  getZ(int index) {
     return array[index * itemSize + 2];
   }
 
-  setZ(index, z) {
+  /// Sets the z component of the vector at the given index.
+  BufferAttribute setZ(int index, double z) {
     array[index * itemSize + 2] = z;
 
     return this;
   }
 
-  getW(index) {
+  /// Returns the w component of the vector at the given index.
+  getW(int index) {
     return array[index * itemSize + 3];
   }
 
-  setW(index, w) {
+  /// Sets the w component of the vector at the given index.
+  BufferAttribute setW(int index, double w) {
     array[index * itemSize + 3] = w;
 
     return this;
   }
 
-  setXY(index, x, y) {
+  /// Sets the x and y components of the vector at the given index.
+  BufferAttribute setXY(int index, double x, double y) {
     index *= itemSize;
 
     array[index + 0] = x;
@@ -268,7 +298,8 @@ class BufferAttribute {
     return this;
   }
 
-  setXYZ(index, x, y, z) {
+  /// Sets the x, y and z components of the vector at the given index.
+  BufferAttribute setXYZ(int index, double x, double y, double z) {
     index *= itemSize;
 
     array[index + 0] = x;
@@ -278,7 +309,8 @@ class BufferAttribute {
     return this;
   }
 
-  setXYZW(index, x, y, z, w) {
+  /// Sets the x, y, z and w components of the vector at the given index.
+  BufferAttribute setXYZW(int index, double x, double y, double z, double w) {
     index *= itemSize;
 
     array[index + 0] = x;
@@ -289,16 +321,19 @@ class BufferAttribute {
     return this;
   }
 
-  // onUploadCallback() {}
+  onUploadCallback() {}
 
-  onUpload(callback) {
+  /// Sets the value of the onUploadCallback property.
+  /// In the WebGL / Buffergeometry this is used to free memory after the buffer has been transferred to the GPU.
+  onUpload(Function callback) {
     // onUploadCallback = callback;
 
     return this;
   }
 
-  clone() {
-    // return new this.constructor( this.array, this.itemSize ).copy( this );
+  /// Return a copy of this bufferAttribute.
+  BufferAttribute clone() {
+    return BufferAttribute(array, itemSize).copy(this);
   }
 
   toJSON() {
