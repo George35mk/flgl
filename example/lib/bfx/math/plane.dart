@@ -1,4 +1,5 @@
 import 'box3.dart';
+import 'line3.dart';
 import 'matrix3.dart';
 import 'matrix4.dart';
 import 'sphere.dart';
