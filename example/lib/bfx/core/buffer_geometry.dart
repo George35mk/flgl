@@ -788,8 +788,8 @@ class BufferGeometry {
 
     // draw range
 
-    drawRange.start = source.drawRange.start;
-    drawRange.count = source.drawRange.count;
+    drawRange['start'] = source.drawRange['start'];
+    drawRange['count'] = source.drawRange['count'];
 
     // user data
 
@@ -797,7 +797,8 @@ class BufferGeometry {
 
     // geometry generator parameters
 
-    if (source.parameters != null) this.parameters = Object.assign({}, source.parameters);
+    // check this line
+    // if (source.parameters != null) this.parameters = Object.assign({}, source.parameters);
 
     return this;
   }

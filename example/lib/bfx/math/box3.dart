@@ -1,4 +1,9 @@
+import 'package:flgl_example/bfx/core/buffer_attribute.dart';
+import 'package:flgl_example/bfx/core/object_3d.dart';
+import 'package:flgl_example/bfx/math/plane.dart';
+import 'package:flgl_example/bfx/math/sphere.dart';
 import 'package:flgl_example/bfx/math/vector3.dart';
+import 'package:flgl_example/bfx/objects/mesh.dart';
 import 'dart:math' as math;
 import 'matrix4.dart';
 
@@ -22,7 +27,12 @@ final _triangleNormal = Vector3();
 final _testAxis = Vector3();
 
 class Box3 {
+  /// Vector3 representing the lower (x, y, z) boundary of the box.
+  /// Default is ( + Infinity, + Infinity, + Infinity ).
   Vector3 min = Vector3();
+
+  /// Vector3 representing the upper (x, y, z) boundary of the box.
+  /// Default is ( - Infinity, - Infinity, - Infinity ).
   Vector3 max = Vector3();
 
   Box3([Vector3? min, Vector3? max]) {
@@ -30,6 +40,11 @@ class Box3 {
     this.max = max ?? Vector3(double.negativeInfinity, double.negativeInfinity, double.negativeInfinity);
   }
 
+  /// Sets the lower and upper (x, y, z) boundaries of this box.
+  /// Please note that this method only copies the values from the given objects.
+  ///
+  /// - [min] - Vector3 representing the lower (x, y, z) boundary of the box.
+  /// - [max] - Vector3 representing the lower upper (x, y, z) boundary of the box.
   Box3 set(Vector3 min, Vector3 max) {
     this.min.copy(min);
     this.max.copy(max);
@@ -37,6 +52,9 @@ class Box3 {
     return this;
   }
 
+  /// Sets the upper and lower bounds of this box to include all of the data in array.
+  ///
+  /// - [array] -- An array of position data that the resulting box will envelop.
   Box3 setFromArray(List<double> array) {
     var minX = double.infinity;
     var minY = double.infinity;
@@ -66,7 +84,10 @@ class Box3 {
     return this;
   }
 
-  Box3 setFromBufferAttribute(attribute) {
+  /// Sets the upper and lower bounds of this box to include all of the data in attribute.
+  ///
+  /// - [attribute] - A buffer attribute of position data that the resulting box will envelop.
+  Box3 setFromBufferAttribute(BufferAttribute attribute) {
     var minX = double.infinity;
     var minY = double.infinity;
     var minZ = double.infinity;
@@ -95,7 +116,10 @@ class Box3 {
     return this;
   }
 
-  Box3 setFromPoints(points) {
+  /// Sets the upper and lower bounds of this box to include all of the points in points.
+  ///
+  /// - points - Array of Vector3s that the resulting box will contain.
+  Box3 setFromPoints(List<Vector3> points) {
     makeEmpty();
 
     for (var i = 0, il = points.length; i < il; i++) {
@@ -105,25 +129,39 @@ class Box3 {
     return this;
   }
 
-  Box3 setFromCenterAndSize(center, size) {
+  /// Centers this box on center and sets this box's width, height and depth to the values specified
+  /// in size.
+  ///
+  /// - [center], - Desired center position of the box.
+  /// - [size] - Desired x, y and z dimensions of the box.
+  Box3 setFromCenterAndSize(Vector3 center, Vector3 size) {
     final halfSize = _vector.copy(size).multiplyScalar(0.5);
 
-    this.min.copy(center).sub(halfSize);
-    this.max.copy(center).add(halfSize);
+    min.copy(center).sub(halfSize);
+    max.copy(center).add(halfSize);
 
     return this;
   }
 
-  setFromObject(object) {
+  /// Computes the world-axis-aligned bounding box of an Object3D (including its children),
+  /// accounting for the object's, and children's, world transforms. The function may result
+  /// in a larger box than strictly necessary.
+  ///
+  /// - [object] - Object3D to compute the bounding box of.
+  Box3 setFromObject(Object3D object) {
     makeEmpty();
 
     return expandByObject(object);
   }
 
+  /// Returns a new Box3 with the same min and max as this one.
   Box3 clone() {
     return Box3().copy(this);
   }
 
+  /// Copies the min and max from box to this box.
+  ///
+  /// - [box] - Box3 to copy.
   Box3 copy(Box3 box) {
     min.copy(box.min);
     max.copy(box.max);
@@ -131,6 +169,7 @@ class Box3 {
     return this;
   }
 
+  /// Makes this box empty.
   Box3 makeEmpty() {
     min.x = min.y = min.z = double.infinity;
     max.x = max.y = max.z = double.negativeInfinity;
@@ -138,70 +177,104 @@ class Box3 {
     return this;
   }
 
-  isEmpty() {
+  /// Returns true if this box includes zero points within its bounds.
+  ///
+  /// Note that a box with equal lower and upper bounds still includes
+  /// one point, the one both bounds share.
+  bool isEmpty() {
     // this is a more robust check for empty than ( volume <= 0 ) because volume can get positive with two negative axes
-
     return (max.x < min.x) || (max.y < min.y) || (max.z < min.z);
   }
 
-  getCenter(target) {
+  /// Returns the center point of the box as a Vector3.
+  ///
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getCenter(Vector3 target) {
     return isEmpty() ? target.set(0, 0, 0) : target.addVectors(min, max).multiplyScalar(0.5);
   }
 
-  getSize(target) {
+  /// Returns the width, height and depth of this box.
+  ///
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getSize(Vector3 target) {
     return isEmpty() ? target.set(0, 0, 0) : target.subVectors(max, min);
   }
 
-  expandByPoint(point) {
+  /// Expands the boundaries of this box to include point.
+  ///
+  /// - [point] - Vector3 that should be included in the box.
+  Box3 expandByPoint(Vector3 point) {
     min.min(point);
     max.max(point);
 
     return this;
   }
 
-  expandByVector(vector) {
+  /// Expands this box equilaterally by vector. The width of this box will
+  /// be expanded by the x component of vector in both directions.
+  ///
+  /// The height of this box will be expanded by the y component of vector
+  /// in both directions. The depth of this box will be expanded by the z
+  /// component of vector in both directions.
+  ///
+  /// - vector - Vector3 to expand the box by.
+  Box3 expandByVector(Vector3 vector) {
     min.sub(vector);
     max.add(vector);
 
     return this;
   }
 
-  expandByScalar(double scalar) {
+  /// Expands each dimension of the box by scalar. If negative, the
+  /// dimensions of the box will be contracted.
+  ///
+  /// - [scalar] - Distance to expand the box by.
+  Box3 expandByScalar(double scalar) {
     min.addScalar(-scalar);
     max.addScalar(scalar);
 
     return this;
   }
 
-  expandByObject(object) {
+  /// Expands the boundaries of this box to include object and its children,
+  /// accounting for the object's, and children's, world transforms.
+  /// The function may result in a larger box than strictly necessary.
+  ///
+  /// - object - Object3D to expand the box by.
+  Box3 expandByObject(Object3D object) {
     // Computes the world-axis-aligned bounding box of an object (including its children),
     // accounting for both the object's, and children's, world transforms
 
     object.updateWorldMatrix(false, false);
 
-    final geometry = object.geometry;
+    if (object is Mesh) {
+      final geometry = object.geometry;
 
-    if (geometry != null) {
-      if (geometry.boundingBox == null) {
-        geometry.computeBoundingBox();
+      if (geometry != null) {
+        if (geometry.boundingBox == null) {
+          geometry.computeBoundingBox();
+        }
+
+        _box.copy(geometry.boundingBox);
+        _box.applyMatrix4(object.matrixWorld);
+
+        union(_box);
       }
-
-      _box.copy(geometry.boundingBox);
-      _box.applyMatrix4(object.matrixWorld);
-
-      union(_box);
     }
 
     final children = object.children;
 
     for (var i = 0, l = children.length; i < l; i++) {
-      this.expandByObject(children[i]);
+      expandByObject(children[i]);
     }
 
     return this;
   }
 
-  containsPoint(point) {
+  /// Returns true if the specified point lies within or on the boundaries of this box.
+  ///
+  /// - [point] - Vector3 to check for inclusion.
+  bool containsPoint(Vector3 point) {
     return point.x < min.x ||
             point.x > max.x ||
             point.y < min.y ||
@@ -212,7 +285,11 @@ class Box3 {
         : true;
   }
 
-  containsBox(box) {
+  /// Returns true if this box includes the entirety of box. If this and box are identical,
+  /// this function also returns true.
+  ///
+  /// - [box] - Box3 to test for inclusion.
+  bool containsBox(Box3 box) {
     return min.x <= box.min.x &&
         box.max.x <= max.x &&
         min.y <= box.min.y &&
@@ -221,7 +298,11 @@ class Box3 {
         box.max.z <= max.z;
   }
 
-  getParameter(point, target) {
+  /// Returns a point as a proportion of this box's width, height and depth.
+  ///
+  /// - [point] - Vector3.
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getParameter(Vector3 point, Vector3 target) {
     // This can potentially have a divide by zero if the box
     // has a size dimension of 0.
 
@@ -232,7 +313,10 @@ class Box3 {
     );
   }
 
-  intersectsBox(Box3 box) {
+  /// Determines whether or not this box intersects box.
+  ///
+  /// - [box] - Box to check for intersection against.
+  bool intersectsBox(Box3 box) {
     // using 6 splitting planes to rule out intersections.
     return box.max.x < min.x ||
             box.min.x > max.x ||
@@ -244,7 +328,10 @@ class Box3 {
         : true;
   }
 
-  intersectsSphere(sphere) {
+  /// Determines whether or not this box intersects sphere.
+  ///
+  /// - [sphere] - Sphere to check for intersection against.
+  bool intersectsSphere(Sphere sphere) {
     // Find the point on the AABB closest to the sphere center.
     clampPoint(sphere.center, _vector);
 
@@ -252,7 +339,10 @@ class Box3 {
     return _vector.distanceToSquared(sphere.center) <= (sphere.radius * sphere.radius);
   }
 
-  intersectsPlane(plane) {
+  /// Determines whether or not this box intersects plane.
+  ///
+  /// - [plane] - Plane to check for intersection against.
+  bool intersectsPlane(Plane plane) {
     // We compute the minimum and maximum dot product values. If those values
     // are on the same side (back or front) of the plane, then there is no intersection.
 
