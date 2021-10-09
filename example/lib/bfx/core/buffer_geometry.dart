@@ -55,34 +55,51 @@ class BufferGeometry {
     return max;
   }
 
-  getIndex() {
+  /// Return the .index buffer.
+  BufferAttribute getIndex() {
     return index;
   }
 
-  setIndex(List<int> index) {
-    this.index = getMax(index) > 65535 ? Uint32BufferAttribute(index, 1) : Uint16BufferAttribute(index, 1);
+  /// Set the .index buffer.
+  /// - index can be an a normal list or a BufferAttribute;
+  BufferGeometry setIndex(dynamic index) {
+
+    if (index is BufferAttribute) {
+      this.index = index;
+    } else {
+      this.index = getMax(index) > 65535 ? Uint32BufferAttribute(index, 1) : Uint16BufferAttribute(index, 1);
+    }
+    return this;
   }
 
-  getAttribute(String name) {
-    return attributes[name];
+  /// Returns the attribute with the specified name.
+  BufferAttribute getAttribute(String name) {
+    // a possible fix is to remove the retyrn type of this method. 
+    return attributes[name]!; // problem
   }
 
-  setAttribute(String name, Float32BufferAttribute attribute) {
+  /// Sets an attribute to this geometry. Use this rather than the attributes property, 
+  /// because an internal hashmap of .attributes is maintained to speed up iterating 
+  /// over attributes.
+  BufferGeometry setAttribute(String name, BufferAttribute attribute) {
     attributes[name] = attribute;
     return this;
   }
 
+  /// Deletes the attribute with the specified name.
   deleteAttribute(String name) {
     attributes.remove(name);
 
     return this;
   }
 
-  hasAttribute(String name) {
+  /// Returns true if the attribute with the specified name exists.
+  bool hasAttribute(String name) {
     return attributes[name] != null;
   }
 
-  addGroup(int start, int count, [materialIndex = 0]) {
+  /// Adds a group to this geometry; see the groups property for details.
+  void addGroup(int start, int count, [int materialIndex = 0]) {
     groups.add({
       'start': start,
       'count': count,
@@ -90,16 +107,21 @@ class BufferGeometry {
     });
   }
 
-  clearGroups() {
+  /// Clears all groups.
+  void clearGroups() {
     groups.clear();
   }
 
-  setDrawRange(start, count) {
+  /// Set the .drawRange property. For non-indexed BufferGeometry, count is 
+  /// the number of vertices to render. For indexed BufferGeometry, count is 
+  /// the number of indices to render.
+  void setDrawRange(int start, int count) {
     drawRange['start'] = start;
     drawRange['count'] = count;
   }
 
-  applyMatrix4(Matrix4 matrix) {
+  /// Applies the matrix transform to the geometry.
+  BufferGeometry applyMatrix4(Matrix4 matrix) {
     var position = attributes['position'];
 
     if (position != null) {
@@ -137,7 +159,8 @@ class BufferGeometry {
     return this;
   }
 
-  applyQuaternion(Quaternion q) {
+  /// Applies the rotation represented by the quaternion to the geometry.
+  BufferGeometry applyQuaternion(Quaternion q) {
     _m1.makeRotationFromQuaternion(q);
 
     applyMatrix4(_m1);
@@ -145,7 +168,10 @@ class BufferGeometry {
     return this;
   }
 
-  rotateX(angle) {
+  /// Rotate the geometry about the X axis. This is typically done as a one time 
+  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// real-time mesh rotation.
+  BufferGeometry rotateX(double angle) {
     // rotate geometry around world x-axis
 
     _m1.makeRotationX(angle);
@@ -155,7 +181,10 @@ class BufferGeometry {
     return this;
   }
 
-  rotateY(angle) {
+  /// Rotate the geometry about the Y axis. This is typically done as a one time 
+  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// real-time mesh rotation.
+  BufferGeometry rotateY(double angle) {
     // rotate geometry around world y-axis
 
     _m1.makeRotationY(angle);
@@ -165,7 +194,10 @@ class BufferGeometry {
     return this;
   }
 
-  rotateZ(angle) {
+  /// Rotate the geometry about the Z axis. This is typically done as a one time 
+  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// real-time mesh rotation.
+  BufferGeometry rotateZ(double angle) {
     // rotate geometry around world z-axis
 
     _m1.makeRotationZ(angle);
@@ -175,7 +207,7 @@ class BufferGeometry {
     return this;
   }
 
-  translate(x, y, z) {
+  BufferGeometry translate(double x, double y, double z) {
     // translate geometry
 
     _m1.makeTranslation(x, y, z);
@@ -185,7 +217,9 @@ class BufferGeometry {
     return this;
   }
 
-  scale(x, y, z) {
+  /// Scale the geometry data. This is typically done as a one time operation, 
+  /// and not during a loop. Use Object3D.scale for typical real-time mesh scaling.
+  BufferGeometry scale(double x, double y, double z) {
     // scale geometry
 
     _m1.makeScale(x, y, z);
@@ -195,17 +229,20 @@ class BufferGeometry {
     return this;
   }
 
-  lookAt(vector) {
+  /// Rotates the geometry to face a point in space. This is typically done as a one time 
+  /// operation, and not during a loop. Use Object3D.lookAt for typical real-time mesh usage.
+  /// 
+  /// - [vector] - A world vector to look at.
+  BufferGeometry lookAt(Vector3 vector) {
     _obj.lookAt(vector);
-
     _obj.updateMatrix();
-
     applyMatrix4(_obj.matrix);
 
     return this;
   }
 
-  center() {
+  /// Center the geometry based on the bounding box.
+  BufferGeometry center() {
     computeBoundingBox();
 
     boundingBox.getCenter(_offset).negate();
@@ -215,7 +252,8 @@ class BufferGeometry {
     return this;
   }
 
-  setFromPoints(List points) {
+  /// Sets the attributes for this BufferGeometry from an array of points.
+  BufferGeometry setFromPoints(List points) {
     final position = [];
 
     for (var i = 0, l = points.length; i < l; i++) {
@@ -231,7 +269,10 @@ class BufferGeometry {
     return this;
   }
 
-  computeBoundingBox() {
+  /// Computes bounding box of the geometry, updating .boundingBox attribute.
+  /// Bounding boxes aren't computed by default. They need to be explicitly 
+  /// computed, otherwise they are null.
+  void computeBoundingBox() {
     boundingBox ??= Box3();
 
     final position = attributes['position'];
