@@ -28,6 +28,8 @@ class Object3D {
   /// the object uniqu hash id. c24f3sd2
   int uuid = 0;
 
+  int id = _object3DId++;
+
   /// The object name
   String name = '';
   String type = 'Object3D';

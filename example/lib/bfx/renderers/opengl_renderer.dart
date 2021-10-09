@@ -198,7 +198,7 @@ class OpenGLRenderer {
     currentRenderList = renderLists.get(scene, renderListStack.length);
     currentRenderList.init();
     renderListStack.add(currentRenderList);
-    projectObject(scene, camera, 0, _this.sortObjects);
+    // projectObject(scene, camera, 0, _this.sortObjects);
     currentRenderList.finish();
 
     if (_this.sortObjects == true) {
