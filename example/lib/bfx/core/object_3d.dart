@@ -176,17 +176,29 @@ class Object3D {
     quaternion.setFromEuler(euler, true);
   }
 
+  /// Calls setFromRotationMatrix( m) on the .quaternion.
+  ///
+  /// Note that this assumes that the upper 3x3 of m is a pure rotation matrix (i.e, unscaled).
+  ///
+  /// - [m] -- rotate the quaternion by the rotation component of the matrix.
   void setRotationFromMatrix(Matrix4 m) {
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
     quaternion.setFromRotationMatrix(m);
   }
 
+  /// Copy the given quaternion into .quaternion.
+  ///
+  /// - [q] -- normalized Quaternion.
   setRotationFromQuaternion(Quaternion q) {
     // assumes q is normalized
     quaternion.copy(q);
   }
 
-  rotateOnAxis(Vector3 axis, double angle) {
+  /// Rotate an object along an axis in object space. The axis is assumed to be normalized.
+  ///
+  /// - [axis] -- A normalized vector in object space.
+  /// - [angle] -- The angle in radians.
+  Object3D rotateOnAxis(Vector3 axis, double angle) {
     // rotate object on axis in object space
     // axis is assumed to be normalized
     _q1.setFromAxisAngle(axis, angle);
@@ -194,7 +206,12 @@ class Object3D {
     return this;
   }
 
-  rotateOnWorldAxis(Vector3 axis, double angle) {
+  /// Rotate an object along an axis in world space. The axis is assumed to be normalized.
+  /// Method Assumes no rotated parent.
+  ///
+  /// - [axis] -- A normalized vector in world space.
+  /// - [angle] -- The angle in radians.
+  Object3D rotateOnWorldAxis(Vector3 axis, double angle) {
     // rotate object on axis in world space
     // axis is assumed to be normalized
     // method assumes no rotated parent
@@ -205,19 +222,30 @@ class Object3D {
     return this;
   }
 
-  rotateX(double angle) {
+  /// Rotates the object around x axis in local space.
+  /// - [angle] - the angle to rotate in radians.
+  Object3D rotateX(double angle) {
     return rotateOnAxis(_xAxis, angle);
   }
 
-  rotateY(double angle) {
+  /// Rotates the object around y axis in local space.
+  /// - [angle] - the angle to rotate in radians.
+  Object3D rotateY(double angle) {
     return rotateOnAxis(_yAxis, angle);
   }
 
-  rotateZ(double angle) {
+  /// Rotates the object around z axis in local space.
+  /// - [angle] - the angle to rotate in radians.
+  Object3D rotateZ(double angle) {
     return rotateOnAxis(_zAxis, angle);
   }
 
-  translateOnAxis(axis, distance) {
+  /// Translate an object by distance along an axis in object space.
+  /// The axis is assumed to be normalized.
+  ///
+  /// - [axis] -- A normalized vector in object space.
+  /// - [distance] -- The distance to translate.
+  Object3D translateOnAxis(Vector3 axis, double distance) {
     // translate object by distance along axis in object space
     // axis is assumed to be normalized
     _v1.copy(axis).applyQuaternion(quaternion);
@@ -225,36 +253,52 @@ class Object3D {
     return this;
   }
 
-  translateX(distance) {
+  /// Translates object along x axis in object space by distance units.
+  Object3D translateX(double distance) {
     return translateOnAxis(_xAxis, distance);
   }
 
-  translateY(distance) {
+  /// Translates object along y axis in object space by distance units.
+  Object3D translateY(double distance) {
     return translateOnAxis(_yAxis, distance);
   }
 
-  translateZ(distance) {
+  /// Translates object along z axis in object space by distance units.
+  Object3D translateZ(double distance) {
     return translateOnAxis(_zAxis, distance);
   }
 
-  localToWorld(Vector3 vector) {
+  /// Converts the vector from this object's local space to world space.
+  ///
+  /// - [vector] - A vector representing a position in this object's local space.
+  Vector3 localToWorld(Vector3 vector) {
     return vector.applyMatrix4(matrixWorld);
   }
 
-  worldToLocal(vector) {
+  /// Converts the vector from world space to this object's local space.
+  ///
+  /// - [vector] - A vector representing a position in world space.
+  Vector3 worldToLocal(Vector3 vector) {
     return vector.applyMatrix4(_m1.copy(matrixWorld).invert());
   }
 
-  lookAt(x, [y, z]) {
+  /// Optionally, the x, y and z components of the world space position.
+  /// Rotates the object to face a point in world space.
+  /// This method does not support objects having non-uniformly-scaled parent(s).
+  /// - [vector] - A vector representing a position in world space.
+  ///
+  /// - .lookAt ( vector : Vector3 ) : void
+  /// - .lookAt ( x : double, y : double, z : double ) : void
+  lookAt(dynamic x, [double? y, double? z]) {
     // This method does not support objects having non-uniformly-scaled parent(s)
 
     if (x.isVector3) {
       _target.copy(x);
     } else {
-      _target.set(x, y, z);
+      _target.set(x, y!, z!);
     }
 
-    var parent = this.parent;
+    Object3D parent = this.parent;
 
     updateWorldMatrix(true, false);
 
@@ -275,6 +319,11 @@ class Object3D {
     }
   }
 
+  /// Adds object as child of this object. An arbitrary number of objects may
+  /// be added. Any current parent on an object passed in here will be removed,
+  /// since an object can have at most one parent.
+  ///
+  /// See Group for info on manually grouping objects.
   Object3D add(Object3D object) {
     // if (arguments.length > 1) {
     //   for (var i = 0; i < arguments.length; i++) {
@@ -305,20 +354,16 @@ class Object3D {
     return this;
   }
 
-  Object3D remove(object) {
+  /// Removes object as child of this object. An arbitrary number of objects may be removed.
+  Object3D remove(Object3D object) {
     // if ( arguments.length > 1 ) {
-
     // 	for ( let i = 0; i < arguments.length; i ++ ) {
-
     // 		this.remove( arguments[ i ] );
-
     // 	}
-
     // 	return this;
-
     // }
 
-    var index = children.indexOf(object);
+    int index = children.indexOf(object);
 
     if (index != -1) {
       object.parent = null;
@@ -331,6 +376,7 @@ class Object3D {
     return this;
   }
 
+  /// Removes this object from its current parent.
   Object3D removeFromParent() {
     var parent = this.parent;
 
@@ -341,7 +387,8 @@ class Object3D {
     return this;
   }
 
-  clear() {
+  /// Removes all child objects.
+  Object3D clear() {
     for (var i = 0; i < children.length; i++) {
       var object = children[i];
 
@@ -352,16 +399,14 @@ class Object3D {
     }
 
     children.length = 0;
-
     // or
     // children.clear();
 
     return this;
   }
 
-  attach(Object3D object) {
-    // adds object as a child of this, while maintaining the object's world transform
-
+  /// Adds object as a child of this, while maintaining the object's world transform.
+  Object3D attach(Object3D object) {
     updateWorldMatrix(true, false);
 
     _m1.copy(matrixWorld).invert();
@@ -381,15 +426,34 @@ class Object3D {
     return this;
   }
 
-  getObjectById(id) {
+  /// Searches through an object and its children, starting with the object
+  /// itself, and returns the first with a matching id.
+  ///
+  /// Note that ids are assigned in chronological order: 1, 2, 3, ...,
+  /// incrementing by one for each new object.
+  ///
+  /// - [id] -- Unique number of the object instance
+  Object3D getObjectById(int id) {
     return getObjectByProperty('id', id);
   }
 
-  getObjectByName(String name) {
+  /// Searches through an object and its children, starting with the object itself,
+  /// and returns the first with a matching name.
+  ///
+  /// Note that for most objects the name is an empty string by default.
+  /// You will have to set it manually to make use of this method.
+  ///
+  /// - [name] -- String to match to the children's Object3D.name property.
+  Object3D getObjectByName(String name) {
     return getObjectByProperty('name', name);
   }
 
-  getObjectByProperty(name, value) {
+  /// Searches through an object and its children, starting with the object itself,
+  /// and returns the first with a property that matches the value given.
+  ///
+  /// - [name] -- the property name to search for.
+  /// - [value] -- value of the given property.
+  getObjectByProperty(String name, dynamic value) {
     if (this.name == value) return this; // problem
 
     for (var i = 0, l = children.length; i < l; i++) {
@@ -404,13 +468,19 @@ class Object3D {
     return null;
   }
 
-  getWorldPosition(target) {
+  /// Returns a vector representing the position of the object in world space.
+  ///
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getWorldPosition(Vector3 target) {
     updateWorldMatrix(true, false);
 
     return target.setFromMatrixPosition(matrixWorld);
   }
 
-  getWorldQuaternion(target) {
+  /// Returns a quaternion representing the rotation of the object in world space.
+  ///
+  /// - [target] — the result will be copied into this Quaternion.
+  Quaternion getWorldQuaternion(Quaternion target) {
     updateWorldMatrix(true, false);
 
     matrixWorld.decompose(_position, target, _scale);
@@ -418,7 +488,10 @@ class Object3D {
     return target;
   }
 
-  getWorldScale(target) {
+  /// Returns a vector of the scaling factors applied to the object for each axis in world space.
+  ///
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getWorldScale(Vector3 target) {
     updateWorldMatrix(true, false);
 
     matrixWorld.decompose(_position, _quaternion, target);
@@ -426,7 +499,10 @@ class Object3D {
     return target;
   }
 
-  getWorldDirection(target) {
+  /// Returns a vector representing the direction of object's positive z-axis in world space.
+  ///
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 getWorldDirection(Vector3 target) {
     updateWorldMatrix(true, false);
 
     final e = matrixWorld.elements;
@@ -434,9 +510,15 @@ class Object3D {
     return target.set(e[8], e[9], e[10]).normalize();
   }
 
+  /// Abstract (empty) method to get intersections between a casted ray and this object.
+  /// Subclasses such as Mesh, Line, and Points implement this method in order to use raycasting.
   raycast() {}
 
-  traverse(callback) {
+  /// Executes the callback on this object and all descendants.
+  /// Note: Modifying the scene graph inside the callback is discouraged.
+  ///
+  /// - [callback] - A function with as first argument an object3D object.
+  void traverse(Function callback) {
     callback(this);
 
     final children = this.children;
@@ -446,7 +528,13 @@ class Object3D {
     }
   }
 
-  traverseVisible(callback) {
+  /// Like traverse, but the callback will only be executed for visible objects.
+  /// Descendants of invisible objects are not traversed.
+  ///
+  /// Note: Modifying the scene graph inside the callback is discouraged.
+  ///
+  /// - [callback] - A function with as first argument an object3D object.
+  void traverseVisible(Function callback) {
     if (visible == false) return;
 
     callback(this);
@@ -458,8 +546,12 @@ class Object3D {
     }
   }
 
-  traverseAncestors(callback) {
-    final parent = this.parent;
+  /// Executes the callback on all ancestors.
+  /// Note: Modifying the scene graph inside the callback is discouraged.
+  ///
+  /// - [callback] - A function with as first argument an object3D object.
+  void traverseAncestors(Function callback) {
+    final parent = this.parent as Object3D;
 
     if (parent != null) {
       callback(parent);
@@ -468,15 +560,17 @@ class Object3D {
     }
   }
 
-  updateMatrix() {
+  /// Updates the local transform.
+  void updateMatrix() {
     matrix.compose(position, quaternion, scale);
     matrixWorldNeedsUpdate = true;
   }
 
-  updateMatrixWorld([force]) {
+  /// Updates the global transform of the object and its descendants.
+  void updateMatrixWorld([bool? force]) {
     if (matrixAutoUpdate) updateMatrix();
 
-    if (matrixWorldNeedsUpdate || force) {
+    if (matrixWorldNeedsUpdate || force!) {
       if (parent == null) {
         matrixWorld.copy(matrix);
       } else {
@@ -491,7 +585,11 @@ class Object3D {
     }
   }
 
-  updateWorldMatrix(updateParents, updateChildren) {
+  /// Updates the global transform of the object.
+  ///
+  /// - [updateParents] - recursively updates global transform of ancestors.
+  /// - [updateChildren] - recursively updates global transform of descendants.
+  void updateWorldMatrix(bool updateParents, bool updateChildren) {
     if (updateParents == true && parent != null) {
       parent.updateWorldMatrix(true, false);
     }
@@ -511,11 +609,18 @@ class Object3D {
     }
   }
 
-  Object3D clone([recursive]) {
-    return Object3D().copy(this, recursive);
+  /// Returns a clone of this object and optionally all descendants.
+  ///
+  /// - [recursive] -- if true, descendants of the object are also cloned. Default is true.
+  Object3D clone([bool? recursive]) {
+    return Object3D().copy(this, recursive!);
   }
 
-  Object3D copy(Object3D source, [recursive = true]) {
+  /// Copy the given object into this object. Note: event listeners and user-defined callbacks
+  /// (.onAfterRender and .onBeforeRender) are not copied.
+  ///
+  /// - [recursive] -- if true, descendants of the object are also copied. Default is true.
+  Object3D copy(Object3D source, [bool recursive = true]) {
     name = source.name;
 
     up.copy(source.up);
