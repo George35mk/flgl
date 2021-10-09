@@ -1,5 +1,8 @@
 import 'dart:math' as math;
 
+import 'package:flgl_example/bfx/core/buffer_attribute.dart';
+import 'package:flgl_example/bfx/math/matrix4.dart';
+
 import 'euler.dart';
 import 'math_utils.dart';
 import 'vector3.dart';
@@ -17,7 +20,7 @@ class Quaternion {
     return qm.slerpQuaternions(qa, qb, t);
   }
 
-  static slerpFlat(dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t) {
+  static slerpFlat(List dst, int dstOffset, List src0, int srcOffset0, List src1, int srcOffset1, double t) {
     // fuzz-free, array-based Quaternion SLERP operation
 
     var x0 = src0[srcOffset0 + 0];
@@ -202,7 +205,7 @@ class Quaternion {
     return this;
   }
 
-  setFromAxisAngle(Vector3 axis, angle) {
+  Quaternion setFromAxisAngle(Vector3 axis, double angle) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
 
     // assumes axis is normalized
@@ -219,7 +222,7 @@ class Quaternion {
     return this;
   }
 
-  setFromRotationMatrix(m) {
+  Quaternion setFromRotationMatrix(Matrix4 m) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
@@ -271,7 +274,7 @@ class Quaternion {
     return this;
   }
 
-  setFromUnitVectors(Vector3 vFrom, Vector3 vTo) {
+  Quaternion setFromUnitVectors(Vector3 vFrom, Vector3 vTo) {
     // assumes direction vectors vFrom and vTo are normalized
 
     var r = vFrom.dot(vTo) + 1;
@@ -305,7 +308,7 @@ class Quaternion {
     return normalize();
   }
 
-  angleTo(Quaternion q) {
+  double angleTo(Quaternion q) {
     return 2 * math.acos(MathUtils.clamp(dot(q), -1, 1).abs());
   }
 
@@ -321,21 +324,21 @@ class Quaternion {
 
     double t = math.min(1, step / angle);
 
-    this.slerp(q, t);
+    slerp(q, t);
 
     return this;
   }
 
-  identity() {
+  Quaternion identity() {
     return set(0, 0, 0, 1);
   }
 
-  invert() {
+  Quaternion invert() {
     // quaternion is assumed to have unit length
     return conjugate();
   }
 
-  conjugate() {
+  Quaternion conjugate() {
     x *= -1;
     y *= -1;
     z *= -1;
@@ -346,15 +349,15 @@ class Quaternion {
     return x * v.x + y * v.y + z * v.z + w * v.w;
   }
 
-  lengthSq() {
+  double lengthSq() {
     return x * x + y * y + z * z + w * w;
   }
 
-  length() {
+  double length() {
     return math.sqrt(x * x + y * y + z * z + w * w);
   }
 
-  normalize() {
+  Quaternion normalize() {
     var l = length();
 
     if (l == 0) {
@@ -374,7 +377,7 @@ class Quaternion {
     return this;
   }
 
-  multiply(q, [p]) {
+  Quaternion multiply(Quaternion q, [Quaternion? p]) {
     if (p != null) {
       print('THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.');
       return multiplyQuaternions(q, p);
@@ -383,7 +386,7 @@ class Quaternion {
     return multiplyQuaternions(this, q);
   }
 
-  premultiply(q) {
+  Quaternion premultiply(Quaternion q) {
     return multiplyQuaternions(q, this);
   }
 
@@ -463,7 +466,7 @@ class Quaternion {
     copy(qa).slerp(qb, t);
   }
 
-  random() {
+  Quaternion random() {
     // Derived from http://planning.cs.uiuc.edu/node198.html
     // Note, this source uses w, x, y, z ordering,
     // so we swap the order below.
@@ -483,11 +486,11 @@ class Quaternion {
     );
   }
 
-  equals(quaternion) {
-    return (quaternion._x == x) && (quaternion._y == y) && (quaternion._z == z) && (quaternion._w == w);
+  bool equals(Quaternion quaternion) {
+    return (quaternion.x == x) && (quaternion.y == y) && (quaternion.z == z) && (quaternion.w == w);
   }
 
-  Quaternion fromArray(List<double> array, [offset = 0]) {
+  Quaternion fromArray(List<double> array, [int offset = 0]) {
     x = array[offset];
     y = array[offset + 1];
     z = array[offset + 2];
@@ -496,7 +499,7 @@ class Quaternion {
     return this;
   }
 
-  toArray([array = List, offset = 0]) {
+  List<double> toArray([array = List, int offset = 0]) {
     array[offset] = x;
     array[offset + 1] = y;
     array[offset + 2] = z;
@@ -505,7 +508,7 @@ class Quaternion {
     return array;
   }
 
-  fromBufferAttribute(attribute, int index) {
+  Quaternion fromBufferAttribute(BufferAttribute attribute, int index) {
     x = attribute.getX(index);
     y = attribute.getY(index);
     z = attribute.getZ(index);
@@ -514,7 +517,7 @@ class Quaternion {
     return this;
   }
 
-  onChange(callback) {
+  Quaternion onChange(callback) {
     // onChangeCallback = callback;
 
     return this;

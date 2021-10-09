@@ -22,62 +22,112 @@ final _xAxis = Vector3(1, 0, 0);
 final _yAxis = Vector3(0, 1, 0);
 final _zAxis = Vector3(0, 0, 1);
 
-var DefaultUp = Vector3(0, 1, 0);
+/// The default up direction for objects, also used as the default position for DirectionalLight,
+/// HemisphereLight and Spotlight (which creates lights shining from the top down).
+/// Set to ( 0, 1, 0 ) by default.
+var defaultUp = Vector3(0, 1, 0);
 
 class Object3D {
-  /// the object uniqu hash id. c24f3sd2
-  int uuid = 0;
+  /// UUID of this object instance. This gets automatically assigned, so this shouldn't be edited.
+  String uuid = '';
 
+  /// readonly – Unique number for this object instance.
   int id = _object3DId++;
 
-  /// The object name
+  /// Optional name of the object (doesn't need to be unique). Default is an empty string.
   String name = '';
   String type = 'Object3D';
 
-  /// the parent of this object can be null or Object3D
+  /// Object's parent in the scene graph. An object can have at most one parent.
+  ///
+  /// the type is Object3D
   dynamic parent; // null
 
   /// A list of Object3D children
   List<Object3D> children = [];
 
-  Vector3 up = DefaultUp.clone();
+  /// This is used by the lookAt method, for example, to determine the orientation of the result.
+  /// Default is Object3D.DefaultUp - that is, ( 0, 1, 0 ).
+  Vector3 up = defaultUp.clone();
 
-  /// The translation vector
+  /// A Vector3 representing the object's local position. Default is (0, 0, 0).
   Vector3 position = Vector3();
 
-  /// The rotation vector in radians.
+  /// Object's local rotation (see Euler angles), in radians.
   Euler rotation = Euler(0, 0, 0);
 
+  /// Object's local rotation as a Quaternion.
   Quaternion quaternion = Quaternion();
 
-  /// The scale vector
+  /// The object's local scale. Default is Vector3( 1, 1, 1 ).
   Vector3 scale = Vector3(1, 1, 1);
 
-  /// The local matrix
+  /// The local transform matrix.
   Matrix4 matrix = Matrix4();
 
-  /// The worldMatrix
+  /// When this is set, it calculates the matrix of position,
+  /// (rotation or quaternion) and scale every frame and also recalculates
+  /// the matrixWorld property. Default is Object3D.DefaultMatrixAutoUpdate (true).
+  bool matrixAutoUpdate = true;
+
+  /// The global transform of the object. If the Object3D has no parent,
+  /// then it's identical to the local transform .matrix.
   Matrix4 matrixWorld = Matrix4();
 
-  Matrix4 modelViewMatrix = Matrix4();
-  Matrix3 normalMatrix = Matrix3();
-
-  bool matrixAutoUpdate = true;
+  /// When this is set, it calculates the matrixWorld in that frame and
+  /// resets this property to false. Default is false.
   bool matrixWorldNeedsUpdate = false;
 
+  /// This is passed to the shader and used to calculate the position of the object.
+  Matrix4 modelViewMatrix = Matrix4();
+
+  /// This is passed to the shader and used to calculate lighting for the object.
+  /// It is the transpose of the inverse of the upper left 3x3 sub-matrix of
+  /// this object's modelViewMatrix.
+  ///
+  /// The reason for this special matrix is that simply using the modelViewMatrix
+  /// could result in a non-unit length of normals (on scaling) or in a non-perpendicular
+  /// direction (on non-uniform scaling).
+  ///
+  /// On the other hand the translation part of the modelViewMatrix is not relevant
+  /// for the calculation of normals. Thus a Matrix3 is sufficient.
+  Matrix3 normalMatrix = Matrix3();
+
+  /// The layer membership of the object. The object is only visible if it
+  /// has at least one layer in common with the Camera in use.
+  /// This property can also be used to filter out unwanted objects in
+  /// ray-intersection tests when using Raycaster.
   Layers layers = Layers();
+
+  /// Object gets rendered if true. Default is true.
   bool visible = true;
 
+  /// Whether the object gets rendered into shadow map. Default is false.
   bool castShadow = false;
+
+  /// Whether the material receives shadows. Default is false.
   bool receiveShadow = false;
 
+  /// When this is set, it checks every frame if the object is in the frustum
+  /// of the camera before rendering the object. If set to `false` the object
+  /// gets rendered every frame even if it is not in the frustum of the camera.
+  /// Default is `true`.
   bool frustumCulled = true;
+
+  /// This value allows the default rendering order of scene graph objects to
+  /// be overridden although opaque and transparent objects remain sorted independently.
+  ///
+  /// When this property is set for an instance of Group, all descendants objects
+  /// will be sorted and rendered together. Sorting is from lowest to highest renderOrder.
+  /// Default value is 0.
   int renderOrder = 0;
 
+  /// Array with object's animation clips.
   List animations = [];
 
-  // the user data.
-  var userData = {};
+  /// An object that can be used to store custom data about the Object3D.
+  /// It should not hold references to functions as these will not be cloned.
+  Map userData = {};
 
   dynamic isImmediateRenderObject;
 
@@ -98,27 +148,35 @@ class Object3D {
 
   onAfterRender(/* renderer, scene, camera, geometry, material, group */) {}
 
+  /// Applies the matrix transform to the object and updates the object's position, rotation and scale.
   applyMatrix4(Matrix4 matrix) {
     if (matrixAutoUpdate) updateMatrix();
     this.matrix.premultiply(matrix);
     this.matrix.decompose(position, quaternion, scale);
   }
 
-  applyQuaternion(q) {
+  /// Applies the rotation represented by the quaternion to the object.
+  applyQuaternion(Quaternion q) {
     quaternion.premultiply(q);
     return this;
   }
 
-  setRotationFromAxisAngle(Vector3 axis, double angle) {
+  /// Calls setFromAxisAngle( axis, angle ) on the .quaternion.
+  ///
+  /// - [axis] -- A normalized vector in object space.
+  /// - [angle] -- angle in radians
+  void setRotationFromAxisAngle(Vector3 axis, double angle) {
     // assumes axis is normalized
     quaternion.setFromAxisAngle(axis, angle);
   }
 
-  setRotationFromEuler(euler) {
+  /// Calls setRotationFromEuler( euler) on the .quaternion.
+  /// - [euler] -- Euler angle specifying rotation amount.
+  void setRotationFromEuler(Euler euler) {
     quaternion.setFromEuler(euler, true);
   }
 
-  setRotationFromMatrix(m) {
+  void setRotationFromMatrix(Matrix4 m) {
     // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
     quaternion.setFromRotationMatrix(m);
   }
@@ -217,7 +275,7 @@ class Object3D {
     }
   }
 
-  Object3D add(object) {
+  Object3D add(Object3D object) {
     // if (arguments.length > 1) {
     //   for (var i = 0; i < arguments.length; i++) {
     //     this.add(arguments[i]);
@@ -231,7 +289,7 @@ class Object3D {
       return this;
     }
 
-    if (object && object is Object3D) {
+    if (object != null && object is Object3D) {
       if (object.parent != null) {
         object.parent.remove(object);
       }

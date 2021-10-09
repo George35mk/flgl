@@ -9,7 +9,7 @@ import 'package:flgl_example/bfx/math/vector4.dart';
 
 final _vector = Vector3();
 final _vector2 = Vector2();
-const StaticDrawUsage = 35044;
+const staticDrawUsage = 35044;
 
 class BufferAttribute {
   bool isBufferAttribute = true;

@@ -624,10 +624,10 @@ class Vector3 {
   }
 
   /// Sets this vector from the cylindrical coordinates radius, theta and y.
-  Vector3 setFromCylindricalCoords(double radius, double theta, double y) {
-    this.x = radius * math.sin(theta);
-    this.y = y;
-    this.z = radius * math.cos(theta);
+  Vector3 setFromCylindricalCoords(double radius, double theta, double _y) {
+    x = radius * math.sin(theta);
+    y = _y;
+    z = radius * math.cos(theta);
 
     return this;
   }
