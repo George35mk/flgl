@@ -199,7 +199,7 @@ class OpenGLRenderer {
 
     currentRenderState = renderStates.get(scene, renderStateStack.length);
     currentRenderState.init();
-    renderStateStack.push(currentRenderState);
+    renderStateStack.add(currentRenderState);
 
     currentRenderList = renderLists.get(scene, renderListStack.length);
     currentRenderList.init();

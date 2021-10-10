@@ -12,4 +12,12 @@ class MathUtils {
   static String generateUUID() {
     return uuid.v1();
   }
+
+  static lerp(x, y, t) {
+    return (1 - t) * x + t * y;
+  }
+
+  static euclideanModulo(n, m) {
+    return ((n % m) + m) % m;
+  }
 }
