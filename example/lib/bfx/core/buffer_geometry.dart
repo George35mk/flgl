@@ -10,6 +10,7 @@ import 'package:flgl_example/bfx/math/vector2.dart';
 import 'package:flgl_example/bfx/math/vector3.dart';
 
 import 'buffer_attribute.dart';
+import 'interleaved_buffer_attribute.dart';
 import 'object_3d.dart';
 import 'dart:math' as math;
 
@@ -63,7 +64,6 @@ class BufferGeometry {
   /// Set the .index buffer.
   /// - index can be an a normal list or a BufferAttribute;
   BufferGeometry setIndex(dynamic index) {
-
     if (index is BufferAttribute) {
       this.index = index;
     } else {
@@ -74,12 +74,12 @@ class BufferGeometry {
 
   /// Returns the attribute with the specified name.
   BufferAttribute getAttribute(String name) {
-    // a possible fix is to remove the retyrn type of this method. 
+    // a possible fix is to remove the retyrn type of this method.
     return attributes[name]!; // problem
   }
 
-  /// Sets an attribute to this geometry. Use this rather than the attributes property, 
-  /// because an internal hashmap of .attributes is maintained to speed up iterating 
+  /// Sets an attribute to this geometry. Use this rather than the attributes property,
+  /// because an internal hashmap of .attributes is maintained to speed up iterating
   /// over attributes.
   BufferGeometry setAttribute(String name, BufferAttribute attribute) {
     attributes[name] = attribute;
@@ -112,8 +112,8 @@ class BufferGeometry {
     groups.clear();
   }
 
-  /// Set the .drawRange property. For non-indexed BufferGeometry, count is 
-  /// the number of vertices to render. For indexed BufferGeometry, count is 
+  /// Set the .drawRange property. For non-indexed BufferGeometry, count is
+  /// the number of vertices to render. For indexed BufferGeometry, count is
   /// the number of indices to render.
   void setDrawRange(int start, int count) {
     drawRange['start'] = start;
@@ -168,8 +168,8 @@ class BufferGeometry {
     return this;
   }
 
-  /// Rotate the geometry about the X axis. This is typically done as a one time 
-  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// Rotate the geometry about the X axis. This is typically done as a one time
+  /// operation, and not during a loop. Use Object3D.rotation for typical
   /// real-time mesh rotation.
   BufferGeometry rotateX(double angle) {
     // rotate geometry around world x-axis
@@ -181,8 +181,8 @@ class BufferGeometry {
     return this;
   }
 
-  /// Rotate the geometry about the Y axis. This is typically done as a one time 
-  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// Rotate the geometry about the Y axis. This is typically done as a one time
+  /// operation, and not during a loop. Use Object3D.rotation for typical
   /// real-time mesh rotation.
   BufferGeometry rotateY(double angle) {
     // rotate geometry around world y-axis
@@ -194,8 +194,8 @@ class BufferGeometry {
     return this;
   }
 
-  /// Rotate the geometry about the Z axis. This is typically done as a one time 
-  /// operation, and not during a loop. Use Object3D.rotation for typical 
+  /// Rotate the geometry about the Z axis. This is typically done as a one time
+  /// operation, and not during a loop. Use Object3D.rotation for typical
   /// real-time mesh rotation.
   BufferGeometry rotateZ(double angle) {
     // rotate geometry around world z-axis
@@ -217,7 +217,7 @@ class BufferGeometry {
     return this;
   }
 
-  /// Scale the geometry data. This is typically done as a one time operation, 
+  /// Scale the geometry data. This is typically done as a one time operation,
   /// and not during a loop. Use Object3D.scale for typical real-time mesh scaling.
   BufferGeometry scale(double x, double y, double z) {
     // scale geometry
@@ -229,9 +229,9 @@ class BufferGeometry {
     return this;
   }
 
-  /// Rotates the geometry to face a point in space. This is typically done as a one time 
+  /// Rotates the geometry to face a point in space. This is typically done as a one time
   /// operation, and not during a loop. Use Object3D.lookAt for typical real-time mesh usage.
-  /// 
+  ///
   /// - [vector] - A world vector to look at.
   BufferGeometry lookAt(Vector3 vector) {
     _obj.lookAt(vector);
@@ -270,13 +270,13 @@ class BufferGeometry {
   }
 
   /// Computes bounding box of the geometry, updating .boundingBox attribute.
-  /// Bounding boxes aren't computed by default. They need to be explicitly 
+  /// Bounding boxes aren't computed by default. They need to be explicitly
   /// computed, otherwise they are null.
   void computeBoundingBox() {
     boundingBox ??= Box3();
 
     final position = attributes['position'];
-    final morphAttributesPosition = morphAttributes['position'];
+    // final morphAttributesPosition = morphAttributes['position'];
 
     if (position != null && position is GLBufferAttribute) {
       print(
@@ -296,23 +296,23 @@ class BufferGeometry {
 
       // process morph attributes if present
 
-      if (morphAttributesPosition != null) {
-        for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
-          final morphAttribute = morphAttributesPosition[i];
-          _box.setFromBufferAttribute(morphAttribute);
+      // if (morphAttributesPosition != null) {
+      //   for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
+      //     final morphAttribute = morphAttributesPosition[i];
+      //     _box.setFromBufferAttribute(morphAttribute);
 
-          if (morphTargetsRelative) {
-            _vector.addVectors(boundingBox.min, _box.min);
-            boundingBox.expandByPoint(_vector);
+      //     if (morphTargetsRelative) {
+      //       _vector.addVectors(boundingBox.min, _box.min);
+      //       boundingBox.expandByPoint(_vector);
 
-            _vector.addVectors(boundingBox.max, _box.max);
-            boundingBox.expandByPoint(_vector);
-          } else {
-            boundingBox.expandByPoint(_box.min);
-            boundingBox.expandByPoint(_box.max);
-          }
-        }
-      }
+      //       _vector.addVectors(boundingBox.max, _box.max);
+      //       boundingBox.expandByPoint(_vector);
+      //     } else {
+      //       boundingBox.expandByPoint(_box.min);
+      //       boundingBox.expandByPoint(_box.max);
+      //     }
+      //   }
+      // }
     } else {
       boundingBox.makeEmpty();
     }
@@ -327,7 +327,7 @@ class BufferGeometry {
     boundingSphere ??= Sphere();
 
     final position = attributes['position'];
-    final morphAttributesPosition = morphAttributes['position'];
+    // final morphAttributesPosition = morphAttributes['position'];
 
     if (position != null && position is GLBufferAttribute) {
       print(
@@ -347,23 +347,23 @@ class BufferGeometry {
 
       // process morph attributes if present
 
-      if (morphAttributesPosition != null) {
-        for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
-          final morphAttribute = morphAttributesPosition[i];
-          _boxMorphTargets.setFromBufferAttribute(morphAttribute);
+      // if (morphAttributesPosition != null) {
+      //   for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
+      //     final morphAttribute = morphAttributesPosition[i];
+      //     _boxMorphTargets.setFromBufferAttribute(morphAttribute);
 
-          if (morphTargetsRelative) {
-            _vector.addVectors(_box.min, _boxMorphTargets.min);
-            _box.expandByPoint(_vector);
+      //     if (morphTargetsRelative) {
+      //       _vector.addVectors(_box.min, _boxMorphTargets.min);
+      //       _box.expandByPoint(_vector);
 
-            _vector.addVectors(_box.max, _boxMorphTargets.max);
-            _box.expandByPoint(_vector);
-          } else {
-            _box.expandByPoint(_boxMorphTargets.min);
-            _box.expandByPoint(_boxMorphTargets.max);
-          }
-        }
-      }
+      //       _vector.addVectors(_box.max, _boxMorphTargets.max);
+      //       _box.expandByPoint(_vector);
+      //     } else {
+      //       _box.expandByPoint(_boxMorphTargets.min);
+      //       _box.expandByPoint(_boxMorphTargets.max);
+      //     }
+      //   }
+      // }
 
       _box.getCenter(center);
 
@@ -380,23 +380,23 @@ class BufferGeometry {
 
       // process morph attributes if present
 
-      if (morphAttributesPosition != null) {
-        for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
-          final morphAttribute = morphAttributesPosition[i];
-          final morphTargetsRelative = this.morphTargetsRelative;
+      // if (morphAttributesPosition != null) {
+      //   for (var i = 0, il = morphAttributesPosition.length; i < il; i++) {
+      //     final morphAttribute = morphAttributesPosition[i];
+      //     final morphTargetsRelative = this.morphTargetsRelative;
 
-          for (var j = 0, jl = morphAttribute.count; j < jl; j++) {
-            _vector.fromBufferAttribute(morphAttribute, j);
+      //     for (var j = 0, jl = morphAttribute.count; j < jl; j++) {
+      //       _vector.fromBufferAttribute(morphAttribute, j);
 
-            if (morphTargetsRelative) {
-              _offset.fromBufferAttribute(position, j);
-              _vector.add(_offset);
-            }
+      //       if (morphTargetsRelative) {
+      //         _offset.fromBufferAttribute(position, j);
+      //         _vector.add(_offset);
+      //       }
 
-            maxRadiusSq = math.max(maxRadiusSq, center.distanceToSquared(_vector));
-          }
-        }
-      }
+      //       maxRadiusSq = math.max(maxRadiusSq, center.distanceToSquared(_vector));
+      //     }
+      //   }
+      // }
 
       boundingSphere.radius = math.sqrt(maxRadiusSq);
 
@@ -421,11 +421,11 @@ class BufferGeometry {
     }
 
     final indices = index.array;
-    final positions = attributes['position']!.array;
-    final normals = attributes['normal']!.array;
+    final positions = attributes['position']!.array as List<double>;
+    final normals = attributes['normal']!.array as List<double>;
     final uvs = attributes['uv']!.array;
 
-    final nVertices = positions.length / 3;
+    final nVertices = positions.length ~/ 3;
 
     if (attributes['tangent'] == null) {
       setAttribute('tangent', BufferAttribute(Float32List(4 * nVertices), 4));
@@ -436,8 +436,8 @@ class BufferGeometry {
     final tan1 = [], tan2 = [];
 
     for (var i = 0; i < nVertices; i++) {
-      tan1[i] = new Vector3();
-      tan2[i] = new Vector3();
+      tan1[i] = Vector3();
+      tan2[i] = Vector3();
     }
 
     final vA = Vector3();
@@ -470,7 +470,7 @@ class BufferGeometry {
 
       // silently ignore degenerate uv triangles having coincident or colinear vertices
 
-      if (!isFinite(r)) return;
+      if (!r.isFinite) return; // maybe a problem
 
       sdir.copy(vB).multiplyScalar(uvC.y).addScaledVector(vC, -uvB.y).multiplyScalar(r);
       tdir.copy(vC).multiplyScalar(uvB.x).addScaledVector(vB, -uvC.x).multiplyScalar(r);
@@ -486,7 +486,7 @@ class BufferGeometry {
 
     var groups = this.groups;
 
-    if (groups.length == 0) {
+    if (groups.isEmpty) {
       groups = [
         {'start': 0, 'count': indices.length}
       ];
@@ -495,8 +495,8 @@ class BufferGeometry {
     for (var i = 0, il = groups.length; i < il; ++i) {
       final group = groups[i];
 
-      final start = group.start;
-      final count = group.count;
+      final start = group['start'];
+      final count = group['count'];
 
       for (var j = start, jl = start + count; j < jl; j += 3) {
         handleTriangle(indices[j + 0], indices[j + 1], indices[j + 2]);
@@ -532,8 +532,8 @@ class BufferGeometry {
     for (var i = 0, il = groups.length; i < il; ++i) {
       final group = groups[i];
 
-      final start = group.start;
-      final count = group.count;
+      final start = group['start'];
+      final count = group['count'];
 
       for (var j = start, jl = start + count; j < jl; j += 3) {
         handleVertex(indices[j + 0]);
@@ -617,8 +617,8 @@ class BufferGeometry {
     }
   }
 
-  merge(BufferGeometry geometry, offset) {
-    if (!(geometry != null && geometry is BufferGeometry)) {
+  merge(BufferGeometry geometry, [int offset = 0]) {
+    if (geometry is! BufferGeometry) {
       print('THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry. $geometry');
       return;
     }
@@ -633,7 +633,7 @@ class BufferGeometry {
     final attributes = this.attributes;
 
     attributes.forEach((key, value) {
-      if (geometry.attributes[key] == null) continue;
+      if (geometry.attributes[key] == null) ;
 
       final attribute1 = attributes[key];
       final attributeArray1 = attribute1!.array;
@@ -641,8 +641,8 @@ class BufferGeometry {
       final attribute2 = geometry.attributes[key];
       final attributeArray2 = attribute2!.array;
 
-      final attributeOffset = attribute2.itemSize * offset;
-      final length = math.min(attributeArray2.length, attributeArray1.length - attributeOffset);
+      final int attributeOffset = attribute2.itemSize * offset;
+      final int length = math.min(attributeArray2.length, attributeArray1.length - attributeOffset);
 
       for (var i = 0, j = attributeOffset; i < length; i++, j++) {
         attributeArray1[j] = attributeArray2[i];
@@ -664,85 +664,81 @@ class BufferGeometry {
     }
   }
 
-  toNonIndexed() {
-    convertBufferAttribute(BufferAttribute attribute, List<dynamic> indices) {
-      final array = attribute.array;
-      final itemSize = attribute.itemSize;
-      final normalized = attribute.normalized;
+  // toNonIndexed() {
+  //   convertBufferAttribute(BufferAttribute attribute, List<dynamic> indices) {
+  //     final array = attribute.array;
+  //     final itemSize = attribute.itemSize;
+  //     final normalized = attribute.normalized;
 
-      final array2 = new array.constructor(indices.length * itemSize);
+  //     // find what array is and assign
+  //     final array2 = array.constructor(indices.length * itemSize);
 
-      var index = 0, index2 = 0;
+  //     var index = 0, index2 = 0;
 
-      for (var i = 0, l = indices.length; i < l; i++) {
-        if (attribute.isInterleavedBufferAttribute) {
-          index = indices[i] * attribute.data.stride + attribute.offset;
-        } else {
-          index = indices[i] * itemSize;
-        }
+  //     for (var i = 0, l = indices.length; i < l; i++) {
+  //       if (attribute is InterleavedBufferAttribute) {
+  //         index = indices[i] * attribute.data.stride + attribute.offset;
+  //       } else {
+  //         index = indices[i] * itemSize;
+  //       }
 
-        for (var j = 0; j < itemSize; j++) {
-          array2[index2++] = array[index++];
-        }
-      }
+  //       for (var j = 0; j < itemSize; j++) {
+  //         array2[index2++] = array[index++];
+  //       }
+  //     }
 
-      return BufferAttribute(array2, itemSize, normalized);
-    }
+  //     return BufferAttribute(array2, itemSize, normalized);
+  //   }
 
-    //
+  //   //
 
-    if (index == null) {
-      print('THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.');
-      return this;
-    }
+  //   if (index == null) {
+  //     print('THREE.BufferGeometry.toNonIndexed(): BufferGeometry is already non-indexed.');
+  //     return this;
+  //   }
 
-    final geometry2 = BufferGeometry();
+  //   final geometry2 = BufferGeometry();
 
-    final indices = index.array;
-    final attributes = this.attributes;
+  //   final indices = index.array;
+  //   final attributes = this.attributes;
 
-    // attributes
+  //   // attributes
+  //   attributes.forEach((name, attribute) {
+  //     final newAttribute = convertBufferAttribute(attribute, indices);
+  //     geometry2.setAttribute(name, newAttribute);
+  //   });
 
-    for (final name in attributes) {
-      final attribute = attributes[name];
+  //   // morph attributes
 
-      final newAttribute = convertBufferAttribute(attribute, indices);
+  //   // final morphAttributes = this.morphAttributes;
 
-      geometry2.setAttribute(name, newAttribute);
-    }
+  //   // morphAttributes.forEach((name, value) {
+  //   //   final morphArray = [];
+  //   //   final morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
 
-    // morph attributes
+  //   //   for (var i = 0, il = morphAttribute.length; i < il; i++) {
+  //   //     final attribute = morphAttribute[i];
 
-    final morphAttributes = this.morphAttributes;
+  //   //     final newAttribute = convertBufferAttribute(attribute, indices);
 
-    morphAttributes.forEach((name, value) { 
-      final morphArray = [];
-      final morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
+  //   //     morphArray.add(newAttribute);
+  //   //   }
 
-      for (var i = 0, il = morphAttribute.length; i < il; i++) {
-        final attribute = morphAttribute[i];
+  //   //   geometry2.morphAttributes[name] = morphArray;
+  //   // });
 
-        final newAttribute = convertBufferAttribute(attribute, indices);
+  //   geometry2.morphTargetsRelative = morphTargetsRelative;
 
-        morphArray.add(newAttribute);
-      }
+  //   // groups
+  //   final groups = this.groups;
 
-      geometry2.morphAttributes[name] = morphArray;
-    });
-    
+  //   for (var i = 0, l = groups.length; i < l; i++) {
+  //     final group = groups[i];
+  //     geometry2.addGroup(group['start'], group['count'], group['materialIndex']);
+  //   }
 
-    geometry2.morphTargetsRelative = morphTargetsRelative;
-
-    // groups
-    final groups = this.groups;
-
-    for (var i = 0, l = groups.length; i < l; i++) {
-      final group = groups[i];
-      geometry2.addGroup(group['start'], group['count'], group['materialIndex']);
-    }
-
-    return geometry2;
-  }
+  //   return geometry2;
+  // }
 
   toJSON() {}
 
@@ -753,12 +749,12 @@ class BufferGeometry {
   BufferGeometry copy(BufferGeometry source) {
     // reset
 
-    this.index = null;
+    this.index = null as dynamic; // problem
     this.attributes = {};
     this.morphAttributes = {};
     this.groups = [];
-    this.boundingBox = null;
-    this.boundingSphere = null;
+    this.boundingBox = null as dynamic; // problem
+    this.boundingSphere = null as dynamic; // problem
 
     // used for storing cloned, shared data
 
@@ -773,32 +769,38 @@ class BufferGeometry {
     final index = source.index;
 
     if (index != null) {
-      setIndex(index.clone(data));
+      // setIndex(index.clone(data));
+      setIndex(index.clone());
     }
 
     // attributes
 
     final attributes = source.attributes;
 
-    for (final name in attributes) {
-      final attribute = attributes[name];
-      setAttribute(name, attribute!.clone(data));
-    }
+    attributes.forEach((name, attribute) {
+      // final attribute = attributes[name];
+      setAttribute(name, attribute.clone());
+    });
+
+    // for (final name in attributes) {
+    //   final attribute = attributes[name];
+    //   setAttribute(name, attribute!.clone());
+    // }
 
     // morph attributes
 
-    final morphAttributes = source.morphAttributes;
+    // final morphAttributes = source.morphAttributes;
 
-    morphAttributes.forEach((name, value) { 
-      final array = [];
-      final morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
+    // morphAttributes.forEach((name, value) {
+    //   final array = [];
+    //   final morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
 
-      for (var i = 0, l = morphAttribute.length; i < l; i++) {
-        array.add(morphAttribute![i].clone(data));
-      }
+    //   for (var i = 0, l = morphAttribute.length; i < l; i++) {
+    //     array.add(morphAttribute![i].clone(data));
+    //   }
 
-      this.morphAttributes[name] = array;
-    });
+    //   this.morphAttributes[name] = array;
+    // });
 
     morphTargetsRelative = source.morphTargetsRelative;
 
