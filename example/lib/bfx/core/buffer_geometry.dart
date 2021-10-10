@@ -46,6 +46,7 @@ class BufferGeometry {
 
   Map<String, dynamic> drawRange = {'start': 0, 'count': double.infinity};
 
+  /// the user data.
   Map<dynamic, dynamic> userData = {};
 
   BufferGeometry();

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flgl_example/bfx/constants.dart';
 import 'package:flgl_example/bfx/math/color.dart';
 import 'package:flgl_example/bfx/math/matrix3.dart';
 import 'package:flgl_example/bfx/math/matrix4.dart';
@@ -14,24 +15,24 @@ const staticDrawUsage = 35044;
 class BufferAttribute {
   bool isBufferAttribute = true;
   String name = '';
-  List array;
+
+  /// this array is typed array
+  // Float32List array;
+  dynamic array;
   int itemSize;
+  int count = 0;
   bool normalized;
-  late int count;
-  late int usage;
+  int usage = StaticDrawUsage;
   Map<String, dynamic> updateRange = {'offset': 0, 'count': -1};
   int version = 0;
 
   BufferAttribute(this.array, this.itemSize, [this.normalized = false]) {
     count = array.length ~/ itemSize;
     usage = 35044; // gl.STATIC_DRAW
-
-    // name = '';
-    // updateRange = {'offset': 0, 'count': -1};
-    // version = 0;
   }
 
-  /// Flag to indicate that this attribute has changed and should be re-sent to the GPU. Set this to true when you modify the value of the array.
+  /// Flag to indicate that this attribute has changed and should be re-sent to the GPU.
+  /// Set this to true when you modify the value of the array.
   ///
   /// Setting this to true also increments the version.
   set needsUpdate(bool value) {
@@ -48,6 +49,9 @@ class BufferAttribute {
   BufferAttribute copy(BufferAttribute source) {
     name = source.name;
     // this.array = new source.array.constructor( source.array );
+    if (source.array is Float32List) {
+      array = Float32List.fromList(source.array);
+    }
     itemSize = source.itemSize;
     count = source.count;
     normalized = source.normalized;

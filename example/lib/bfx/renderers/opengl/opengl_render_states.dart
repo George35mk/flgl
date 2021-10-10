@@ -1,0 +1,3 @@
+class OpenGLRenderStates {
+  OpenGLRenderStates();
+}

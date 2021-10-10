@@ -11,6 +11,7 @@ import 'opengl/opengl_extensions.dart';
 import 'opengl/opengl_info.dart';
 import 'opengl/opengl_properties.dart';
 import 'opengl/opengl_render_lists.dart';
+import 'opengl/opengl_render_states.dart';
 import 'opengl/opengl_state.dart';
 import 'opengl/opengl_utils.dart';
 
@@ -106,6 +107,7 @@ class OpenGLRenderer {
   late OpenGLInfo info;
   late OpenGLProperties properties;
   late OpenGLRenderLists renderLists;
+  late OpenGLRenderStates renderStates;
 
   late OpenGLRenderer _this;
 
@@ -151,7 +153,7 @@ class OpenGLRenderer {
     // programCache = new WebGLPrograms(_this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping);
     // materials = new WebGLMaterials(properties);
     renderLists = OpenGLRenderLists(properties);
-    // renderStates = new WebGLRenderStates(extensions, capabilities);
+    renderStates = OpenGLRenderStates(extensions, capabilities);
     // background = new WebGLBackground(_this, cubemaps, state, objects, _premultipliedAlpha);
     // shadowMap = new WebGLShadowMap(_this, objects, capabilities);
     // bufferRenderer = new WebGLBufferRenderer(_gl, extensions, info, capabilities);
@@ -194,6 +196,10 @@ class OpenGLRenderer {
       scene.updateMatrixWorld();
     }
     if (camera.parent == null) camera.updateMatrixWorld();
+
+    currentRenderState = renderStates.get(scene, renderStateStack.length);
+    currentRenderState.init();
+    renderStateStack.push(currentRenderState);
 
     currentRenderList = renderLists.get(scene, renderListStack.length);
     currentRenderList.init();
@@ -302,8 +308,4 @@ class WebGLBufferRenderer {
     gl.drawArrays(mode, start, count);
     info.update(count, mode, 1);
   }
-}
-
-class WebGLIndexedBufferRenderer {
-  WebGLIndexedBufferRenderer();
 }
