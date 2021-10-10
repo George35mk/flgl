@@ -165,6 +165,7 @@ class UniformsLib {
           }
         },
 
+        // ignore: todo
         // TODO (abelnation): RectAreaLight BRDF data needs to be moved from example to main src
         'rectAreaLights': {
           'value': [],
