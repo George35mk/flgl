@@ -1,45 +1,59 @@
+import 'dart:typed_data';
+
+import 'package:flgl_example/bfx/math/math_utils.dart';
+
 import '../constants.dart';
 
 class InterleavedBuffer {
   bool isInterleavedBuffer = true;
-  List array;
+  Float32List array;
   int stride;
   dynamic count;
   dynamic usage;
-  dynamic updateRange;
-  dynamic version;
-  dynamic uuid;
 
+  /// Object containing offset and count.
+  Map<String, dynamic> updateRange = {'offset': 0, 'count': -1};
+
+  /// A version number, incremented every time the needsUpdate property is set to true.
+  dynamic version;
+
+  /// UUID of this instance. This gets automatically assigned, so this shouldn't be edited.
+  String uuid = MathUtils.generateUUID();
+
+  /// example
+  /// ```dart
+  /// const interleavedBuffer = new InterleavedBuffer( Float32List, 5 );
+  /// const interleavedBuffer = new InterleavedBuffer();
+  /// ```
   InterleavedBuffer(this.array, this.stride) {
     count = array != null ? array.length / stride : 0;
     usage = StaticDrawUsage;
     updateRange = {'offset': 0, 'count': -1};
-
     version = 0;
 
-    // this.uuid = MathUtils.generateUUID();
+    uuid = MathUtils.generateUUID();
   }
 
   set needsUpdate(bool value) {
     if (value == true) version++;
   }
 
-  setUsage(value) {
+  InterleavedBuffer setUsage(value) {
     usage = value;
-
     return this;
   }
 
-  copy(source) {
-    array = source.array.constructor(source.array);
+  InterleavedBuffer copy(InterleavedBuffer source) {
+    // array = source.array.constructor(source.array);
+    // array = Float32List.fromList(source.array.toList());
+    array = Float32List.fromList(source.array);
     count = source.count;
     stride = source.stride;
     usage = source.usage;
-
     return this;
   }
 
-  copyAt(index1, attribute, index2) {
+  InterleavedBuffer copyAt(index1, attribute, index2) {
     index1 *= stride;
     index2 *= attribute.stride;
 
@@ -50,42 +64,37 @@ class InterleavedBuffer {
     return this;
   }
 
-  set(value, [offset = 0]) {
-    array.set(value, offset);
+  InterleavedBuffer set(Float32List value, [int offset = 0]) {
+    array.setAll(offset, value);
+    // array.set(value, offset);
 
     return this;
   }
 
-  clone( data ) {
+  // InterleavedBuffer clone(data) {
+  //   data.arrayBuffers ??= {};
 
-    data.arrayBuffers ??= {};
+  //   if (this.array.buffer._uuid == null) {
+  //     this.array.buffer._uuid = MathUtils.generateUUID();
+  //   }
 
-		if ( this.array.buffer._uuid == null ) {
+  //   if (data.arrayBuffers[this.array.buffer._uuid] == null) {
+  //     data.arrayBuffers[this.array.buffer._uuid] = this.array.slice(0).buffer;
+  //   }
 
-			this.array.buffer._uuid = MathUtils.generateUUID();
+  //   final array = this.array.constructor(data.arrayBuffers[this.array.buffer._uuid]);
+  //   final ib = this.constructor(array, this.stride);
 
-		}
+  //   ib.setUsage(usage);
 
-		if ( data.arrayBuffers[ this.array.buffer._uuid ] == undefined ) {
+  //   return ib;
+  // }
 
-			data.arrayBuffers[ this.array.buffer._uuid ] = this.array.slice( 0 ).buffer;
+  // onUploadCallback() {}
 
-		}
+  // InterleavedBuffer onUpload(Function callback) {
+  //   onUploadCallback = callback;
 
-		const array = new this.array.constructor( data.arrayBuffers[ this.array.buffer._uuid ] );
-
-		const ib = this.constructor( array, this.stride );
-		ib.setUsage( this.usage );
-
-		return ib;
-
-	}
-
-  onUpload( callback ) {
-
-		this.onUploadCallback = callback;
-
-		return this;
-
-	}
+  //   return this;
+  // }
 }
