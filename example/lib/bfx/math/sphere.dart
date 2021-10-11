@@ -1,5 +1,6 @@
 import 'package:flgl_example/bfx/math/box3.dart';
 import 'package:flgl_example/bfx/math/matrix4.dart';
+import 'package:flgl_example/bfx/math/plane.dart';
 import 'package:flgl_example/bfx/math/vector3.dart';
 import 'dart:math' as math;
 
@@ -8,6 +9,7 @@ final _v1 = Vector3();
 final _toFarthestPoint = Vector3();
 final _toPoint = Vector3();
 
+/// A sphere defined by a center and radius.
 class Sphere {
   Vector3 center = Vector3();
   double radius = -1;
@@ -17,14 +19,24 @@ class Sphere {
     this.radius = radius ?? -1;
   }
 
-  Sphere set(center, radius) {
+  /// Sets the center and radius properties of this sphere.
+  /// Please note that this method only copies the values from the given center.
+  ///
+  /// - [center] - center of the sphere.
+  /// - [radius] - radius of the sphere.
+  Sphere set(Vector3 center, double radius) {
     this.center.copy(center);
     this.radius = radius;
-
     return this;
   }
 
-  Sphere setFromPoints(points, [Vector3? optionalCenter]) {
+  /// Computes the minimum bounding sphere for an array of points. If optionalCenteris
+  /// given, it is used as the sphere's center. Otherwise, the center of the axis-aligned
+  /// bounding box encompassing points is calculated.
+  ///
+  /// - [points] - an Array of Vector3 positions.
+  /// - [optionalCenter] - Optional Vector3 position for the sphere's center.
+  Sphere setFromPoints(List<Vector3> points, [Vector3? optionalCenter]) {
     final center = this.center;
 
     if (optionalCenter != null) {
@@ -44,17 +56,20 @@ class Sphere {
     return this;
   }
 
+  /// Copies the values of the passed sphere's center and radius properties to this sphere.
   Sphere copy(Sphere sphere) {
     center.copy(sphere.center);
     radius = sphere.radius;
-
     return this;
   }
 
-  isEmpty() {
+  /// Checks to see if the sphere is empty (the radius set to a negative number).
+  /// Spheres with a radius of 0 contain only their center point and are not considered to be empty.
+  bool isEmpty() {
     return (radius < 0);
   }
 
+  /// Makes the sphere empty by setting center to (0, 0, 0) and radius to -1.
   Sphere makeEmpty() {
     center.set(0, 0, 0);
     radius = -1;
@@ -62,29 +77,48 @@ class Sphere {
     return this;
   }
 
-  containsPoint(point) {
+  /// Checks to see if the sphere contains the provided point inclusive of the surface of the sphere.
+  ///
+  /// - [point] - the Vector3 to be checked
+  bool containsPoint(Vector3 point) {
     return (point.distanceToSquared(center) <= (radius * radius));
   }
 
-  distanceToPoint(point) {
+  /// Returns the closest distance from the boundary of the sphere to the point. If the sphere contains
+  /// the point, the distance will be negative.
+  double distanceToPoint(Vector3 point) {
     return (point.distanceTo(center) - radius);
   }
 
-  intersectsSphere(Sphere sphere) {
+  /// Checks to see if two spheres intersect.
+  ///
+  /// - [sphere] - Sphere to check for intersection against.
+  bool intersectsSphere(Sphere sphere) {
     final radiusSum = radius + sphere.radius;
-
     return sphere.center.distanceToSquared(center) <= (radiusSum * radiusSum);
   }
 
-  intersectsBox(box) {
+  /// Determines whether or not this sphere intersects a given box.
+  ///
+  /// - [box] - Box3 to check for intersection against.
+  bool intersectsBox(Box3 box) {
     return box.intersectsSphere(this);
   }
 
-  intersectsPlane(plane) {
+  /// Determines whether or not this sphere intersects a given plane.
+  ///
+  /// - plane - Plane to check for intersection against.
+  bool intersectsPlane(Plane plane) {
     return plane.distanceToPoint(center).abs() <= radius;
   }
 
-  clampPoint(point, target) {
+  /// Clamps a point within the sphere. If the point is outside the sphere,
+  /// it will clamp it to the closest point on the edge of the sphere.
+  /// Points already inside the sphere will not be affected.
+  ///
+  /// - [point] - Vector3 The point to clamp.
+  /// - [target] — the result will be copied into this Vector3.
+  Vector3 clampPoint(Vector3 point, Vector3 target) {
     final deltaLengthSq = center.distanceToSquared(point);
 
     target.copy(point);
@@ -97,7 +131,10 @@ class Sphere {
     return target;
   }
 
-  getBoundingBox(target) {
+  /// Returns aMinimum Bounding Box for the sphere.
+  ///
+  /// - [target] — the result will be copied into this Box3.
+  Box3 getBoundingBox(Box3 target) {
     if (isEmpty()) {
       // Empty sphere produces empty bounding box
       target.makeEmpty();
@@ -110,20 +147,25 @@ class Sphere {
     return target;
   }
 
+  /// Transforms this sphere with the provided Matrix4.
+  ///
+  /// - matrix - the Matrix4 to apply
   Sphere applyMatrix4(Matrix4 matrix) {
     center.applyMatrix4(matrix);
     radius = radius * matrix.getMaxScaleOnAxis();
-
     return this;
   }
 
-  Sphere translate(offset) {
+  /// Translate the sphere's center by the provided offset Vector3.
+  Sphere translate(Vector3 offset) {
     center.add(offset);
-
     return this;
   }
 
-  Sphere expandByPoint(point) {
+  /// Expands the boundaries of this sphere to include point.
+  ///
+  /// - [point] - Vector3 that should be included in the sphere.
+  Sphere expandByPoint(Vector3 point) {
     // from https://github.com/juj/MathGeoLib/blob/2940b99b99cfe575dd45103ef20f4019dee15b54/src/Geometry/Sphere.cpp#L649-L671
 
     _toPoint.subVectors(point, center);
@@ -145,6 +187,9 @@ class Sphere {
     return this;
   }
 
+  /// Expands this sphere to enclose both the original sphere and the given sphere.
+  ///
+  /// - [sphere] - Bounding sphere that will be unioned with this sphere.
   Sphere union(Sphere sphere) {
     // from https://github.com/juj/MathGeoLib/blob/2940b99b99cfe575dd45103ef20f4019dee15b54/src/Geometry/Sphere.cpp#L759-L769
 
@@ -160,10 +205,12 @@ class Sphere {
     return this;
   }
 
-  equals(Sphere sphere) {
+  /// Checks to see if the two spheres' centers and radii are equal.
+  bool equals(Sphere sphere) {
     return sphere.center.equals(center) && (sphere.radius == radius);
   }
 
+  /// Returns a new sphere with the same center and radius as this one.
   Sphere clone() {
     return Sphere().copy(this);
   }
