@@ -9,6 +9,8 @@ import 'package:flgl_example/bfx/math/vector3.dart';
 import 'package:flgl_example/bfx/math/vector4.dart';
 import 'package:flgl_example/bfx/scene.dart';
 
+import 'opengl/opengl_attributes.dart';
+import 'opengl/opengl_binding_states.dart';
 import 'opengl/opengl_capabilities.dart';
 import 'opengl/opengl_extensions.dart';
 import 'opengl/opengl_info.dart';
@@ -125,6 +127,11 @@ class OpenGLRenderer {
   late OpenGLState state;
   late OpenGLInfo info;
   late OpenGLProperties properties;
+  // late OpenGLTextures textures;
+  // late OpenGLCubeMaps cubemaps;
+  // late OpenGLCubeUVMaps cubeuvmaps;
+  late OpenGLAttributes attributes;
+  late OpenGLBindingStates bindingStates;
   late OpenGLRenderLists renderLists;
   late OpenGLRenderStates renderStates;
 
@@ -163,8 +170,8 @@ class OpenGLRenderer {
     // textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info);
     // cubemaps = new WebGLCubeMaps(_this);
     // cubeuvmaps = new WebGLCubeUVMaps(_this);
-    // attributes = new WebGLAttributes(_gl, capabilities);
-    // bindingStates = new WebGLBindingStates(_gl, extensions, attributes, capabilities);
+    attributes = OpenGLAttributes(gl!, capabilities);
+    bindingStates = OpenGLBindingStates(gl!, extensions, attributes, capabilities);
     // geometries = new WebGLGeometries(_gl, attributes, info, bindingStates);
     // objects = new WebGLObjects(_gl, geometries, attributes, info);
     // morphtargets = new WebGLMorphtargets(_gl, capabilities, textures);

@@ -4,12 +4,16 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/bfx/core/buffer_attribute.dart';
 import 'package:weak_map/weak_map.dart';
 
+import 'opengl_capabilities.dart';
+
 class OpenGLAttributes {
   bool isWebGL2 = false;
   OpenGLContextES gl;
+  OpenGLCapabilities capabilities;
+
   WeakMap buffers = WeakMap<BufferAttribute, Object>(); // maybe memory issues, please check the package on pub.dev
 
-  OpenGLAttributes(this.gl);
+  OpenGLAttributes(this.gl, this.capabilities);
 
   createBuffer(BufferAttribute attribute, bufferType) {
     final array = attribute.array;
