@@ -2,70 +2,12 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
-class ArrayBuffer {
-  /// The number of [components].
-  int numComponents = 0;
-
-  /// The number of vertices.
-  int numVertices = 0;
-
-  /// The list type
-  /// Supported types are:
-  /// - Float32
-  /// - Uint16
-  /// - Uint8
-  String type = '';
-
-  /// The Array buffer data list.
-  dynamic data;
-  int cursor = 0;
-
-  ArrayBuffer(this.numComponents, this.numVertices, this.type) {
-    if (type == 'Float32') {
-      data = Float32List(numComponents * numVertices);
-    } else if (type == 'Uint16') {
-      data = Uint16List(numComponents * numVertices);
-    } else if (type == 'Uint8') {
-      data = Uint8List(numComponents * numVertices);
-    } else {
-      throw 'Unsupported list type';
-    }
-  }
-
-  /// Returns the number of elements.
-  get numElements {
-    return (data.length ~/ numComponents).toInt() | 0;
-  }
-
-  push(List<num> args) {
-    for (var i = 0; i < args.length; i++) {
-      var value = args[i];
-      data[cursor++] = value;
-    }
-  }
-}
-
-///  Array of the indices of corners of each face of a cube.
-///  @type {Array.<number[]>}
-const CUBE_FACE_INDICES = [
-  [3, 7, 5, 1], // right
-  [6, 2, 0, 4], // left
-  [6, 7, 3, 2], // ??
-  [0, 1, 5, 4], // ??
-  [7, 6, 4, 5], // front
-  [2, 3, 1, 0], // back
-];
+import 'array_buffer.dart';
 
 class Primitives {
-  List<dynamic> getAllExceptInticesList(List<dynamic> vertices) {
-    List outputList = vertices.where((o) => o['category_id'] == '1').toList();
-    return outputList;
-  }
-
   /// Given indexed vertices creates a new set of vertices unindexed by expanding the indexed vertices.
-  /// @param {Object.<string, TypedArray>} vertices The indexed vertices to deindex
-  /// @return {Object.<string, TypedArray>} The deindexed vertices
-  /// @memberOf module:primitives
+  /// - @param Map<String, ArrayBuffer> [vertices] The indexed vertices to deindex
+  /// - @return Map<String, ArrayBuffer> The deindexed vertices
   static deindexVertices(Map<String, ArrayBuffer> vertices) {
     var indices = vertices['indices']; // get the indices list.
     Map<String, ArrayBuffer> newVertices = {}; // create an empty map
@@ -103,13 +45,13 @@ class Primitives {
   /// - @param {Object.<string, augmentedTypedArray>} vertices Vertices as returned from one of the createXXXVertices functions.
   /// - @param {module:primitives.RandomVerticesOptions} [options] options.
   /// - @return {Object.<string, augmentedTypedArray>} same vertices as passed in with `color` added.
-  /// - @memberOf module:primitives
   static makeRandomVertexColors(Map<String, ArrayBuffer> vertices, [options]) {
     options ??= {};
     var numElements = vertices['position']!.numElements;
     var vcolors = ArrayBuffer(4, numElements, 'Uint8');
 
-    rand(ndx, int channel) {
+    /// returns a random int between 0-256
+    int rand(ndx, int channel) {
       return channel < 3 ? Random().nextInt(256) : 255;
     }
 
@@ -129,7 +71,7 @@ class Primitives {
       var numSets = numElements / numVertsPerColor;
 
       for (var ii = 0; ii < numSets; ++ii) {
-        var color = [rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3)];
+        List<int> color = [rand(ii, 0), rand(ii, 1), rand(ii, 2), rand(ii, 3)];
         for (var jj = 0; jj < numVertsPerColor; ++jj) {
           vcolors.push(color);
         }
@@ -142,8 +84,8 @@ class Primitives {
   // a_position:'position'
   // a_normal:'normal'
   // a_color:'color'
-  static createMapping(Map<String, ArrayBuffer> obj) {
-    var mapping = {};
+  static Map<String, String> createMapping(Map<String, ArrayBuffer> obj) {
+    Map<String, String> mapping = {};
     obj.forEach((key, value) {
       if (key != 'indices') {
         mapping['a_$key'] = key;
@@ -198,7 +140,7 @@ class Primitives {
 
   // change arrays with arrayBuffers.
   static createAttribsFromArrays(OpenGLContextES gl, Map<String, ArrayBuffer> arrays, [optMapping]) {
-    var mapping = optMapping ?? createMapping(arrays);
+    Map<String, String> mapping = optMapping ?? createMapping(arrays);
     var attribs = {};
     mapping.forEach((attribName, value) {
       var bufferName = mapping[attribName];
@@ -399,6 +341,17 @@ class Primitives {
       [0, 0],
       [0, 1],
       [1, 1],
+    ];
+
+    ///  Array of the indices of corners of each face of a cube.
+    ///  @type {Array.<number[]>}
+    const List<List<int>> CUBE_FACE_INDICES = [
+      [3, 7, 5, 1], // right
+      [6, 2, 0, 4], // left
+      [6, 7, 3, 2], // ??
+      [0, 1, 5, 4], // ??
+      [7, 6, 4, 5], // front
+      [2, 3, 1, 0], // back
     ];
 
     var numVertices = 6 * 4;

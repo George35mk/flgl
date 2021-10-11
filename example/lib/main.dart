@@ -5,6 +5,7 @@ import 'package:flgl_example/examples/2D/examples_page_2d.dart';
 import 'package:flgl_example/examples/3D/examples_page_3d.dart';
 import 'package:flgl_example/examples/Lighting/lighting_examples_page.dart';
 import 'package:flgl_example/examples/Structure_and_Organization/structure_and_organization.dart';
+import 'package:flgl_example/examples/drawing_objects/drawing_objects.dart';
 
 import 'examples/Fundamentals/example_1.dart';
 import 'examples/Fundamentals/example_2.dart';
@@ -51,6 +52,9 @@ import 'examples/Structure_and_Organization/drawing_multiple_things_2.dart';
 import 'examples/Structure_and_Organization/scene_graph_1.dart';
 import 'examples/Structure_and_Organization/scene_graph_2.dart';
 import 'examples/Structure_and_Organization/scene_graph_3.dart';
+import 'examples/Structure_and_Organization/scene_graph_4.dart';
+
+import 'package:flgl_example/examples/drawing_objects/cube_example.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,6 +81,8 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => const Home(),
+
+        // fundamentals
         '/fundamentals': (context) => const ExamplesPageFundamentals(),
         '/fundamentals/example_1': (context) => const Example1(),
         '/fundamentals/example_2': (context) => const Example2(),
@@ -86,6 +92,8 @@ class _MyAppState extends State<MyApp> {
         '/fundamentals/example_6': (context) => const Example6(),
         '/fundamentals/example_7': (context) => const Example7(),
         '/fundamentals/example_8': (context) => const Example8(),
+
+        // 2d
         '/2d': (context) => const ExamplesPage2d(),
         '/2d/example_9': (context) => const Example9(),
         '/2d/example_10': (context) => const Example10(),
@@ -93,6 +101,8 @@ class _MyAppState extends State<MyApp> {
         '/2d/example_12': (context) => const Example12(),
         '/2d/example_13': (context) => const Example13(),
         '/2d/example_14': (context) => const Example14(),
+
+        // 3d
         '/3d': (context) => const ExamplesPage3d(),
         '/3d/example_15': (context) => const Example15(),
         '/3d/example_16': (context) => const Example16(),
@@ -106,6 +116,8 @@ class _MyAppState extends State<MyApp> {
         '/3d/example_24': (context) => const Example24(),
         '/3d/example_25': (context) => const Example25(),
         '/3d/example_26': (context) => const Example26(),
+
+        // lighting
         '/lighting': (context) => const LightingExamplesPage(),
         '/lighting/directional_lighting_1': (context) => const DirectionalLighting1(),
         '/lighting/directional_lighting_2': (context) => const DirectionalLighting2(),
@@ -116,6 +128,8 @@ class _MyAppState extends State<MyApp> {
         '/lighting/point_light_4': (context) => const PointLight4(),
         '/lighting/spot_light_1': (context) => const SpotLight1(),
         '/lighting/spot_light_2': (context) => const SpotLight2(),
+
+        // structure_and_organization
         '/structure_and_organization': (context) => const StructureAndOrganization(),
         '/structure_and_organization/less_code_more_fun_1': (context) => const LessCodeMoreFun1(),
         '/structure_and_organization/drawing_multiple_things_1': (context) => const DrawingMultipleThings1(),
@@ -123,6 +137,11 @@ class _MyAppState extends State<MyApp> {
         '/structure_and_organization/scene_graph_1': (context) => const SceneGraph1(),
         '/structure_and_organization/scene_graph_2': (context) => const SceneGraph2(),
         '/structure_and_organization/scene_graph_3': (context) => const SceneGraph3(),
+        '/structure_and_organization/scene_graph_4': (context) => const SceneGraph4(),
+
+        // drawing_objects
+        '/drawing_objects': (context) => const DrawingObjects(),
+        '/drawing_objects/cube_example': (context) => const CubeExample(),
       },
     );
   }
