@@ -2,5 +2,6 @@
     "[dart]": {
         "editor.formatOnSave": true,
         "editor.formatOnType": true,
-    }
+    },
+    "dart.renameFilesWithClasses": "prompt"
 }

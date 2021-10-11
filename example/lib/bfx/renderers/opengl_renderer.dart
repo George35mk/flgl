@@ -3,6 +3,9 @@ import 'package:flgl_example/bfx/cameras/camera.dart';
 import 'package:flgl_example/bfx/core/buffer_geometry.dart';
 import 'package:flgl_example/bfx/core/object_3d.dart';
 import 'package:flgl_example/bfx/materials/fbx_material.dart';
+import 'package:flgl_example/bfx/math/frustum.dart';
+import 'package:flgl_example/bfx/math/matrix4.dart';
+import 'package:flgl_example/bfx/math/vector3.dart';
 import 'package:flgl_example/bfx/math/vector4.dart';
 import 'package:flgl_example/bfx/scene.dart';
 
@@ -94,11 +97,27 @@ class OpenGLRenderer {
 
   late Vector4 _viewport;
   late Vector4 _scissor;
-  dynamic _scissorTest = false;
+
+  final bool _scissorTest = false;
+  final List _currentDrawBuffers = []; // frustum
+  final Frustum _frustum = Frustum(); // clipping
+
+  final bool _clippingEnabled = false;
+  final bool _localClippingEnabled = false; // transmission
+
+  final dynamic _transmissionRenderTarget = null; // camera matrices cache
+  final Matrix4 _projScreenMatrix = Matrix4();
+  final Vector3 _vector3 = Vector3();
+
+  final Map _emptyScene = {
+    'background': null,
+    'fog': null,
+    'environment': null,
+    'overrideMaterial': null,
+    'isScene': true,
+  };
 
   //
-
-  final List _currentDrawBuffers = [];
 
   late OpenGLExtensions extensions;
   late OpenGLCapabilities capabilities;
@@ -200,6 +219,10 @@ class OpenGLRenderer {
     currentRenderState = renderStates.get(scene, renderStateStack.length);
     currentRenderState.init();
     renderStateStack.add(currentRenderState);
+
+    _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+
+    _frustum.setFromProjectionMatrix(_projScreenMatrix);
 
     currentRenderList = renderLists.get(scene, renderListStack.length);
     currentRenderList.init();

@@ -512,7 +512,7 @@ class Object3D {
 
   /// Abstract (empty) method to get intersections between a casted ray and this object.
   /// Subclasses such as Mesh, Line, and Points implement this method in order to use raycasting.
-  raycast() {}
+  // raycast() {} // problem
 
   /// Executes the callback on this object and all descendants.
   /// Note: Modifying the scene graph inside the callback is discouraged.

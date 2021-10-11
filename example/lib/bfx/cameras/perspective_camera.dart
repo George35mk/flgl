@@ -1,10 +1,5 @@
-import 'dart:math';
-
+import 'dart:math' as math;
 import 'package:flgl_example/bfx/cameras/camera.dart';
-import 'package:flgl_example/examples/math/m4.dart';
-import 'package:flgl_example/examples/math/math_utils.dart';
-
-import '../math/matrix4.dart';
 
 const double DEG2RAD = 0.017453292519943295;
 
@@ -51,11 +46,11 @@ class PerspectiveCamera extends Camera {
 
   getFilmWidth() {
     // film not completely covered in portrait format (aspect < 1)
-    return filmGauge * min(aspect, 1);
+    return filmGauge * math.min(aspect, 1);
   }
 
   updateProjectionMatrix() {
-    var top = near * tan(DEG2RAD * 0.5 * fov) / zoom;
+    var top = near * math.tan(DEG2RAD * 0.5 * fov) / zoom;
     var height = 2 * top;
     var width = aspect * height;
     var left = -0.5 * width;
