@@ -1,4 +1,4 @@
-export default /* glsl */`
+const dithering_pars_fragment_glsl = '''
 #ifdef DITHERING
 
 	// based on https://www.shadertoy.com/view/MslGR8
@@ -17,4 +17,4 @@ export default /* glsl */`
 	}
 
 #endif
-`;
+''';

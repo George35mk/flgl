@@ -1,4 +1,4 @@
-export default /* glsl */`
+const clipping_planes_fragment_glsl = '''
 #if NUM_CLIPPING_PLANES > 0
 
 	vec4 plane;
@@ -30,4 +30,4 @@ export default /* glsl */`
 	#endif
 
 #endif
-`;
+''';

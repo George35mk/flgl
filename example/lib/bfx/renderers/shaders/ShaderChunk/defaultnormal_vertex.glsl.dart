@@ -1,4 +1,4 @@
-export default /* glsl */`
+const defaultnormal_vertex_glsl = '''
 vec3 transformedNormal = objectNormal;
 
 #ifdef USE_INSTANCING
@@ -33,4 +33,4 @@ transformedNormal = normalMatrix * transformedNormal;
 	#endif
 
 #endif
-`;
+''';

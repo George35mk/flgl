@@ -1,4 +1,4 @@
-const aomap_fragment = '''
+const aomap_fragment_glsl = '''
 #ifdef USE_AOMAP
 
 	// reads channel R, compatible with a combined OcclusionRoughnessMetallic (RGB) texture

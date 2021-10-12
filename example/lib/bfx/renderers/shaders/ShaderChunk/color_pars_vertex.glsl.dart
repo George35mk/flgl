@@ -1,4 +1,4 @@
-export default /* glsl */`
+const color_pars_vertex_glsl = '''
 #if defined( USE_COLOR_ALPHA )
 
 	varying vec4 vColor;
@@ -8,4 +8,4 @@ export default /* glsl */`
 	varying vec3 vColor;
 
 #endif
-`;
+''';

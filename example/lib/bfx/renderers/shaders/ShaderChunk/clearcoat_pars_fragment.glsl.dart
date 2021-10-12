@@ -1,4 +1,4 @@
-export default /* glsl */`
+const clearcoat_pars_fragment_glsl = '''
 
 #ifdef USE_CLEARCOATMAP
 
@@ -18,4 +18,4 @@ export default /* glsl */`
 	uniform vec2 clearcoatNormalScale;
 
 #endif
-`;
+''';

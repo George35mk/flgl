@@ -1,4 +1,4 @@
-export default /* glsl */`
+const clearcoat_normal_fragment_maps_glsl = '''
 #ifdef USE_CLEARCOAT_NORMALMAP
 
 	vec3 clearcoatMapN = texture2D( clearcoatNormalMap, vUv ).xyz * 2.0 - 1.0;
@@ -15,4 +15,4 @@ export default /* glsl */`
 	#endif
 
 #endif
-`;
+''';

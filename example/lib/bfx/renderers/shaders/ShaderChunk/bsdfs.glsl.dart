@@ -1,4 +1,4 @@
-export default /* glsl */`
+const bsdfs_glsl = '''
 
 vec3 BRDF_Lambert( const in vec3 diffuseColor ) {
 
@@ -255,4 +255,4 @@ vec3 BRDF_Sheen( const in vec3 lightDir, const in vec3 viewDir, const in vec3 no
 }
 
 #endif
-`;
+''';

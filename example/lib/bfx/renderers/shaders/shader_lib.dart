@@ -1,4 +1,5 @@
 import 'package:flgl_example/bfx/math/color.dart';
+import 'package:flgl_example/bfx/math/matrix3.dart';
 import 'package:flgl_example/bfx/math/vector3.dart';
 import 'package:flgl_example/bfx/renderers/shaders/uniforms_lib.dart';
 
@@ -53,8 +54,8 @@ class ShaderLib {
           UniformsLib.fog,
           UniformsLib.lights,
           {
-            'emissive': {'value': new Color(0x000000)},
-            'specular': {'value': new Color(0x111111)},
+            'emissive': {'value': Color(0x000000)},
+            'specular': {'value': Color(0x111111)},
             'shininess': {'value': 30}
           }
         ]),
@@ -164,7 +165,7 @@ class ShaderLib {
 
   Map background = {
     'uniforms': {
-      'uvTransform': {'value': new Matrix3()},
+      'uvTransform': {'value': Matrix3()},
       't2D': {'value': null},
     },
     'vertexShader': ShaderChunk.background_vert,
@@ -213,7 +214,7 @@ class ShaderLib {
       UniformsLib.lights,
       UniformsLib.fog,
       {
-        'color': {'value': new Color(0x00000)},
+        'color': {'value': Color(0x00000)},
         'opacity': {'value': 1.0}
       },
     ]),

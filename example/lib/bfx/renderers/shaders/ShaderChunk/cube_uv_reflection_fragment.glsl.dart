@@ -1,4 +1,4 @@
-export default /* glsl */`
+const cube_uv_reflection_fragment_glsl = '''
 #ifdef ENVMAP_TYPE_CUBE_UV
 
 	#define cubeUV_maxMipLevel 8.0
@@ -211,4 +211,4 @@ export default /* glsl */`
 	}
 
 #endif
-`;
+''';

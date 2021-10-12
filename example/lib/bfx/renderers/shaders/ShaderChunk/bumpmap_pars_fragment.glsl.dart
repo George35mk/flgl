@@ -1,4 +1,4 @@
-export default /* glsl */`
+const bumpmap_pars_fragment_glsl = '''
 #ifdef USE_BUMPMAP
 
 	uniform sampler2D bumpMap;
@@ -41,4 +41,4 @@ export default /* glsl */`
 	}
 
 #endif
-`;
+''';

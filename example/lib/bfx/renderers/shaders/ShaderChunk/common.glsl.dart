@@ -1,4 +1,4 @@
-export default /* glsl */`
+const common_glsl = '''
 #define PI 3.141592653589793
 #define PI2 6.283185307179586
 #define PI_HALF 1.5707963267948966
@@ -113,4 +113,4 @@ vec2 equirectUv( in vec3 dir ) {
 	return vec2( u, v );
 
 }
-`;
+''';
