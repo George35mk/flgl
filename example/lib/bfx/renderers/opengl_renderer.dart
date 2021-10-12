@@ -12,16 +12,22 @@ import 'package:flgl_example/bfx/scene.dart';
 import 'opengl/opengl_attributes.dart';
 import 'opengl/opengl_binding_states.dart';
 import 'opengl/opengl_capabilities.dart';
+import 'opengl/opengl_clipping.dart';
+import 'opengl/opengl_cube_maps.dart';
+import 'opengl/opengl_cube_uv_maps.dart';
 import 'opengl/opengl_extensions.dart';
+import 'opengl/opengl_geometries.dart';
 import 'opengl/opengl_info.dart';
+import 'opengl/opengl_objects.dart';
+import 'opengl/opengl_programs.dart';
 import 'opengl/opengl_properties.dart';
 import 'opengl/opengl_render_lists.dart';
 import 'opengl/opengl_render_states.dart';
 import 'opengl/opengl_state.dart';
 import 'opengl/opengl_utils.dart';
 
-const LinearEncoding = 3000;
-const NoToneMapping = 0;
+// const LinearEncoding = 3000;
+// const NoToneMapping = 0;
 
 class OpenGLRenderer {
   late Scene scene;
@@ -128,10 +134,15 @@ class OpenGLRenderer {
   late OpenGLInfo info;
   late OpenGLProperties properties;
   // late OpenGLTextures textures;
-  // late OpenGLCubeMaps cubemaps;
-  // late OpenGLCubeUVMaps cubeuvmaps;
+  late OpenGLCubeMaps cubemaps;
+  late OpenGLCubeUVMaps cubeuvmaps;
   late OpenGLAttributes attributes;
   late OpenGLBindingStates bindingStates;
+  late OpenGLGeometries geometries;
+  late OpenGLObjects objects;
+  // late OpenGLMorphtargets morphtargets;
+  late OpenGLClipping clipping;
+  late OpenGLPrograms programCache;
   late OpenGLRenderLists renderLists;
   late OpenGLRenderStates renderStates;
 
@@ -168,15 +179,15 @@ class OpenGLRenderer {
     info = OpenGLInfo(gl!);
     properties = OpenGLProperties();
     // textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info);
-    // cubemaps = new WebGLCubeMaps(_this);
-    // cubeuvmaps = new WebGLCubeUVMaps(_this);
+    cubemaps = OpenGLCubeMaps(_this);
+    cubeuvmaps = OpenGLCubeUVMaps(_this);
     attributes = OpenGLAttributes(gl!, capabilities);
     bindingStates = OpenGLBindingStates(gl!, extensions, attributes, capabilities);
-    // geometries = new WebGLGeometries(_gl, attributes, info, bindingStates);
-    // objects = new WebGLObjects(_gl, geometries, attributes, info);
+    geometries = OpenGLGeometries(gl!, attributes, info, bindingStates);
+    objects = OpenGLObjects(gl!, geometries, attributes, info);
     // morphtargets = new WebGLMorphtargets(_gl, capabilities, textures);
-    // clipping = new WebGLClipping(properties);
-    // programCache = new WebGLPrograms(_this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping);
+    clipping = OpenGLClipping(properties);
+    programCache = OpenGLPrograms(_this, cubemaps, cubeuvmaps, extensions, capabilities, bindingStates, clipping);
     // materials = new WebGLMaterials(properties);
     renderLists = OpenGLRenderLists(properties);
     renderStates = OpenGLRenderStates(extensions, capabilities);

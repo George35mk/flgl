@@ -5,7 +5,7 @@ import 'package:flgl_example/bfx/math/vector2.dart';
 class UniformsLib {
   UniformsLib();
 
-  Map common = {
+  static Map common = {
     'diffuse': {'value': Color(0xffffff)},
     'opacity': {'value': 1.0},
     'map': {'value': null},
@@ -15,11 +15,11 @@ class UniformsLib {
     'alphaTest': {'value': 0}
   };
 
-  Map specularmap = {
+  static Map specularmap = {
     'specularMap': {'value': null},
   };
 
-  Map envmap = {
+  static Map envmap = {
     'envMap': {'value': null},
     'flipEnvMap': {'value': -1},
     'reflectivity': {'value': 1.0}, // basic, lambert, phong
@@ -28,56 +28,56 @@ class UniformsLib {
     'maxMipLevel': {'value': 0}
   };
 
-  Map aomap = {
+  static Map aomap = {
     'aoMap': {'value': null},
     'aoMapIntensity': {'value': 1}
   };
 
-  Map lightmap = {
+  static Map lightmap = {
     'lightMap': {'value': null},
     'lightMapIntensity': {'value': 1}
   };
 
-  Map emissivemap = {
+  static Map emissivemap = {
     'emissiveMap': {'value': null}
   };
 
-  Map bumpmap = {
+  static Map bumpmap = {
     'bumpMap': {'value': null},
     'bumpScale': {'value': 1}
   };
 
-  Map normalmap = {
+  static Map normalmap = {
     'normalMap': {'value': null},
     'normalScale': {'value': Vector2(1, 1)}
   };
 
-  Map displacementmap = {
+  static Map displacementmap = {
     'displacementMap': {'value': null},
     'displacementScale': {'value': 1},
     'displacementBias': {'value': 0}
   };
 
-  Map roughnessmap = {
+  static Map roughnessmap = {
     'roughnessMap': {'value': null}
   };
 
-  Map metalnessmap = {
+  static Map metalnessmap = {
     'metalnessMap': {'value': null}
   };
 
-  Map gradientmap = {
+  static Map gradientmap = {
     'gradientMap': {'value': null}
   };
 
-  Map fog = {
+  static Map fog = {
     'fogDensity': {'value': 0.00025},
     'fogNear': {'value': 1},
     'fogFar': {'value': 2000},
     'fogColor': {'value': Color(0xffffff)}
   };
 
-  Map lights = {
+  static Map lights = {
         'ambientLightColor': {'value': []},
         'lightProbe': {'value': []},
         'directionalLights': {
@@ -191,7 +191,7 @@ class UniformsLib {
         'uvTransform': {'value': Matrix3()}
       };
 
-  Map sprite = {
+  static Map sprite = {
     'diffuse': {'value': Color(0xffffff)},
     'opacity': {'value': 1.0},
     'center': {'value': Vector2(0.5, 0.5)},
