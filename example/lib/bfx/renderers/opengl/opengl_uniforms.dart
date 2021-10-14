@@ -17,6 +17,39 @@ class OpenGLUniforms {
       // parseUniform(info, addr, this);
     }
   }
+
+  setValue(gl, name, value, [textures]) {
+    final u = map[name];
+    if (u != null) u.setValue(gl, value, textures);
+  }
+
+  setOptional(gl, object, name) {
+    final v = object[name];
+    if (v != null) setValue(gl, name, v);
+  }
+
+  upload(gl, seq, values, textures) {
+    for (var i = 0, n = seq.length; i != n; ++i) {
+      final u = seq[i], v = values[u.id];
+
+      if (v.needsUpdate != false) {
+        // note: always updating when .needsUpdate is undefined
+        u.setValue(gl, v.value, textures);
+      }
+    }
+  }
+
+  seqWithValue ( seq, values ) {
+    final r = [];
+    for ( var i = 0, n = seq.length; i != n; ++ i ) {
+
+      final u = seq[ i ];
+      if ( u.id in values ) r.add( u );
+
+    }
+    return r;
+
+  }
 }
 
 

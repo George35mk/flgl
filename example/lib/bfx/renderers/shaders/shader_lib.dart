@@ -9,7 +9,15 @@ import 'uniforms_utils.dart';
 class ShaderLib {
   ShaderLib();
 
-  Map<String, dynamic> basic = {
+  operator [](String key) {
+    return this[key];
+  }
+
+  // operator []=(String key, dynamic value) {
+  //   this[key] = value;
+  // }
+
+  static Map<String, dynamic> basic = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.common,
       UniformsLib.specularmap,
@@ -22,7 +30,7 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.meshbasic_frag
   };
 
-  Map<String, dynamic> lambert = {
+  static Map<String, dynamic> lambert = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.common,
       UniformsLib.specularmap,
@@ -40,7 +48,7 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.meshlambert_frag
   };
 
-  Map<String, dynamic> phong = {
+  static Map<String, dynamic> phong = {
         'uniforms': UniformsUtils.mergeUniforms([
           UniformsLib.common,
           UniformsLib.specularmap,
@@ -143,7 +151,7 @@ class ShaderLib {
         'fragmentShader': ShaderChunk.depth_frag
       };
 
-  Map normal = {
+  static Map normal = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.common,
       UniformsLib.bumpmap,
@@ -157,13 +165,13 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.meshnormal_frag
   };
 
-  Map sprite = {
+  static Map sprite = {
     'uniforms': UniformsUtils.mergeUniforms([UniformsLib.sprite, UniformsLib.fog]),
     'vertexShader': ShaderChunk.sprite_vert,
     'fragmentShader': ShaderChunk.sprite_frag
   };
 
-  Map background = {
+  static Map background = {
     'uniforms': {
       'uvTransform': {'value': Matrix3()},
       't2D': {'value': null},
@@ -176,7 +184,7 @@ class ShaderLib {
 	//	Cube map shader
   ------------------------------------------------------------------------- */
 
-  Map cube = {
+  static Map cube = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.envmap,
       {
@@ -187,7 +195,7 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.cube_frag
   };
 
-  Map equirect = {
+  static Map equirect = {
     'uniforms': {
       'tEquirect': {'value': null},
     },
@@ -195,7 +203,7 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.equirect_frag
   };
 
-  Map distanceRGBA = {
+  static Map distanceRGBA = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.common,
       UniformsLib.displacementmap,
@@ -209,7 +217,7 @@ class ShaderLib {
     'fragmentShader': ShaderChunk.distanceRGBA_frag
   };
 
-  Map shadow = {
+  static Map shadow = {
     'uniforms': UniformsUtils.mergeUniforms([
       UniformsLib.lights,
       UniformsLib.fog,

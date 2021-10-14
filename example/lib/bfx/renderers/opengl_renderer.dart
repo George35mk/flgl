@@ -198,6 +198,10 @@ class OpenGLRenderer {
     // info.programs = programCache.programs;
   }
 
+  OpenGLContextES getContext() {
+    return gl!;
+  }
+
   /// on render init you must:
   /// - compile and link the shaders
   /// - create a program from vertex shader & fragment shader.

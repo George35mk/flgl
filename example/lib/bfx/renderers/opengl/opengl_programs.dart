@@ -11,6 +11,8 @@ import 'opengl_extensions.dart';
 
 import 'dart:math' as math;
 
+import 'opengl_program.dart';
+
 class OpenGLPrograms {
   OpenGLRenderer renderer;
   OpenGLCubeMaps cubemaps;
@@ -345,10 +347,10 @@ class OpenGLPrograms {
   }
 
   getUniforms(material) {
-    final shaderID = shaderIDs[material.type];
+    final String shaderID = shaderIDs[material.type];
     var uniforms;
 
-    if (shaderID) {
+    if (shaderID != null) {
       final shader = ShaderLib[shaderID];
       uniforms = UniformsUtils.clone(shader.uniforms);
     } else {
@@ -374,7 +376,7 @@ class OpenGLPrograms {
     }
 
     if (program == null) {
-      program = WebGLProgram(renderer, cacheKey, parameters, bindingStates);
+      program = OpenGLProgram(renderer, cacheKey, parameters, bindingStates);
       programs.add(program);
     }
 
