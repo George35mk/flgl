@@ -134,12 +134,6 @@ class _Example1State extends State<Example1> {
     // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    // print('MAX_TEXTURE_IMAGE_UNITS: ${gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS)}');
-    // print('MAX_SAMPLES: ${gl.getParameter(gl.MAX_SAMPLES)}');
-    // print('SHADING_LANGUAGE_VERSION: ${gl.getParameter(gl.SHADING_LANGUAGE_VERSION)}');
-    // print('VERSION: ${gl.getParameter(gl.VERSION)}');
-    // print('GL_VIEWPORT: ${gl.getParameter(gl.GL_VIEWPORT)}');
-
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     var size = 2; // 2 components per iteration
     var type = gl.FLOAT; // the data is 32bit floats
