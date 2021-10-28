@@ -36,7 +36,7 @@ class _FLGLViewportState extends State<FLGLViewport> {
   void dispose() {
     super.dispose();
     // flgl.dispose();
-    print('Dispose...');
+    // print('Dispose...');
   }
 
   @override

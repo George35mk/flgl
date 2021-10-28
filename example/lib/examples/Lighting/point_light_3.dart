@@ -228,9 +228,9 @@ class _PointLight3State extends State<PointLight3> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var camera = [100, 150, 200];
-    var target = [0, 0, 0];
-    var up = [0, 1, 0];
+    List<double> camera = [100, 150, 200];
+    List<double> target = [0, 0, 0];
+    List<double> up = [0, 1, 0];
     var cameraMatrix = M4.lookAt(camera, target, up);
 
     // Make a view matrix from the camera matrix.

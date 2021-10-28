@@ -245,9 +245,9 @@ class _SceneGraph1State extends State<SceneGraph1> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var cameraPosition = [0, -200, 0];
-    var cameraTarget = [0, 0, 0];
-    var cameraUp = [0, 0, 1];
+    List<double> cameraPosition = [0, -200, 0];
+    List<double> cameraTarget = [0, 0, 0];
+    List<double> cameraUp = [0, 0, 1];
     var cameraMatrix = M4.lookAt(cameraPosition, cameraTarget, cameraUp);
 
     // Make a view matrix from the camera matrix.
@@ -342,8 +342,8 @@ class _SceneGraph1State extends State<SceneGraph1> {
 
 class Node {
   List<Node> children = [];
-  List<num> localMatrix = M4.identity();
-  List<num> worldMatrix = M4.identity();
+  List<double> localMatrix = M4.identity();
+  List<double> worldMatrix = M4.identity();
   Map<String, dynamic> drawInfo = {};
   Node? parent;
 

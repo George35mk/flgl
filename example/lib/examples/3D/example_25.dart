@@ -240,17 +240,17 @@ class _Example25State extends State<Example25> {
     double zNear = 1;
     double zFar = 2000;
 
-    List<num> projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
+    List<double> projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute a matrix for the camera
-    List<num> cameraMatrix = M4.yRotation(cameraAngleRadians);
+    List<double> cameraMatrix = M4.yRotation(cameraAngleRadians);
     cameraMatrix = M4.translate(cameraMatrix, 0, 50, radius * 1.5);
 
     // Make a view matrix from the camera matrix
-    List<num> viewMatrix = M4.inverse(cameraMatrix);
+    List<double> viewMatrix = M4.inverse(cameraMatrix);
 
     // Compute a view projection matrix
-    List<num> viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
+    List<double> viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
 
     for (var ii = 0; ii < numFs; ++ii) {
       var angle = ii * pi * 2 / numFs;

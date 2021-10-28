@@ -70,33 +70,33 @@ class _SceneGraph4State extends State<SceneGraph4> {
     'children': [
       {
         'name': "waist",
-        'translation': [0, 3, 0],
+        'translation': [0.0, 3.0, 0.0],
         'children': [
           {
             'name': "torso",
-            'translation': [0, 2, 0],
+            'translation': [0.0, 2.0, 0.0],
             'children': [
               {
                 'name': "neck",
-                'translation': [0, 1, 0],
+                'translation': [0.0, 1.0, 0.0],
                 'children': [
                   {
                     'name': "head",
-                    'translation': [0, 1, 0],
+                    'translation': [0.0, 1.0, 0.0],
                   },
                 ],
               },
               {
                 'name': "left-arm",
-                'translation': [-1, 0, 0],
+                'translation': [-1.0, 0.0, 0.0],
                 'children': [
                   {
                     'name': "left-forearm",
-                    'translation': [-1, 0, 0],
+                    'translation': [-1.0, 0.0, 0.0],
                     'children': [
                       {
                         'name': "left-hand",
-                        'translation': [-1, 0, 0],
+                        'translation': [-1.0, 0.0, 0.0],
                       },
                     ],
                   },
@@ -104,15 +104,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
               },
               {
                 'name': "right-arm",
-                'translation': [1, 0, 0],
+                'translation': [1.0, 0.0, 0.0],
                 'children': [
                   {
                     'name': "right-forearm",
-                    'translation': [1, 0, 0],
+                    'translation': [1.0, 0.0, 0.0],
                     'children': [
                       {
                         'name': "right-hand",
-                        'translation': [1, 0, 0],
+                        'translation': [1.0, 0.0, 0.0],
                       },
                     ],
                   },
@@ -122,15 +122,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
           },
           {
             'name': "left-leg",
-            'translation': [-1, -1, 0],
+            'translation': [-1.0, -1.0, 0.0],
             'children': [
               {
                 'name': "left-calf",
-                'translation': [0, -1, 0],
+                'translation': [0.0, -1.0, 0.0],
                 'children': [
                   {
                     'name': "left-foot",
-                    'translation': [0, -1, 0],
+                    'translation': [0.0, -1.0, 0.0],
                   },
                 ],
               }
@@ -138,15 +138,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
           },
           {
             'name': "right-leg",
-            'translation': [1, -1, 0],
+            'translation': [1.0, -1.0, 0.0],
             'children': [
               {
                 'name': "right-calf",
-                'translation': [0, -1, 0],
+                'translation': [0.0, -1.0, 0.0],
                 'children': [
                   {
                     'name': "right-foot",
-                    'translation': [0, -1, 0],
+                    'translation': [0.0, -1.0, 0.0],
                   },
                 ],
               }
@@ -333,9 +333,9 @@ class _SceneGraph4State extends State<SceneGraph4> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var cameraPosition = [4, 3.5, 10];
-    var cameraTarget = [0, 3.5, 0];
-    var cameraUp = [0, 1, 0];
+    List<double> cameraPosition = [4, 3.5, 10];
+    List<double> cameraTarget = [0, 3.5, 0];
+    List<double> cameraUp = [0, 1, 0];
     var cameraMatrix = M4.lookAt(cameraPosition, cameraTarget, cameraUp);
 
     // Make a view matrix from the camera matrix.
@@ -472,11 +472,11 @@ class _SceneGraph4State extends State<SceneGraph4> {
 }
 
 class TRS {
-  List<num> translation = [0, 0, 0];
-  List<num> rotation = [0, 0, 0];
-  List<num> scale = [1, 1, 1];
+  List<double> translation = [0, 0, 0];
+  List<double> rotation = [0, 0, 0];
+  List<double> scale = [1, 1, 1];
 
-  List<num> getMatrix([dst]) {
+  List<double> getMatrix([dst]) {
     dst ??= M4.identity();
 
     var t = this.translation;
@@ -496,8 +496,8 @@ class TRS {
 
 class Node {
   List<Node> children = [];
-  List<num> localMatrix = M4.identity();
-  List<num> worldMatrix = M4.identity();
+  List<double> localMatrix = M4.identity();
+  List<double> worldMatrix = M4.identity();
   Map<String, dynamic> drawInfo = {};
   Node? parent;
   TRS source;
