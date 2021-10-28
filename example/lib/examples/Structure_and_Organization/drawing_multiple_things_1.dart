@@ -194,9 +194,9 @@ class _DrawingMultipleThings1State extends State<DrawingMultipleThings1> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var camera = [0, 0, 100];
-    var target = [0, 0, 0];
-    var up = [0, 1, 0];
+    List<double> camera = [0, 0, 100];
+    List<double> target = [0, 0, 0];
+    List<double> up = [0, 1, 0];
     var cameraMatrix = M4.lookAt(camera, target, up);
 
     // Make a view matrix from the camera matrix.

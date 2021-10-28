@@ -94,24 +94,28 @@ class OpenGLContextES extends OpenGL30Constant {
     return _v;
   }
 
-  genTextures(v0, v1) {
-    return gl.glGenTextures(v0, v1);
+  void genTextures(v0, v1) {
+    gl.glGenTextures(v0, v1);
   }
 
-  bindTexture(type, texture) {
-    return gl.glBindTexture(type, texture);
+  void bindTexture(int target, int texture) {
+    gl.glBindTexture(target, texture);
   }
 
-  bindTexture2(texture) {
-    return gl.glBindTexture(TEXTURE_2D, texture);
+  void bindTexture2(texture) {
+    gl.glBindTexture(TEXTURE_2D, texture);
   }
 
-  activeTexture(v0) {
-    return gl.glActiveTexture(v0);
+  void bindSampler(int unit, int sampler) {
+    gl.glBindSampler(unit, sampler);
   }
 
-  texParameteri(v0, v1, v2) {
-    return gl.glTexParameteri(v0, v1, v2);
+  void activeTexture(int texture) {
+    gl.glActiveTexture(texture);
+  }
+
+  void texParameteri(int target, int pname, int param) {
+    gl.glTexParameteri(target, pname, param);
   }
 
   texImage2D(target, level, internalformat, width, height, border, format, type, data) {
@@ -723,9 +727,52 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.glGetShaderSource(v0);
   // }
 
-  uniformMatrix4fv(location, bool transpose, List<num> value) {
-    var arrayPointer = floatListToArrayPointer(value.map((e) => e.toDouble()).toList());
-    gl.glUniformMatrix4fv(location, value.length ~/ 16, transpose ? 1 : 0, arrayPointer);
+  uniformMatrix4fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 16;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix4fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix2x3fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 6;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix2x3fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix3x2fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 6;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix3x2fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix2x4fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 8;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix2x4fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix4x2fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 8;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix4x2fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix3x4fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 12;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix3x4fv(location, count, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  uniformMatrix4x3fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 12;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix4x3fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
@@ -823,6 +870,42 @@ class OpenGLContextES extends OpenGL30Constant {
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
     gl.glUniform4iv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
+
+  uniform1ui(int location, int value) {
+    gl.glUniform1ui(location, value);
+  }
+
+  uniform1uiv(int location, Uint32List value) {
+    int count = value.length;
+    final valuePtr = calloc<Uint32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform1uiv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
+
+  uniform2uiv(int location, Uint32List value) {
+    int count = value.length;
+    final valuePtr = calloc<Uint32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform2uiv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
+
+  uniform3uiv(int location, Uint32List value) {
+    int count = value.length;
+    final valuePtr = calloc<Uint32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform3uiv(location, count, valuePtr);
+    calloc.free(valuePtr);
+  }
+
+  uniform4uiv(int location, Uint32List value) {
+    int count = value.length;
+    final valuePtr = calloc<Uint32>(count);
+    valuePtr.asTypedList(count).setAll(0, value);
+    gl.glUniform4uiv(location, count, valuePtr);
     calloc.free(valuePtr);
   }
 

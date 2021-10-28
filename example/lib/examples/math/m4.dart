@@ -1,11 +1,11 @@
 import 'dart:math';
 
 class M4 {
-  static List<num> subtractVectors(a, b) {
+  static List<double> subtractVectors(a, b) {
     return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
   }
 
-  static List<num> cross(a, b) {
+  static List<double> cross(a, b) {
     return [
       a[1] * b[2] - a[2] * b[1],
       a[2] * b[0] - a[0] * b[2],
@@ -13,7 +13,7 @@ class M4 {
     ];
   }
 
-  static List<num> normalize(v) {
+  static List<double> normalize(v) {
     var length = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     // make sure we don't divide by 0.
     if (length > 0.00001) {
@@ -23,7 +23,7 @@ class M4 {
     }
   }
 
-  static List<num> lookAt(List<num> cameraPosition, List<num> target, List<num> up) {
+  static List<double> lookAt(List<double> cameraPosition, List<double> target, List<double> up) {
     var zAxis = normalize(subtractVectors(cameraPosition, target));
     var xAxis = normalize(cross(up, zAxis));
     var yAxis = normalize(cross(zAxis, xAxis));
@@ -36,7 +36,7 @@ class M4 {
     ];
   }
 
-  static List<num> identity() {
+  static List<double> identity() {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [
       1, 0, 0, 0, //
@@ -46,7 +46,7 @@ class M4 {
     ];
   }
 
-  static List<num> projection(num width, num height, num depth) {
+  static List<double> projection(num width, num height, num depth) {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [
       2 / width, 0, 0, 0, //
@@ -56,7 +56,7 @@ class M4 {
     ];
   }
 
-  static List<num> makeZToWMatrix(num fudgeFactor) {
+  static List<double> makeZToWMatrix(double fudgeFactor) {
     return [
       1, 0, 0, 0, //
       0, 1, 0, 0, //
@@ -65,7 +65,7 @@ class M4 {
     ];
   }
 
-  static List<num> perspective(
+  static List<double> perspective(
     num fieldOfViewInRadians,
     num aspect,
     num near,
@@ -82,8 +82,8 @@ class M4 {
     ];
   }
 
-  static List<num> multiply(List<num> a, List<num> b, [dst]) {
-    dst ??= List<num>.filled(16, 0, growable: false);
+  static List<double> multiply(List<double> a, List<double> b, [dst]) {
+    dst ??= List<double>.filled(16, 0, growable: false);
 
     var b00 = b[0 * 4 + 0];
     var b01 = b[0 * 4 + 1];
@@ -136,7 +136,7 @@ class M4 {
     return dst;
   }
 
-  static List<num> inverse(List<num> m) {
+  static List<double> inverse(List<double> m) {
     var m00 = m[0 * 4 + 0];
     var m01 = m[0 * 4 + 1];
     var m02 = m[0 * 4 + 2];
@@ -205,7 +205,7 @@ class M4 {
     ];
   }
 
-  static List<num> translation(num tx, num ty, num tz) {
+  static List<double> translation(double tx, double ty, double tz) {
     return [
       // x y z w
       1, 0, 0, 0,
@@ -215,7 +215,7 @@ class M4 {
     ];
   }
 
-  static List<num> xRotation(num angleInRadians) {
+  static List<double> xRotation(num angleInRadians) {
     var c = cos(angleInRadians);
     var s = sin(angleInRadians);
 
@@ -227,7 +227,7 @@ class M4 {
     ];
   }
 
-  static List<num> yRotation(num angleInRadians) {
+  static List<double> yRotation(num angleInRadians) {
     var c = cos(angleInRadians);
     var s = sin(angleInRadians);
 
@@ -239,7 +239,7 @@ class M4 {
     ];
   }
 
-  static List<num> zRotation(num angleInRadians) {
+  static List<double> zRotation(num angleInRadians) {
     var c = cos(angleInRadians);
     var s = sin(angleInRadians);
 
@@ -251,7 +251,7 @@ class M4 {
     ];
   }
 
-  static List<num> scaling(num sx, num sy, num sz) {
+  static List<double> scaling(double sx, double sy, double sz) {
     return [
       sx, 0, 0, 0, //
       0, sy, 0, 0, //
@@ -260,23 +260,23 @@ class M4 {
     ];
   }
 
-  static List<num> translate(List<num> m, num tx, num ty, num tz) {
+  static List<double> translate(List<double> m, double tx, double ty, double tz) {
     return multiply(m, translation(tx, ty, tz));
   }
 
-  static List<num> xRotate(List<num> m, num angleInRadians) {
+  static List<double> xRotate(List<double> m, num angleInRadians) {
     return multiply(m, xRotation(angleInRadians));
   }
 
-  static List<num> yRotate(List<num> m, num angleInRadians) {
+  static List<double> yRotate(List<double> m, num angleInRadians) {
     return multiply(m, yRotation(angleInRadians));
   }
 
-  static List<num> zRotate(List<num> m, num angleInRadians) {
+  static List<double> zRotate(List<double> m, num angleInRadians) {
     return multiply(m, zRotation(angleInRadians));
   }
 
-  static List<num> scale(List<num> m, num sx, num sy, num sz) {
+  static List<double> scale(List<double> m, double sx, double sy, double sz) {
     return multiply(m, scaling(sx, sy, sz));
   }
 
@@ -288,8 +288,8 @@ class M4 {
   /// - @param {Vector4} dst optional vector4 to store result
   /// - @return {Vector4} dst or new Vector4 if not provided
   /// - @memberOf module:webgl-3d-math
-  static transformPoint(List<num> m, List<num> v, [dst]) {
-    dst ??= List<num>.filled(4, 0, growable: false);
+  static transformPoint(List<double> m, List<double> v, [dst]) {
+    dst ??= List<double>.filled(4, 0, growable: false);
     var v0 = v[0];
     var v1 = v[1];
     var v2 = v[2];
@@ -307,8 +307,8 @@ class M4 {
   /// - @param {Matrix4} [dst] optional matrix to store result
   /// - @return {Matrix4} dst or a new matrix if none provided
   /// - @memberOf module:webgl-3d-math
-  static transpose(List<num> m, [dst]) {
-    dst ??= List<num>.filled(16, 0, growable: false);
+  static transpose(List<double> m, [dst]) {
+    dst ??= List<double>.filled(16, 0, growable: false);
 
     dst[0] = m[0];
     dst[1] = m[4];
@@ -330,8 +330,8 @@ class M4 {
     return dst;
   }
 
-  static copy(List<num> src, [dst]) {
-    dst ??= List<num>.filled(16, 0, growable: false);
+  static copy(List<double> src, [dst]) {
+    dst ??= List<double>.filled(16, 0, growable: false);
 
     dst[0] = src[0];
     dst[1] = src[1];

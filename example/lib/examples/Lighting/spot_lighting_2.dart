@@ -252,9 +252,9 @@ class _SpotLight2State extends State<SpotLight2> {
     var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
 
     // Compute the camera's matrix
-    var camera = [100, 150, 200];
-    var target = [0, 35, 0];
-    var up = [0, 1, 0];
+    List<double> camera = [100, 150, 200];
+    List<double> target = [0, 35, 0];
+    List<double> up = [0, 1, 0];
     var cameraMatrix = M4.lookAt(camera, target, up);
 
     // Make a view matrix from the camera matrix.
@@ -280,7 +280,7 @@ class _SpotLight2State extends State<SpotLight2> {
     gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
 
     // set the light position
-    const lightPosition = [40, 60, 120];
+    List<double> lightPosition = [40, 60, 120];
     gl.uniform3fv(lightWorldPositionLocation, lightPosition);
 
     // set the camera/view position
