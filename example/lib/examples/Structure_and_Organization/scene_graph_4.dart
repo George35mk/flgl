@@ -70,33 +70,33 @@ class _SceneGraph4State extends State<SceneGraph4> {
     'children': [
       {
         'name': "waist",
-        'translation': [0, 3, 0],
+        'translation': [0.0, 3.0, 0.0],
         'children': [
           {
             'name': "torso",
-            'translation': [0, 2, 0],
+            'translation': [0.0, 2.0, 0.0],
             'children': [
               {
                 'name': "neck",
-                'translation': [0, 1, 0],
+                'translation': [0.0, 1.0, 0.0],
                 'children': [
                   {
                     'name': "head",
-                    'translation': [0, 1, 0],
+                    'translation': [0.0, 1.0, 0.0],
                   },
                 ],
               },
               {
                 'name': "left-arm",
-                'translation': [-1, 0, 0],
+                'translation': [-1.0, 0.0, 0.0],
                 'children': [
                   {
                     'name': "left-forearm",
-                    'translation': [-1, 0, 0],
+                    'translation': [-1.0, 0.0, 0.0],
                     'children': [
                       {
                         'name': "left-hand",
-                        'translation': [-1, 0, 0],
+                        'translation': [-1.0, 0.0, 0.0],
                       },
                     ],
                   },
@@ -104,15 +104,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
               },
               {
                 'name': "right-arm",
-                'translation': [1, 0, 0],
+                'translation': [1.0, 0.0, 0.0],
                 'children': [
                   {
                     'name': "right-forearm",
-                    'translation': [1, 0, 0],
+                    'translation': [1.0, 0.0, 0.0],
                     'children': [
                       {
                         'name': "right-hand",
-                        'translation': [1, 0, 0],
+                        'translation': [1.0, 0.0, 0.0],
                       },
                     ],
                   },
@@ -122,15 +122,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
           },
           {
             'name': "left-leg",
-            'translation': [-1, -1, 0],
+            'translation': [-1.0, -1.0, 0.0],
             'children': [
               {
                 'name': "left-calf",
-                'translation': [0, -1, 0],
+                'translation': [0.0, -1.0, 0.0],
                 'children': [
                   {
                     'name': "left-foot",
-                    'translation': [0, -1, 0],
+                    'translation': [0.0, -1.0, 0.0],
                   },
                 ],
               }
@@ -138,15 +138,15 @@ class _SceneGraph4State extends State<SceneGraph4> {
           },
           {
             'name': "right-leg",
-            'translation': [1, -1, 0],
+            'translation': [1.0, -1.0, 0.0],
             'children': [
               {
                 'name': "right-calf",
-                'translation': [0, -1, 0],
+                'translation': [0.0, -1.0, 0.0],
                 'children': [
                   {
                     'name': "right-foot",
-                    'translation': [0, -1, 0],
+                    'translation': [0.0, -1.0, 0.0],
                   },
                 ],
               }
