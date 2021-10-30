@@ -63,19 +63,19 @@ class Object3D {
 
   /// Set's the object position.
   setPosition(Vector3 v) {
-    position = v;
+    position.copy(v);
     updateMatrix();
   }
 
   /// Set's the object rotation.
   setRotation(Vector3 v) {
-    rotation = v;
+    rotation.copy(v);
     updateMatrix();
   }
 
   /// Set's the object scale.
   setScale(Vector3 v) {
-    scale = v;
+    scale.copy(v);
     updateMatrix();
   }
 
