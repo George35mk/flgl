@@ -29,10 +29,10 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   late OpenGLContextES gl;
 
   /// The viewport width
-  late int width = 1333;
+  double width = 0.0;
 
   /// The viewport height
-  late int height = 752 - 80 - 48;
+  double height = 0.0;
 
   double time = 0;
   double fRotationRadians = 0.0;
@@ -77,70 +77,59 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flutter 3D: Triangle"),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Stack(
-            children: [
-              FLGLViewport(
-                width: width,
-                height: height,
-                onInit: (Flgl _flgl) {
-                  setState(() {
-                    initialized = true;
-                    flgl = _flgl;
-                    gl = flgl.gl;
+          FLGLViewport(
+            width: width.toInt() + 1,
+            height: height.toInt(),
+            onInit: (Flgl _flgl) {
+              setState(() {
+                initialized = true;
+                flgl = _flgl;
+                gl = flgl.gl;
 
-                    initScene();
-                    render();
+                initScene();
+                render();
 
-                    // Draw 50 frames per second.
-                    // timer = Timer.periodic(
-                    //   const Duration(milliseconds: 20),
-                    //   (Timer t) => {
-                    //     render(),
-                    //   },
-                    // );
-                  });
-                },
-              ),
-              Positioned(
-                width: 420,
-                // height: 150,
-                top: 10,
-                right: 10,
-                child: GLControls(
-                  transformControlsManager: controlsManager,
-                  onChange: (TransformControl control) {
-                    setState(() {
-                      switch (control.name) {
-                        case 'fRotation':
-                          fRotationRadians = MathUtils.degToRad(control.value);
-                          break;
-                        default:
-                      }
-                      render();
-                    });
-                  },
-                ),
-              )
-
-              // GLControls(),
-            ],
+                // Draw 50 frames per second.
+                // timer = Timer.periodic(
+                //   const Duration(milliseconds: 20),
+                //   (Timer t) => {
+                //     render(),
+                //   },
+                // );
+              });
+            },
           ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
+          Positioned(
+            width: 420,
+            // height: 150,
+            top: 10,
+            right: 10,
+            child: GLControls(
+              transformControlsManager: controlsManager,
+              onChange: (TransformControl control) {
+                setState(() {
+                  switch (control.name) {
+                    case 'fRotation':
+                      fRotationRadians = MathUtils.degToRad(control.value);
+                      break;
+                    default:
+                  }
                   render();
-                },
-                child: const Text("Render"),
-              )
-            ],
+                });
+              },
+            ),
           )
+
+          // GLControls(),
         ],
       ),
     );
@@ -163,12 +152,8 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     Mesh mesh = Mesh(gl, triangleGeometry);
     scene.add(mesh);
 
-    // renderer.render(scene, camera);
-    renderer.render2();
-
-    // // !super important.
-    // gl.finish();
-    // flgl.updateTexture();
+    renderer.render(scene, camera);
+    // renderer.render2();
   }
 
   render() {

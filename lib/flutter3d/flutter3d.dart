@@ -49,11 +49,12 @@ class Flutter3D {
     }
     offset ??= 0;
     if (elementType != null || indices != null) {
-      int _mode = type;
+      int primitiveType = type;
       int _count = numElements;
       int _type = elementType == null ? gl.UNSIGNED_SHORT : bufferInfo.elementType;
       int _offset = offset;
-      gl.drawElements(_mode, _count, _type, _offset);
+      // 4, 3, 5123, 0
+      gl.drawElements(primitiveType, _count, _type, _offset);
     } else {
       gl.drawArrays(type, offset, numElements);
     }

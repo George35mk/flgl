@@ -55,12 +55,12 @@ class Renderer {
     gl.clearColor(0, 0, 0, 1);
     // flgl.updateTexture();
 
+    // Clear the canvas AND the depth buffer.
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     // enable CULL_FACE and DEPTH_TEST.
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
-
-    // Clear the canvas AND the depth buffer.
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     /// 1)  compute the projection matrix.
     ///     it can be perspective or orthographic camera.
@@ -124,10 +124,11 @@ class Renderer {
 
       // calls gl.drawArrays or gl.drawElements
       Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);
+
+      // !super important.
+      gl.finish();
+      flgl.updateTexture();
     }
-    // // !super important.
-    // gl.finish();
-    // flgl.updateTexture();
   }
 
   render2() {
