@@ -135,28 +135,28 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     );
   }
 
+  /// Initialize's the scene.
   initScene() {
+    // Setup the camera.
     camera = PerspectiveCamera(60, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
 
+    // Setup the renderer.
     renderer = Renderer(gl, flgl);
     renderer.width = flgl.width.toDouble();
     renderer.height = flgl.height.toDouble();
     renderer.dpr = flgl.dpr.toDouble();
 
-    // PlaneGeometry planeGeometry = PlaneGeometry(gl);
-    // Mesh plane = Mesh(gl, planeGeometry);
-    // scene.add(plane);
-    // scene.add(cube);
-
+    // Add objects in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
     Mesh mesh = Mesh(gl, triangleGeometry);
     scene.add(mesh);
 
+    // finally render the scene.
     renderer.render(scene, camera);
-    // renderer.render2();
   }
 
+  /// Render's the scene.
   render() {
-    // renderer.render(scene, camera);
+    renderer.render(scene, camera);
   }
 }
