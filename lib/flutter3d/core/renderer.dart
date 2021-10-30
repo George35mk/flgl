@@ -20,34 +20,6 @@ class Renderer {
   Renderer(this.gl, this.flgl);
 
   render(Scene scene, Camera camera) {
-    // // At draw time
-    // gl.useProgram(program);
-    // gl.bindVertexArray(vao);
-
-    // // Setup the textures used
-    // gl.activeTexture(gl.TEXTURE0 + diffuseTextureUnit);
-    // gl.bindTexture(gl.TEXTURE_2D, diffuseTexture);
-
-    // // Set all the uniforms.
-    // gl.uniformMatrix4fv(u_worldViewProjectionLoc, false, someWorldViewProjectionMat);
-    // gl.uniform3fv(u_lightWorldPosLoc, lightWorldPos);
-    // gl.uniformMatrix4fv(u_worldLoc, worldMat);
-    // gl.uniformMatrix4fv(u_viewInverseLoc, viewInverseMat);
-    // gl.uniformMatrix4fv(u_worldInverseTransposeLoc, worldInverseTransposeMat);
-    // gl.uniform4fv(u_lightColorLoc, lightColor);
-    // gl.uniform4fv(u_ambientLoc, ambientColor);
-    // gl.uniform1i(u_diffuseLoc, diffuseTextureUnit);
-    // gl.uniform4fv(u_specularLoc, specularColor);
-    // gl.uniform1f(u_shininessLoc, shininess);
-    // gl.uniform1f(u_specularFactorLoc, specularFactor);
-
-    // gl.drawArrays(...);
-
-    // // or
-    // gl.drawElements(...);
-
-    /// So...
-
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, (width * dpr).toInt() + 1, (height * dpr).toInt());
 

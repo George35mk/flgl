@@ -18,11 +18,5 @@ class Programs {
         setter(buffers[name]);
       }
     });
-    // for (var name in buffers) {
-    //   var setter = setters[name];
-    //   if (setter) {
-    //     setter(buffers[name]);
-    //   }
-    // }
   }
 }

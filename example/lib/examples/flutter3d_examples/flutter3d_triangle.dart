@@ -51,13 +51,29 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   PerspectiveCamera? camera;
   Renderer? renderer;
 
+  List<double> translation = [0.0, 0.0, 0.0];
+  List<double> rotation = [0.0, 0.0, 0.0];
+  List<double> scale = [1.0, 1.0, 1.0];
+  List<double> matrix = M4.identity();
+  Mesh? triangleMesh;
+
   @override
   void initState() {
     super.initState();
 
     // init control manager.
     controlsManager = TransformControlsManager({});
-    // controlsManager!.add(TransformControl(name: 'fRotation', min: -360, max: 360, value: 0.0));
+    controlsManager!.add(TransformControl(name: 'tx', min: -1.0, max: 1.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'ty', min: -5.0, max: 5.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'tz', min: -5.0, max: 5.0, value: 0));
+
+    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
+
+    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: 1.0));
   }
 
   @override
@@ -111,15 +127,39 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
             child: GLControls(
               transformControlsManager: controlsManager,
               onChange: (TransformControl control) {
-                setState(() {
-                  switch (control.name) {
-                    case 'fRotation':
-                      fRotationRadians = MathUtils.degToRad(control.value);
-                      break;
-                    default:
-                  }
-                  render();
-                });
+                // setState(() {
+                switch (control.name) {
+                  case 'tx':
+                    translation[0] = control.value;
+                    break;
+                  case 'ty':
+                    translation[1] = control.value;
+                    break;
+                  case 'tz':
+                    translation[2] = control.value;
+                    break;
+                  case 'rx':
+                    rotation[0] = MathUtils.degToRad(control.value);
+                    break;
+                  case 'ry':
+                    rotation[1] = MathUtils.degToRad(control.value);
+                    break;
+                  case 'rz':
+                    rotation[2] = MathUtils.degToRad(control.value);
+                    break;
+                  case 'sx':
+                    scale[0] = control.value;
+                    break;
+                  case 'sy':
+                    scale[1] = control.value;
+                    break;
+                  case 'sz':
+                    scale[2] = control.value;
+                    break;
+                  default:
+                }
+                render();
+                // });
               },
             ),
           )
@@ -141,10 +181,21 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     renderer!.height = flgl.height.toDouble();
     renderer!.dpr = flgl.dpr.toDouble();
 
-    // Add objects in the scene graph.
+    // Add the first mesh in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
-    Mesh mesh = Mesh(gl, triangleGeometry);
-    scene.add(mesh);
+    triangleMesh = Mesh(gl, triangleGeometry);
+    triangleMesh!.uniforms['u_colorMult'] = [0.0, 1.0, 0.0, 1.0];
+    triangleMesh!.setPosition(Vector3(0, 0, 0));
+
+    // Add the second mesh.
+    TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
+    Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
+    triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
+    triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
+
+    // Add the meshes inside the scene.
+    scene.add(triangleMesh);
+    scene.add(triangleMesh2);
 
     // finally render the scene.
     renderer!.render(scene, camera!);
@@ -152,6 +203,14 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
   /// Render's the scene.
   render() {
+    print('Render runining...');
+
+    triangleMesh!.setPosition(Vector3(translation[0], translation[1], translation[2]));
+    triangleMesh!.setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
+    triangleMesh!.setScale(Vector3(scale[0], scale[1], scale[2]));
+
+    // scene.children[1].setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
+
     renderer!.render(scene, camera!);
   }
 }

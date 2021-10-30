@@ -4,6 +4,8 @@ import 'package:flgl/flutter3d/geometries/plane_geometry.dart';
 import 'package:flgl/flutter3d/geometries/shaders/plane_fragment_shader.dart';
 import 'package:flgl/flutter3d/geometries/shaders/plane_vertex_shader.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
+import 'package:flgl/flutter3d/math/m4.dart';
+import 'package:flgl/flutter3d/math/vector3.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import '../flutter3d.dart';
@@ -13,11 +15,30 @@ class Object3D {
   // some uniforms
   // dynamic program;
   ProgramInfo? programInfo;
+
+  /// OpenGLES context.
   OpenGLContextES gl;
+
+  /// The object geometry.
   BufferGeometry geometry;
+
+  /// The object VAO.
   dynamic vao; // is int
 
+  /// The object uniforms.
   Map<String, dynamic> uniforms = {};
+
+  /// The object position
+  Vector3 position = Vector3();
+
+  /// The object rotation.
+  Vector3 rotation = Vector3();
+
+  /// The object scale.
+  Vector3 scale = Vector3(1, 1, 1);
+
+  /// The object matrix4 or u_world matrix.
+  List<double> matrix = M4.identity();
 
   Object3D(this.gl, this.geometry) {
     if (geometry is PlaneGeometry) {
@@ -29,6 +50,34 @@ class Object3D {
     }
   }
 
+  /// Compose the object matrix.
+  updateMatrix() {
+    matrix = M4.translate(M4.identity(), position.x, position.y, position.z);
+    matrix = M4.xRotate(matrix, rotation.x);
+    matrix = M4.yRotate(matrix, rotation.y);
+    matrix = M4.zRotate(matrix, rotation.z);
+    matrix = M4.scale(matrix, scale.x, scale.y, scale.z);
+    uniforms['u_world'] = matrix; // update the uniforms.
+  }
+
+  /// Set's the object position.
+  setPosition(Vector3 v) {
+    position = v;
+    updateMatrix();
+  }
+
+  /// Set's the object rotation.
+  setRotation(Vector3 v) {
+    rotation = v;
+    updateMatrix();
+  }
+
+  /// Set's the object scale.
+  setScale(Vector3 v) {
+    scale = v;
+    updateMatrix();
+  }
+
   setupTriangle(BufferGeometry geometry) {
     String vertexShader = """
       #version 300 es
@@ -36,29 +85,34 @@ class Object3D {
       // an attribute is an input (in) to a vertex shader.
       // It will receive data from a buffer
       in vec4 a_position;
+
+      // A matrix to transform the positions by
+      // uniform mat4 u_matrix;
+
+      // the object matrix4
+      uniform mat4 u_world;
       
       // all shaders have a main function
       void main() {
       
         // gl_Position is a special variable a vertex shader
         // is responsible for setting
-        gl_Position = a_position;
+        gl_Position = u_world * a_position;
       }
     """;
 
     String fragmentShader = """
       #version 300 es
       
-      // fragment shaders don't have a default precision so we need
-      // to pick one. highp is a good default. It means "high precision"
       precision highp float;
-      
+
+      uniform vec4 u_colorMult;
+
       // we need to declare an output for the fragment shader
       out vec4 outColor;
-      
+
       void main() {
-        // Just set the output to a constant reddish-purple
-        outColor = vec4(1, 0, 0.5, 1);
+        outColor = u_colorMult;
       }
     """;
 

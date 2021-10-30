@@ -62,12 +62,9 @@ class Flutter3D {
 
   static setUniforms(ProgramInfo programInfo, Map<String, dynamic> uniforms) {
     var uniformSetters = programInfo.uniformSetters;
-
     uniforms.forEach((key, value) {
       var setter = uniformSetters[key];
       if (setter != null) {
-        var type = uniforms[key].runtimeType;
-        print(type);
         setter(uniforms[key]); // you can use value also
       }
     });

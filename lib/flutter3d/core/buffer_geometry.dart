@@ -170,12 +170,13 @@ class AttributeBufferInfo {
   /// example gl.STATIC_DRAW.
   int drawType;
 
-  AttributeBufferInfo(
-      {required this.buffer,
-      required this.numComponents,
-      required this.type,
-      required this.normalize,
-      required this.stride,
-      required this.offset,
-      required this.drawType});
+  AttributeBufferInfo({
+    required this.buffer,
+    required this.numComponents,
+    required this.type,
+    required this.normalize,
+    required this.stride,
+    required this.offset,
+    required this.drawType,
+  });
 }
