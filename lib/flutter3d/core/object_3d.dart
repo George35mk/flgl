@@ -6,6 +6,7 @@ import 'package:flgl/flutter3d/geometries/shaders/plane_vertex_shader.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
 import 'package:flgl/flutter3d/math/m4.dart';
 import 'package:flgl/flutter3d/math/vector3.dart';
+import 'package:flgl/flutter3d/shaders/triangle_shaders.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import '../flutter3d.dart';
@@ -79,45 +80,12 @@ class Object3D {
   }
 
   setupTriangle(BufferGeometry geometry) {
-    String vertexShader = """
-      #version 300 es
-      
-      // an attribute is an input (in) to a vertex shader.
-      // It will receive data from a buffer
-      in vec4 a_position;
-
-      // A matrix to transform the positions by
-      // uniform mat4 u_matrix;
-
-      // the object matrix4
-      uniform mat4 u_world;
-      
-      // all shaders have a main function
-      void main() {
-      
-        // gl_Position is a special variable a vertex shader
-        // is responsible for setting
-        gl_Position = u_world * a_position;
-      }
-    """;
-
-    String fragmentShader = """
-      #version 300 es
-      
-      precision highp float;
-
-      uniform vec4 u_colorMult;
-
-      // we need to declare an output for the fragment shader
-      out vec4 outColor;
-
-      void main() {
-        outColor = u_colorMult;
-      }
-    """;
-
     // 1. Create a program based on geometry and material
-    programInfo = Flutter3D.createProgramInfo(gl, vertexShader, fragmentShader);
+    programInfo = Flutter3D.createProgramInfo(
+      gl,
+      triangleShaders['vertexShader']!,
+      triangleShaders['fragmentShader']!,
+    );
 
     // 2. Compute the buffer info
     geometry.computeBufferInfo(gl);

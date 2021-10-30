@@ -7,9 +7,8 @@ String vertexShader = """
 
   // A matrix to transform the positions by
   // uniform mat4 u_matrix;
-
-  // the object matrix4
   uniform mat4 u_world;
+
   
   // all shaders have a main function
   void main() {
@@ -35,7 +34,7 @@ String fragmentShader = """
   }
 """;
 
-Map triangleShaders = {
+Map<String, String> triangleShaders = {
   'vertexShader': vertexShader,
   'fragmentShader': fragmentShader,
 };
