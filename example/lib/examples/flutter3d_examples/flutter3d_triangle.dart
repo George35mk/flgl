@@ -21,44 +21,35 @@ class Flutter3DTriangle extends StatefulWidget {
 }
 
 class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
+  /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
 
-  dynamic program;
-
+  /// The flutter graphics library instance.
   late Flgl flgl;
+
+  /// The OpenGL context.
   late OpenGLContextES gl;
 
-  /// The viewport width
+  /// The viewport width.
   double width = 0.0;
 
-  /// The viewport height
+  /// The viewport height.
   double height = 0.0;
 
-  double time = 0;
   double fRotationRadians = 0.0;
-  double fieldOfViewRadians = 60;
 
   // Uniforms for each object.
   List<double> cubeTranslation = [-40.0, 0.0, 0.0];
 
+  /// The timer for the render loop.
   Timer? timer;
 
-  dynamic cubeBufferInfo;
-  dynamic programInfo;
-  dynamic sphereBufferInfo;
-
-  // List<Map<String, dynamic>> objectsToDraw = [];
-
+  /// The transform controls manager.
   TransformControlsManager? controlsManager;
 
-  // vars for the pan gesture.
-  double x = 0;
-  double y = 0;
-  double z = 0;
-
   Scene scene = Scene();
-  late PerspectiveCamera camera;
-  late Renderer renderer;
+  PerspectiveCamera? camera;
+  Renderer? renderer;
 
   @override
   void initState() {
@@ -146,9 +137,9 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
-    renderer.width = flgl.width.toDouble();
-    renderer.height = flgl.height.toDouble();
-    renderer.dpr = flgl.dpr.toDouble();
+    renderer!.width = flgl.width.toDouble();
+    renderer!.height = flgl.height.toDouble();
+    renderer!.dpr = flgl.dpr.toDouble();
 
     // Add objects in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
@@ -156,11 +147,11 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     scene.add(mesh);
 
     // finally render the scene.
-    renderer.render(scene, camera);
+    renderer!.render(scene, camera!);
   }
 
   /// Render's the scene.
   render() {
-    renderer.render(scene, camera);
+    renderer!.render(scene, camera!);
   }
 }
