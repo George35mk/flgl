@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import '../controls/gl_controls.dart';
 
 import 'package:flgl/flgl_3d.dart';
-// import 'package:flgl/flutter3d/scene.dart';
 
 class Flutter3DTriangle extends StatefulWidget {
   const Flutter3DTriangle({Key? key}) : super(key: key);
