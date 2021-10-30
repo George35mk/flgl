@@ -181,16 +181,11 @@ class Renderer {
     ];
     gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList(positions), gl.STATIC_DRAW);
 
-    // create the buffer
-    var indexBuffer = gl.createBuffer();
+    // Create a vertex array object (attribute state)
+    var vao = gl.createVertexArray();
 
-    // make this buffer the current 'ELEMENT_ARRAY_BUFFER'
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-    // Fill the current element array buffer with data
-    var indices = [
-      0, 1, 2, // first triangle
-    ];
+    // and make it the one we're currently working with
+    gl.bindVertexArray(vao);
 
     /// Now drow
 
@@ -203,6 +198,9 @@ class Renderer {
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
+
+    // Bind the attribute/buffer set we want.
+    gl.bindVertexArray(vao);
 
     // Turn on the attribute
     gl.enableVertexAttribArray(positionLocation);
@@ -218,11 +216,18 @@ class Renderer {
     var offset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-    // draw TRIANGLE
+    // create the index buffer
+    var indices = [0, 1, 2]; // first triangle
+    var indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16List.fromList(indices), gl.STATIC_DRAW);
+
+    // Draw the rectangle.
     var primitiveType = gl.TRIANGLES;
-    var offset_draw = 0;
+    var _offset = 0;
     var count = 3;
-    gl.drawArrays(primitiveType, offset_draw, count);
+    var indexType = gl.UNSIGNED_SHORT;
+    gl.drawElements(primitiveType, count, indexType, _offset);
 
     // !super important.
     gl.finish();
