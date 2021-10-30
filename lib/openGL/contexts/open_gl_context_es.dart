@@ -356,7 +356,8 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(ptr);
   }
 
-  bindBuffer(int target, dynamic buffer) {
+  bindBuffer(int target, Buffer buffer) {
+    // added the correct type on the second param, replace dynamic with Buffer.
     return gl.glBindBuffer(target, buffer.bufferId);
   }
 
@@ -623,7 +624,9 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glDeleteProgram(program);
   }
 
-  bindVertexArray(int array) {
+  // Accepts int value type,
+  // but I need to pass a null value to unbind the VAO.
+  bindVertexArray(dynamic array) {
     return gl.glBindVertexArray(array);
   }
 

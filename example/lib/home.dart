@@ -6,6 +6,8 @@ import 'package:flgl_example/examples/Structure_and_Organization/structure_and_o
 import 'package:flgl_example/examples/drawing_objects/drawing_objects.dart';
 import 'package:flutter/material.dart';
 
+import 'examples/flutter3d_examples/flutter3d_examples.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -44,6 +46,11 @@ class _HomeState extends State<Home> {
       "name": "Drawing Objects",
       "description": "OpenGLES: Drawing Objects",
       "page": const DrawingObjects(),
+    },
+    '7': {
+      "name": "Flutter3D Examples",
+      "description": "OpenGLES: Drawing Objects with Flutter3D",
+      "page": const Flutter3DExamples(),
     },
   };
 

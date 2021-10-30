@@ -1,3 +1,4 @@
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
 import 'package:flutter/material.dart';
 import 'package:flgl_example/home.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
@@ -55,6 +56,8 @@ import 'examples/Structure_and_Organization/scene_graph_3.dart';
 import 'examples/Structure_and_Organization/scene_graph_4.dart';
 
 import 'package:flgl_example/examples/drawing_objects/cube_example.dart';
+
+import 'examples/flutter3d_examples/flutter3d_triangle.dart';
 
 void main() {
   runApp(const MyApp());
@@ -142,6 +145,10 @@ class _MyAppState extends State<MyApp> {
         // drawing_objects
         '/drawing_objects': (context) => const DrawingObjects(),
         '/drawing_objects/cube_example': (context) => const CubeExample(),
+
+        // flutter3D examples
+        '/flutter3d_examples': (context) => const Flutter3DExamples(),
+        '/flutter3d_examples/triangle': (context) => const Flutter3DTriangle(),
       },
     );
   }
