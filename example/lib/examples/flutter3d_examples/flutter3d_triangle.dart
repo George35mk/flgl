@@ -75,6 +75,16 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     super.dispose();
   }
 
+  void startRenderLoop() {
+    // Draw 50 frames per second.
+    timer = Timer.periodic(
+      const Duration(milliseconds: 20),
+      (Timer t) => {
+        render(),
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -98,13 +108,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
                 initScene();
                 render();
 
-                // Draw 50 frames per second.
-                // timer = Timer.periodic(
-                //   const Duration(milliseconds: 20),
-                //   (Timer t) => {
-                //     render(),
-                //   },
-                // );
+                // startRenderLoop();
               });
             },
           ),
