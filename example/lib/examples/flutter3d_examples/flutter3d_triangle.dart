@@ -86,6 +86,42 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     );
   }
 
+  void handleControlsMangerChanges(TransformControl control) {
+    // setState(() {
+    switch (control.name) {
+      case 'tx':
+        translation[0] = control.value;
+        break;
+      case 'ty':
+        translation[1] = control.value;
+        break;
+      case 'tz':
+        translation[2] = control.value;
+        break;
+      case 'rx':
+        rotation[0] = MathUtils.degToRad(control.value);
+        break;
+      case 'ry':
+        rotation[1] = MathUtils.degToRad(control.value);
+        break;
+      case 'rz':
+        rotation[2] = MathUtils.degToRad(control.value);
+        break;
+      case 'sx':
+        scale[0] = control.value;
+        break;
+      case 'sy':
+        scale[1] = control.value;
+        break;
+      case 'sz':
+        scale[2] = control.value;
+        break;
+      default:
+    }
+    render();
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -108,7 +144,6 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
                 initScene();
                 render();
-
                 // startRenderLoop();
               });
             },
@@ -121,39 +156,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
             child: GLControls(
               transformControlsManager: controlsManager,
               onChange: (TransformControl control) {
-                // setState(() {
-                switch (control.name) {
-                  case 'tx':
-                    translation[0] = control.value;
-                    break;
-                  case 'ty':
-                    translation[1] = control.value;
-                    break;
-                  case 'tz':
-                    translation[2] = control.value;
-                    break;
-                  case 'rx':
-                    rotation[0] = MathUtils.degToRad(control.value);
-                    break;
-                  case 'ry':
-                    rotation[1] = MathUtils.degToRad(control.value);
-                    break;
-                  case 'rz':
-                    rotation[2] = MathUtils.degToRad(control.value);
-                    break;
-                  case 'sx':
-                    scale[0] = control.value;
-                    break;
-                  case 'sy':
-                    scale[1] = control.value;
-                    break;
-                  case 'sz':
-                    scale[2] = control.value;
-                    break;
-                  default:
-                }
-                render();
-                // });
+                handleControlsMangerChanges(control);
               },
             ),
           )
@@ -192,12 +195,12 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     scene.add(triangleMesh2);
 
     // finally render the scene.
-    renderer!.render(scene, camera!);
+    // renderer!.render(scene, camera!);
   }
 
   /// Render's the scene.
   render() {
-    print('Render runining...');
+    // print('Render runining...');
 
     triangleMesh!.setPosition(Vector3(translation[0], translation[1], translation[2]));
     triangleMesh!.setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
