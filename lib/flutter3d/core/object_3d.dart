@@ -134,7 +134,3 @@ class Object3D {
     uniforms['u_texture'] = checkerboardTexture;
   }
 }
-
-class OpenGLTexture {
-  OpenGLTexture();
-}
