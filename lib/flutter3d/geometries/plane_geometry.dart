@@ -42,7 +42,5 @@ class PlaneGeometry extends BufferGeometry {
     setAttribute('position', Float32BufferAttribute(vertices, 3));
     setAttribute('normal', Float32BufferAttribute(normals, 3));
     setAttribute('uv', Float32BufferAttribute(uvs, 2));
-
-    computeBufferInfo(gl);
   }
 }
