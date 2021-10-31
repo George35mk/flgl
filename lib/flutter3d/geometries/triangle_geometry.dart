@@ -17,7 +17,7 @@ class TriangleGeometry extends BufferGeometry {
     normals = [0, 1, 0, 0, 1, 0, 0, 1, 0];
     uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
-    // Set index buffers and attributes.
+    // Set index buffer and attributes.
     setIndex(indices);
     setAttribute('position', Float32BufferAttribute(vertices, 3));
     setAttribute('normal', Float32BufferAttribute(normals, 3));

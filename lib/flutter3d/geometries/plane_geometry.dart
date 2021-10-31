@@ -10,13 +10,6 @@ class PlaneGeometry extends BufferGeometry {
   List<double> normals = [];
   List<double> uvs = [];
 
-  // dynamic programInfo;
-  // dynamic planeVAO;
-
-  // uniforms
-  // if you set the uniforms inside the plane geometry
-  // then you need to have a uniforms map here. othewise use a mesh object.
-
   PlaneGeometry(this.gl) {
     // Compute the indices, vertices, normals and uvs.
     indices = [
@@ -37,7 +30,7 @@ class PlaneGeometry extends BufferGeometry {
     ];
     uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
-    // set index buffers and attributes.
+    // Set index buffers and attributes.
     setIndex(indices);
     setAttribute('position', Float32BufferAttribute(vertices, 3));
     setAttribute('normal', Float32BufferAttribute(normals, 3));
