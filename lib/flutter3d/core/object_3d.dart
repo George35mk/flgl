@@ -13,8 +13,7 @@ import '../flutter3d.dart';
 import 'buffer_geometry.dart';
 
 class Object3D {
-  // some uniforms
-  // dynamic program;
+  /// The object3d program info.
   ProgramInfo? programInfo;
 
   /// OpenGLES context.
@@ -29,7 +28,7 @@ class Object3D {
   /// The object uniforms.
   Map<String, dynamic> uniforms = {};
 
-  /// The object position
+  /// The object position.
   Vector3 position = Vector3();
 
   /// The object rotation.
@@ -58,6 +57,8 @@ class Object3D {
     matrix = M4.yRotate(matrix, rotation.y);
     matrix = M4.zRotate(matrix, rotation.z);
     matrix = M4.scale(matrix, scale.x, scale.y, scale.z);
+
+    // update the uniforms.
     uniforms['u_world'] = matrix; // update the uniforms.
   }
 
@@ -96,7 +97,11 @@ class Object3D {
 
   setupPlane() {
     // init program based on geometry and material
-    programInfo = Flutter3D.createProgramInfo(gl, planeVertexShaderSource, planeFragmentShaderSource);
+    programInfo = Flutter3D.createProgramInfo(
+      gl,
+      planeVertexShaderSource,
+      planeFragmentShaderSource,
+    );
 
     // Setup VAO
     vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
