@@ -184,16 +184,21 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     triangleMesh = Mesh(gl, triangleGeometry);
     triangleMesh!.uniforms['u_colorMult'] = [0.0, 1.0, 0.0, 1.0];
     triangleMesh!.setPosition(Vector3(0, 0, 0));
+    scene.add(triangleMesh);
 
     // Add the second mesh.
     TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
     Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
     triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
     triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
-
-    // Add the meshes inside the scene.
-    scene.add(triangleMesh);
     scene.add(triangleMesh2);
+
+    // Create a plane mesh
+    PlaneGeometry planeGeometry = PlaneGeometry(gl);
+    Mesh planeMesh = Mesh(gl, planeGeometry);
+    planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
+    planeMesh.setPosition(Vector3(0, -0.8, 0));
+    scene.add(planeMesh);
 
     // finally render the scene.
     // renderer!.render(scene, camera!);

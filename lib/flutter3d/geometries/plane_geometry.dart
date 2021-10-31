@@ -14,13 +14,13 @@ class PlaneGeometry extends BufferGeometry {
     // Compute the indices, vertices, normals and uvs.
     indices = [
       0, 2, 1, //
-      2, 3, 1, //
+      0, 3, 2, //
     ];
     vertices = [
-      -1, 0, -1, //
-      1, 0, -1, //
-      -1, 0, 1, //
-      1, 0, 1, //
+      0.5, 0.5, 0.0, // top right
+      0.5, -0.5, 0.0, // bottom right
+      -0.5, -0.5, 0.0, // bottom left
+      -0.5, 0.5, 0.0 // top left
     ];
     normals = [
       0, 1, 0, //

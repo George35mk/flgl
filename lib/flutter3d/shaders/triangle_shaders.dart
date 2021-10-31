@@ -6,11 +6,8 @@ String vertexShader = """
   in vec4 a_position;
 
   // A matrix to transform the positions by
-  // uniform mat4 u_matrix;
   uniform mat4 u_world;
-
   
-  // all shaders have a main function
   void main() {
   
     // gl_Position is a special variable a vertex shader

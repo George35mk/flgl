@@ -2,20 +2,17 @@ String vertexShader = """
   #version 300 es
 
   in vec4 a_position;
-  in vec2 a_texcoord;
 
-  uniform mat4 u_projection;
-  uniform mat4 u_view;
+  // uniform mat4 u_projection;
+  // uniform mat4 u_view;
+
+  // A matrix to transform the positions by
   uniform mat4 u_world;
-
-  out vec2 v_texcoord;
 
   void main() {
     // Multiply the position by the matrix.
-    gl_Position = u_projection * u_view * u_world * a_position;
-
-    // Pass the texture coord to the fragment shader.
-    v_texcoord = a_texcoord;
+    // gl_Position = u_projection * u_view * u_world * a_position;
+    gl_Position = u_world * a_position;
   }
 """;
 
@@ -24,16 +21,13 @@ String fragmentShader = """
   
   precision highp float;
 
-  // Passed in from the vertex shader.
-  in vec2 v_texcoord;
-
   uniform vec4 u_colorMult;
-  uniform sampler2D u_texture;
 
+  // we need to declare an output for the fragment shader
   out vec4 outColor;
 
   void main() {
-    outColor = texture(u_texture, v_texcoord) * u_colorMult;
+    outColor = u_colorMult;
   }
 """;
 
