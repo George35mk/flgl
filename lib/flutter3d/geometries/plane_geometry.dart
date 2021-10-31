@@ -19,9 +19,22 @@ class PlaneGeometry extends BufferGeometry {
 
   PlaneGeometry(this.gl) {
     // Compute the indices, vertices, normals and uvs.
-    indices = [0, 2, 1, 2, 3, 1];
-    vertices = [-1, 0, -1, 1, 0, -1, -1, 0, 1, 1, 0, 1];
-    normals = [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0];
+    indices = [
+      0, 2, 1, //
+      2, 3, 1, //
+    ];
+    vertices = [
+      -1, 0, -1, //
+      1, 0, -1, //
+      -1, 0, 1, //
+      1, 0, 1, //
+    ];
+    normals = [
+      0, 1, 0, //
+      0, 1, 0, //
+      0, 1, 0, //
+      0, 1, 0, //
+    ];
     uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
     // set index buffers and attributes.
