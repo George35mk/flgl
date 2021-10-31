@@ -12,14 +12,14 @@ import '../flutter3d.dart';
 import 'buffer_geometry.dart';
 
 class Object3D {
-  /// The object3d program info.
-  ProgramInfo? programInfo;
-
   /// OpenGLES context.
   OpenGLContextES gl;
 
   /// The object geometry.
   BufferGeometry geometry;
+
+  /// The object3d program info.
+  ProgramInfo? programInfo;
 
   /// The object VAO.
   dynamic vao; // is int
