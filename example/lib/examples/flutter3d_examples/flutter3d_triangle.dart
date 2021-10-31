@@ -35,6 +35,9 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   /// The viewport height.
   double height = 0.0;
 
+  /// The device pixel ratio.
+  double dpr = 1.0;
+
   /// The timer for the render loop.
   Timer? timer;
 
@@ -126,6 +129,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    dpr = MediaQuery.of(context).devicePixelRatio;
 
     return Scaffold(
       appBar: AppBar(
@@ -174,10 +178,10 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
-    renderer!.width = flgl.width.toDouble();
-    renderer!.height = flgl.height.toDouble();
-    renderer!.dpr = flgl.dpr.toDouble();
-    renderer!.setBackgroundColor(0, 0, 0, 0);
+    renderer!.setBackgroundColor(0, 0, 0, 1);
+    renderer!.setWidth(width);
+    renderer!.setHeight(height);
+    renderer!.setDPR(dpr);
 
     // Add the first mesh in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
@@ -191,13 +195,15 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
     triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
     triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
+    triangleMesh2.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh2);
 
     // Create a plane mesh
     PlaneGeometry planeGeometry = PlaneGeometry(gl);
     Mesh planeMesh = Mesh(gl, planeGeometry);
     planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
-    planeMesh.setPosition(Vector3(0, -0.8, 0));
+    planeMesh.setPosition(Vector3(0, 0, 0));
+    planeMesh.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh);
 
     // finally render the scene.

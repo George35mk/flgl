@@ -23,12 +23,24 @@ class Renderer {
   double height = 0;
 
   /// The viewport aspect ratio.
-  double dpr = 0.0;
+  double dpr = 1.0;
 
   /// The scene background color.
   final List<double> _backgroundColor = [0, 0, 0, 1];
 
   Renderer(this.gl, this.flgl);
+
+  void setWidth(double width) {
+    this.width = width;
+  }
+
+  void setHeight(double height) {
+    this.height = height;
+  }
+
+  void setDPR(double dpr) {
+    this.dpr = dpr;
+  }
 
   /// Set's the scene background color.
   /// - r: the red value. 0 - 1
