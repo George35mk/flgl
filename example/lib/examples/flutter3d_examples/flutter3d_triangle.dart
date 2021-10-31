@@ -177,6 +177,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     renderer!.width = flgl.width.toDouble();
     renderer!.height = flgl.height.toDouble();
     renderer!.dpr = flgl.dpr.toDouble();
+    renderer!.setBackgroundColor(0, 0, 0, 0);
 
     // Add the first mesh in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);

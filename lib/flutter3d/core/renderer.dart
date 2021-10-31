@@ -10,21 +10,45 @@ import '../math/math_utils.dart';
 import '../scene.dart';
 
 class Renderer {
-  OpenGLContextES gl;
-
-  double width = 0;
-  double height = 0;
-  double dpr = 0.0;
+  /// The flgl instance.
   Flgl flgl;
 
+  /// The OpenGLES context instance.
+  OpenGLContextES gl;
+
+  /// The viewport width.
+  double width = 0;
+
+  /// The viewport height.
+  double height = 0;
+
+  /// The viewport aspect ratio.
+  double dpr = 0.0;
+
+  /// The scene background color.
+  final List<double> _backgroundColor = [0, 0, 0, 1];
+
   Renderer(this.gl, this.flgl);
+
+  /// Set's the scene background color.
+  /// - r: the red value. 0 - 1
+  /// - g: the green value. 0 - 1
+  /// - b: the blue value. 0 - 1
+  /// - a: the alpha value. 0 - 1.
+  setBackgroundColor(double r, double g, double b, double a) {
+    _backgroundColor[0] = r;
+    _backgroundColor[1] = g;
+    _backgroundColor[2] = b;
+    _backgroundColor[3] = a;
+  }
 
   render(Scene scene, Camera camera) {
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, (width * dpr).toInt() + 1, (height * dpr).toInt());
 
     // Clear the canvas. sets the canvas background color.
-    gl.clearColor(0, 0, 0, 1);
+    // gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(_backgroundColor[0], _backgroundColor[1], _backgroundColor[2], _backgroundColor[3]);
 
     // Clear the canvas AND the depth buffer.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
