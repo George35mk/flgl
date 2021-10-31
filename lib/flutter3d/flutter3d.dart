@@ -153,17 +153,11 @@ class Flutter3D {
     var attribSetters = createAttributeSetters(gl, program);
 
     ProgramInfo programInfo = ProgramInfo(program, uniformSetters, attribSetters);
-
     return programInfo;
-
-    // return {
-    //   'program': program,
-    //   'uniformSetters': uniformSetters,
-    //   'attribSetters': attribSetters,
-    // };
   }
 
-  ///
+  /// Creates VAO, sets the program attributes, and binds the
+  /// indices.
   /// - gl
   /// - setters: the programInfo.attribSetters
   /// - attribs: the bufferInfo.attribs
@@ -182,7 +176,7 @@ class Flutter3D {
     // like when creating buffers for other stuff will mess up this VAO's binding
     // gl.bindVertexArray(null); // maybe I get an issue here.
     // https://gamedev.stackexchange.com/questions/107793/binding-and-unbinding-what-would-you-do
-    // gl.bindVertexArray(null); // error fails, I canot pass null value.
+    // gl.bindVertexArray(null); // error fails, I can't pass null value.
 
     return vao;
   }
