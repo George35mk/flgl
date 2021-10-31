@@ -35,11 +35,6 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   /// The viewport height.
   double height = 0.0;
 
-  double fRotationRadians = 0.0;
-
-  // Uniforms for each object.
-  List<double> cubeTranslation = [-40.0, 0.0, 0.0];
-
   /// The timer for the render loop.
   Timer? timer;
 
