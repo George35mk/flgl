@@ -25,7 +25,6 @@ class Renderer {
 
     // Clear the canvas. sets the canvas background color.
     gl.clearColor(0, 0, 0, 1);
-    // flgl.updateTexture();
 
     // Clear the canvas AND the depth buffer.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -33,28 +32,6 @@ class Renderer {
     // enable CULL_FACE and DEPTH_TEST.
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
-
-    /// 1)  compute the projection matrix.
-    ///     it can be perspective or orthographic camera.
-    ///
-    /// const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    /// const projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
-    ///
-    ///
-    /// 2) compute the camera matrix.
-    ///
-    /// const cameraPosition = [settings.cameraX, settings.cameraY, 7];
-    /// const target = [0, 0, 0];
-    /// const up = [0, 1, 0];
-    /// const cameraMatrix = m4.lookAt(cameraPosition, target, up);
-    ///
-    ///
-    /// 3) compute the viewMatrix.
-    ///
-    /// const viewMatrix = m4.inverse(cameraMatrix);
-    ///
-    ///
-    ///
 
     // Compute the projection matrix
     double fov = MathUtils.degToRad(60);
@@ -81,7 +58,7 @@ class Renderer {
     for (var object in scene.children) {
       // Tell it to use our program (pair of shaders)
       // rememeber !!! for each model - object3d in the scene, some times is better
-      // to use a sererate programe.
+      // to use a seperate programe.
       gl.useProgram(object.programInfo!.program);
 
       // Setup all the needed attributes.
