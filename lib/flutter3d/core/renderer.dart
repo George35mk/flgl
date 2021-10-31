@@ -35,14 +35,14 @@ class Renderer {
   /// - g: the green value. 0 - 1
   /// - b: the blue value. 0 - 1
   /// - a: the alpha value. 0 - 1.
-  setBackgroundColor(double r, double g, double b, double a) {
+  void setBackgroundColor(double r, double g, double b, double a) {
     _backgroundColor[0] = r;
     _backgroundColor[1] = g;
     _backgroundColor[2] = b;
     _backgroundColor[3] = a;
   }
 
-  render(Scene scene, Camera camera) {
+  void render(Scene scene, Camera camera) {
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, (width * dpr).toInt() + 1, (height * dpr).toInt());
 
@@ -104,7 +104,7 @@ class Renderer {
     }
   }
 
-  render2() {
+  void render2() {
     var vertexShaderSource = '''
       #version 300 es
 
