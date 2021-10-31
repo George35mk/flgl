@@ -13,25 +13,9 @@ class TriangleGeometry extends BufferGeometry {
   TriangleGeometry(this.gl) {
     // Compute the indices, vertices, normals and uvs.
     indices = [0, 2, 1];
-    vertices = [
-      //
-      0, 0, 0, //
-      0, 0.5, 0, //
-      0.5, 0, 0, //
-    ];
-    normals = [
-      //
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
-    ];
-    uvs = [
-      //
-      0, 0,
-      1, 0,
-      0, 1,
-      1, 1,
-    ];
+    vertices = [0, 0, 0, 0, 0.5, 0, 0.5, 0, 0];
+    normals = [0, 1, 0, 0, 1, 0, 0, 1, 0];
+    uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
     // Set index buffers and attributes.
     setIndex(indices);
