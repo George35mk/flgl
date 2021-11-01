@@ -234,7 +234,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     // scene.add(sphereMesh);
 
     // Create box mesh.
-    BoxGeometry boxGeometry = BoxGeometry(gl, 2);
+    BoxGeometry boxGeometry = BoxGeometry(gl, 0.5);
     Mesh boxMesh = Mesh(gl, boxGeometry);
     boxMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0]; // yellow
     boxMesh.setPosition(Vector3(4, 0, 0));
