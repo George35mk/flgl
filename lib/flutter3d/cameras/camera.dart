@@ -37,8 +37,7 @@ class Camera {
     );
     viewMatrix = M4.inverse(cameraMatrix);
 
-    // update the uniforms.
-    // Set the camera related uniforms. camera.uniforms
+    // Set the camera related uniforms.
     uniforms['u_projection'] = projectionMatrix;
     uniforms['u_view'] = viewMatrix;
   }
