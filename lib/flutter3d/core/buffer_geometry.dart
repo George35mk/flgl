@@ -98,18 +98,10 @@ class BufferGeometry {
 
   computeBufferInfo(OpenGLContextES gl) {
     var attributes = ['position', 'normal', 'uv']; // also the color...
-    for (var i = 0; i < attributes.length; i++) {
-      var attributeName = attributes[i];
-      var attribute = getAttribute(attributeName);
-      // bufferInfo.attribs[attributeName] = {
-      //   'buffer': createBufferFromBufferAttribute(gl, getAttribute(attributeName), gl.ARRAY_BUFFER),
-      //   'numComponents': getAttribute(attributeName).itemSize,
-      //   'type': getGLTypeForTypedArray(getAttribute(attributeName)),
-      //   'normalize': getAttribute(attributeName).normalized,
-      //   'stride': 0,
-      //   'offset': 0,
-      //   'drawType': getAttribute(attributeName).usage,
-      // };
+    for (int i = 0; i < attributes.length; i++) {
+      String attributeName = attributes[i];
+      BufferAttribute attribute = getAttribute(attributeName);
+
       bufferInfo.attribs[attributeName] = AttributeBufferInfo(
         buffer: createBufferFromBufferAttribute(gl, attribute, gl.ARRAY_BUFFER),
         numComponents: attribute.itemSize,
