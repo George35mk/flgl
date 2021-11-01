@@ -517,7 +517,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
   }
 
-  createVertexArray() {
+  int createVertexArray() {
     final v = calloc<Uint32>();
     gl.glGenVertexArrays(1, v);
     int _v = v.value;
@@ -626,8 +626,8 @@ class OpenGLContextES extends OpenGL30Constant {
 
   // Accepts int value type,
   // but I need to pass a null value to unbind the VAO.
-  bindVertexArray(dynamic array) {
-    return gl.glBindVertexArray(array);
+  void bindVertexArray(int array) {
+    gl.glBindVertexArray(array);
   }
 
   /// Delete vertex array object

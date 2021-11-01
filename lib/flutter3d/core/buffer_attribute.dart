@@ -26,24 +26,17 @@ class BufferAttribute {
   /// 1,2 or 3 components per iteration
   int itemSize;
   bool normalized;
+
+  /// the number of elements in the array.
+  /// how is computed: array.length / numbe of components.
   int count = 0;
 
   /// gl.STATIC_DRAW
   int usage = 35044;
 
-  int cursor = 0;
-
   BufferAttribute(this.array, this.itemSize, [this.normalized = false]) {
     count = array.length ~/ itemSize;
     usage = 35044; // gl.STATIC_DRAW
-  }
-
-  push(List<num> args) {
-    for (int i = 0; i < args.length; ++i) {
-      var value = args[i];
-      array[cursor] = value;
-      cursor++;
-    }
   }
 }
 

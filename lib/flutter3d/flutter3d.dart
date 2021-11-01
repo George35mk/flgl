@@ -163,7 +163,7 @@ class Flutter3D {
   /// - attribs: the bufferInfo.attribs
   /// - indices: the bufferInfo.indices
   static createVAOAndSetAttributes(OpenGLContextES gl, setters, attribs, indices) {
-    var vao = gl.createVertexArray();
+    int vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
 
     Programs.setAttributes(setters, attribs);
