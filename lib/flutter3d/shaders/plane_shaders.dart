@@ -3,16 +3,12 @@ String vertexShader = """
 
   in vec4 a_position;
 
-  // uniform mat4 u_projection;
-  // uniform mat4 u_view;
-
-  // A matrix to transform the positions by
+  uniform mat4 u_projection;
+  uniform mat4 u_view;
   uniform mat4 u_world;
 
   void main() {
-    // Multiply the position by the matrix.
-    // gl_Position = u_projection * u_view * u_world * a_position;
-    gl_Position = u_world * a_position;
+    gl_Position = u_projection * u_view * u_world * a_position;
   }
 """;
 

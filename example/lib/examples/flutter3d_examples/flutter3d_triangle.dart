@@ -175,6 +175,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   initScene() {
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
+    camera!.setPosition(Vector3(0, 0, 10));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
