@@ -187,40 +187,50 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     // Add the first mesh in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
-    Mesh triangleMesh = Mesh(gl, triangleGeometry);
-    triangleMesh.uniforms['u_colorMult'] = [0.0, 1.0, 0.0, 1.0]; // green
+    MeshBasicMaterial material0 = MeshBasicMaterial(
+      color: Color(0.0, 1.0, 0.0, 1.0),
+    );
+    Mesh triangleMesh = Mesh(gl, triangleGeometry, material0);
     triangleMesh.setPosition(Vector3(0, 0, 0));
     triangleMesh.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh);
 
     // Add the second mesh.
     TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
-    Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
-    triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0]; // red
+    MeshBasicMaterial material1 = MeshBasicMaterial(
+      color: Color(1.0, 0.0, 0.0, 1.0),
+    );
+    Mesh triangleMesh2 = Mesh(gl, triangleGeometry2, material1);
     triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
     triangleMesh2.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh2);
 
     // Create a plane mesh 1
     PlaneGeometry planeGeometry = PlaneGeometry(gl);
-    Mesh planeMesh = Mesh(gl, planeGeometry);
-    planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 1.0, 1.0]; // white
+    MeshBasicMaterial material2 = MeshBasicMaterial(
+      color: Color(1.0, 1.0, 1.0, 1.0),
+    );
+    Mesh planeMesh = Mesh(gl, planeGeometry, material2);
     planeMesh.setPosition(Vector3(2, 0, 0));
     planeMesh.setScale(Vector3(1, 1, 0));
     scene.add(planeMesh);
 
     // Create a plane mesh 2
     PlaneGeometry planeGeometry2 = PlaneGeometry(gl);
-    Mesh planeMesh2 = Mesh(gl, planeGeometry2);
-    planeMesh2.uniforms['u_colorMult'] = [0.0, 1.0, 1.0, 1.0]; // bluish white
+    MeshBasicMaterial material3 = MeshBasicMaterial(
+      color: Color(0.0, 1.0, 1.0, 1.0),
+    );
+    Mesh planeMesh2 = Mesh(gl, planeGeometry2, material3);
     planeMesh2.setPosition(Vector3(-2, 0, 0));
     planeMesh2.setScale(Vector3(1, 1, 0));
     scene.add(planeMesh2);
 
     // Create a plane mesh 3
     PlaneGeometry planeGeometry3 = PlaneGeometry(gl);
-    Mesh planeMesh3 = Mesh(gl, planeGeometry3);
-    planeMesh3.uniforms['u_colorMult'] = [0.3, 0.0, 1.0, 1.0]; // mov white
+    MeshBasicMaterial material4 = MeshBasicMaterial(
+      color: Color(0.3, 0.0, 1.0, 1.0),
+    );
+    Mesh planeMesh3 = Mesh(gl, planeGeometry3, material4);
     planeMesh3.setPosition(Vector3(-2, -2, 0));
     planeMesh3.setScale(Vector3(1, 1, 0));
     scene.add(planeMesh3);
@@ -235,16 +245,20 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     // Create box mesh.
     BoxGeometry boxGeometry = BoxGeometry(gl, 0.5);
-    Mesh boxMesh = Mesh(gl, boxGeometry);
-    boxMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0]; // yellow
+    MeshBasicMaterial material5 = MeshBasicMaterial(
+      color: Color(1.0, 1.0, 0.0, 1.0),
+    );
+    Mesh boxMesh = Mesh(gl, boxGeometry, material5);
     boxMesh.setPosition(Vector3(4, 0, 0));
     boxMesh.setScale(Vector3(1, 1, 1));
     scene.add(boxMesh);
 
     // Create box mesh.
     BoxGeometry boxGeometry1 = BoxGeometry(gl);
-    Mesh boxMesh1 = Mesh(gl, boxGeometry1);
-    boxMesh1.uniforms['u_colorMult'] = [0.1, 0.3, 0.0, 1.0]; // yellow
+    MeshBasicMaterial material6 = MeshBasicMaterial(
+      color: Color(1, 0.3, 1, 1.0),
+    ); // Magenta / Fuchsia
+    Mesh boxMesh1 = Mesh(gl, boxGeometry1, material6);
     boxMesh1.setPosition(Vector3(2, 3, 0));
     boxMesh1.setScale(Vector3(1, 1, 1));
     scene.add(boxMesh1);
@@ -254,10 +268,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   render() {
     // print('Render runining...');
 
-    // triangleMesh!.setPosition(Vector3(translation[0], translation[1], translation[2]));
-    // triangleMesh!.setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
-    // triangleMesh!.setScale(Vector3(scale[0], scale[1], scale[2]));
-    var index = scene.children.length - 2;
+    int index = scene.children.length - 1;
     scene.children[index].setPosition(translation);
     scene.children[index].setRotation(rotation.addScalar(0.01));
     scene.children[index].setScale(scale);

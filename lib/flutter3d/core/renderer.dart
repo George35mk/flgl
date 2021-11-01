@@ -86,8 +86,11 @@ class Renderer {
       // Update the camera uniforms.
       Flutter3D.setUniforms(programInfo, camera.uniforms);
 
-      // Set the uniforms unique to the plane
+      // Set the object uniforms
       Flutter3D.setUniforms(programInfo, object.uniforms);
+
+      // Set the object material related uniforms
+      Flutter3D.setUniforms(programInfo, object.material.uniforms);
 
       // calls gl.drawArrays or gl.drawElements
       Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);

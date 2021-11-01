@@ -2,6 +2,7 @@ import 'package:flgl/flutter3d/geometries/box_geometry.dart';
 import 'package:flgl/flutter3d/geometries/plane_geometry.dart';
 import 'package:flgl/flutter3d/geometries/sphere_geometry.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
+import 'package:flgl/flutter3d/materials/material.dart';
 import 'package:flgl/flutter3d/math/m4.dart';
 import 'package:flgl/flutter3d/math/vector3.dart';
 import 'package:flgl/flutter3d/shaders/box_shader.dart';
@@ -19,6 +20,8 @@ class Object3D {
 
   /// The object geometry.
   BufferGeometry geometry;
+
+  Material material;
 
   /// The object3d program info.
   ProgramInfo? programInfo;
@@ -41,7 +44,7 @@ class Object3D {
   /// The object matrix4 or u_world matrix.
   List<double> matrix = M4.identity();
 
-  Object3D(this.gl, this.geometry) {
+  Object3D(this.gl, this.geometry, this.material) {
     if (geometry is PlaneGeometry) {
       setupPlane(geometry);
     } else if (geometry is TriangleGeometry) {
