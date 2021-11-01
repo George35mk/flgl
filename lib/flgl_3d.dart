@@ -22,6 +22,7 @@ export './flutter3d/geometries/box_geometry.dart';
 export './flutter3d/math/m4.dart';
 export './flutter3d/math/math_utils.dart';
 export './flutter3d/math/vector3.dart';
+export './flutter3d/math/color.dart';
 
 export './flutter3d/materials/material.dart';
 export './flutter3d/materials/mesh_basic_material.dart';
