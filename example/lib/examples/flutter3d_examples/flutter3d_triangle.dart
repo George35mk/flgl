@@ -233,8 +233,21 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     // sphereMesh.setScale(Vector3(1, 1, 1));
     // scene.add(sphereMesh);
 
-    // finally render the scene.
-    // renderer!.render(scene, camera!);
+    // Create box mesh.
+    BoxGeometry boxGeometry = BoxGeometry(gl, 2);
+    Mesh boxMesh = Mesh(gl, boxGeometry);
+    boxMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0]; // yellow
+    boxMesh.setPosition(Vector3(4, 0, 0));
+    boxMesh.setScale(Vector3(1, 1, 1));
+    scene.add(boxMesh);
+
+    // Create box mesh.
+    BoxGeometry boxGeometry1 = BoxGeometry(gl);
+    Mesh boxMesh1 = Mesh(gl, boxGeometry1);
+    boxMesh1.uniforms['u_colorMult'] = [0.1, 0.3, 0.0, 1.0]; // yellow
+    boxMesh1.setPosition(Vector3(2, 3, 0));
+    boxMesh1.setScale(Vector3(1, 1, 1));
+    scene.add(boxMesh1);
   }
 
   /// Render's the scene.
@@ -244,10 +257,10 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     // triangleMesh!.setPosition(Vector3(translation[0], translation[1], translation[2]));
     // triangleMesh!.setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
     // triangleMesh!.setScale(Vector3(scale[0], scale[1], scale[2]));
-
-    scene.children[0].setPosition(Vector3(translation.x, translation.y, translation.z));
-    scene.children[0].setRotation(Vector3(rotation.x, rotation.y, rotation.z));
-    scene.children[0].setScale(Vector3(scale.x, scale.y, scale.z));
+    var index = scene.children.length - 2;
+    scene.children[index].setPosition(translation);
+    scene.children[index].setRotation(rotation.addScalar(0.01));
+    scene.children[index].setScale(scale);
 
     renderer!.render(scene, camera!);
   }
