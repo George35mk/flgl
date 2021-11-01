@@ -1,14 +1,16 @@
+import 'package:flgl/flutter3d/math/vector3.dart';
+
 import '../math/m4.dart';
 
 class Camera {
   /// The camera position vector.
-  List<double> position = [2.75, 5, 7];
+  Vector3 position = Vector3(2.75, 5, 7);
 
   /// The camera target vector.
-  List<double> target = [0, 0, 0];
+  Vector3 target = Vector3(0, 0, 0);
 
   /// The camera up vector.
-  List<double> up = [0, 1, 0];
+  Vector3 up = Vector3(0, 1, 0);
 
   /// the camera matrix.
   List<double> cameraMatrix = M4.identity();
@@ -20,7 +22,11 @@ class Camera {
   List<double> projectionMatrix = M4.identity();
 
   Camera() {
-    cameraMatrix = M4.lookAt(position, target, up);
+    cameraMatrix = M4.lookAt(
+      [position.x, position.y, position.z],
+      [target.x, target.y, target.z],
+      [up.x, up.y, up.z],
+    );
     viewMatrix = M4.inverse(cameraMatrix);
   }
 }

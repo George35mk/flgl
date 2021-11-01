@@ -1,18 +1,14 @@
 String vertexShader = """
   #version 300 es
   
-  // an attribute is an input (in) to a vertex shader.
-  // It will receive data from a buffer
   in vec4 a_position;
 
-  // A matrix to transform the positions by
+  uniform mat4 u_projection;
+  uniform mat4 u_view;
   uniform mat4 u_world;
   
   void main() {
-  
-    // gl_Position is a special variable a vertex shader
-    // is responsible for setting
-    gl_Position = u_world * a_position;
+    gl_Position = u_projection * u_view * u_world * a_position;
   }
 """;
 

@@ -191,20 +191,20 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     scene.add(triangleMesh);
 
     // Add the second mesh.
-    // TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
-    // Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
-    // triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
-    // triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
-    // triangleMesh2.setScale(Vector3(1, 1, 1));
-    // scene.add(triangleMesh2);
+    TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
+    Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
+    triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
+    triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
+    triangleMesh2.setScale(Vector3(1, 1, 1));
+    scene.add(triangleMesh2);
 
     // Create a plane mesh
-    // PlaneGeometry planeGeometry = PlaneGeometry(gl);
-    // Mesh planeMesh = Mesh(gl, planeGeometry);
-    // planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
-    // planeMesh.setPosition(Vector3(0, 0, 0));
-    // planeMesh.setScale(Vector3(1, 1, 1));
-    // scene.add(planeMesh);
+    PlaneGeometry planeGeometry = PlaneGeometry(gl);
+    Mesh planeMesh = Mesh(gl, planeGeometry);
+    planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
+    planeMesh.setPosition(Vector3(0, 0, 0));
+    planeMesh.setScale(Vector3(1, 1, 1));
+    scene.add(planeMesh);
 
     // Create a sphere mesh
     // SphereGeometry sphereGeometry = SphereGeometry(gl, 1, 12, 6);
