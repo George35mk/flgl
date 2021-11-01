@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:flgl/flutter3d/geometries/plane_geometry.dart';
+import 'package:flgl/flutter3d/geometries/sphere_geometry.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
 import 'package:flgl/flutter3d/math/m4.dart';
 import 'package:flgl/flutter3d/math/vector3.dart';
 import 'package:flgl/flutter3d/shaders/plane_shaders.dart';
+import 'package:flgl/flutter3d/shaders/sphere_shader.dart';
 import 'package:flgl/flutter3d/shaders/triangle_shaders.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
@@ -44,6 +46,8 @@ class Object3D {
       setupPlane(geometry);
     } else if (geometry is TriangleGeometry) {
       setupTriangle(geometry);
+    } else if (geometry is SphereGeometry) {
+      setupSphere(geometry);
     } else {
       print('Unkown geometry');
     }
@@ -94,7 +98,7 @@ class Object3D {
     vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
   }
 
-  setupPlane(BufferGeometry geometry) {
+  void setupPlane(BufferGeometry geometry) {
     // 1. init program based on geometry and material
     programInfo = Flutter3D.createProgramInfo(
       gl,
@@ -134,5 +138,20 @@ class Object3D {
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
     // uniforms['u_texture'] = checkerboardTexture;
+  }
+
+  void setupSphere(BufferGeometry geometry) {
+    // 1. Create a program based on geometry and material
+    programInfo = Flutter3D.createProgramInfo(
+      gl,
+      sphereShaders['vertexShader']!,
+      sphereShaders['fragmentShader']!,
+    );
+
+    // 2. Compute the buffer info
+    geometry.computeBufferInfo(gl);
+
+    // Setup VAO
+    vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
   }
 }

@@ -69,28 +69,6 @@ class Renderer {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    // Compute the projection matrix
-    double fov = MathUtils.degToRad(60);
-    double aspect = (width * dpr) / (height * dpr);
-    double zNear = 1;
-    double zFar = 2000;
-    var projectionMatrix = M4.perspective(fov, aspect, zNear, zFar);
-
-    // Compute the camera's matrix
-    List<double> camera = [0, 0, 100];
-    List<double> target = [0, 0, 0];
-    List<double> up = [0, 1, 0];
-    var cameraMatrix = M4.lookAt(camera, target, up);
-
-    // Make a view matrix from the camera matrix.
-    var viewMatrix = M4.inverse(cameraMatrix);
-
-    // Compute a view projection matrix
-    // var viewProjectionMatrix = M4.multiply(projectionMatrix, viewMatrix);
-
-    // Tell it to use our program (pair of shaders)
-    // gl.useProgram(program);
-
     for (var object in scene.children) {
       // Tell it to use our program (pair of shaders)
       // rememeber !!! for each model - object3d in the scene, some times is better
@@ -101,8 +79,8 @@ class Renderer {
       gl.bindVertexArray(object.vao);
 
       // Set the camera related uniforms. camera.uniforms
-      object.uniforms['u_view'] = viewMatrix;
-      object.uniforms['u_projection'] = projectionMatrix;
+      object.uniforms['u_projection'] = camera.projectionMatrix;
+      object.uniforms['u_view'] = camera.viewMatrix;
 
       // Set the uniforms unique to the plane
       Flutter3D.setUniforms(object.programInfo!, object.uniforms);

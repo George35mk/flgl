@@ -7,8 +7,15 @@
         {
             "type": "pwa-chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:5500/app.html",
+            "name": "drawing-multiple-things",
+            "url": "http://localhost:5500/drawing-multiple-things/app.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "planar-projection-mapping",
+            "url": "http://localhost:5500/planar-projection-mapping/app.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
