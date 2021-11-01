@@ -21,7 +21,7 @@ class BufferAttribute {
   /// - Int8List
   ///
   /// and can be the object positions, colors, normals or uvs or indices
-  dynamic array;
+  TypedData array;
 
   /// 1,2 or 3 components per iteration
   int itemSize;
@@ -35,7 +35,8 @@ class BufferAttribute {
   int usage = 35044;
 
   BufferAttribute(this.array, this.itemSize, [this.normalized = false]) {
-    count = array.length ~/ itemSize;
+    // count = array.length ~/ itemSize;
+    count = (array.lengthInBytes / array.elementSizeInBytes) ~/ itemSize;
     usage = 35044; // gl.STATIC_DRAW
   }
 }
