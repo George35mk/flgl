@@ -115,7 +115,7 @@ class BufferGeometry {
 
     if (index != null) {
       bufferInfo.indices = createBufferFromBufferAttribute(gl, index!, gl.ELEMENT_ARRAY_BUFFER);
-      bufferInfo.numElements = index!.array.length;
+      bufferInfo.numElements = index!.getLength();
       bufferInfo.elementType = getGLTypeForTypedArray(index!);
     } else {
       bufferInfo.numElements = getAttribute('position').count; // length / numComponents;

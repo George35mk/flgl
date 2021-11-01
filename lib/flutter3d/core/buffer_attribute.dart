@@ -39,6 +39,10 @@ class BufferAttribute {
     count = (array.lengthInBytes / array.elementSizeInBytes) ~/ itemSize;
     usage = 35044; // gl.STATIC_DRAW
   }
+
+  int getLength() {
+    return array.lengthInBytes ~/ array.elementSizeInBytes;
+  }
 }
 
 class Int8BufferAttribute extends BufferAttribute {
