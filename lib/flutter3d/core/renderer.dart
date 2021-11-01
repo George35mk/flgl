@@ -70,10 +70,11 @@ class Renderer {
     gl.enable(gl.DEPTH_TEST);
 
     for (var object in scene.children) {
+      ProgramInfo programInfo = object.programInfo!;
       // Tell it to use our program (pair of shaders)
       // rememeber !!! for each model - object3d in the scene, some times is better
       // to use a seperate programe.
-      gl.useProgram(object.programInfo!.program);
+      gl.useProgram(programInfo.program);
 
       // Setup all the needed attributes.
       gl.bindVertexArray(object.vao);
@@ -83,18 +84,19 @@ class Renderer {
       // object.uniforms['u_view'] = camera.viewMatrix;
 
       // Update the camera uniforms.
-      Flutter3D.setUniforms(object.programInfo!, camera.uniforms);
+      Flutter3D.setUniforms(programInfo, camera.uniforms);
 
       // Set the uniforms unique to the plane
-      Flutter3D.setUniforms(object.programInfo!, object.uniforms);
+      Flutter3D.setUniforms(programInfo, object.uniforms);
 
       // calls gl.drawArrays or gl.drawElements
       Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);
-
-      // !super important.
-      gl.finish();
-      flgl.updateTexture();
     }
+    // ! super important.
+    // ! never put this inside a loop because it takes some time
+    // ! to update the texture.
+    gl.finish();
+    flgl.updateTexture();
   }
 
   void render2() {

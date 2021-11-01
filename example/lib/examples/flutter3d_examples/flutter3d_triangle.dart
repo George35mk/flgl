@@ -48,11 +48,9 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   PerspectiveCamera? camera;
   Renderer? renderer;
 
-  List<double> translation = [0.0, 0.0, 0.0];
-  List<double> rotation = [0.0, 0.0, 0.0];
-  List<double> scale = [1.0, 1.0, 1.0];
-  List<double> matrix = M4.identity();
-  Mesh? triangleMesh;
+  Vector3 translation = Vector3(0.0, 0.0, 0.0);
+  Vector3 rotation = Vector3(0.0, 0.0, 0.0);
+  Vector3 scale = Vector3(1.0, 1.0, 1.0);
 
   @override
   void initState() {
@@ -79,10 +77,15 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     super.dispose();
   }
 
+  Future<String> asyncRender() {
+    // Imagine that this function is more complex and slow.
+    return Future.delayed(const Duration(milliseconds: 33), () => render());
+  }
+
   void startRenderLoop() {
     // Draw 50 frames per second.
     timer = Timer.periodic(
-      const Duration(milliseconds: 20),
+      const Duration(milliseconds: 33),
       (Timer t) => {
         render(),
       },
@@ -90,39 +93,37 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   }
 
   void handleControlsMangerChanges(TransformControl control) {
-    // setState(() {
     switch (control.name) {
       case 'tx':
-        translation[0] = control.value;
+        translation.x = control.value;
         break;
       case 'ty':
-        translation[1] = control.value;
+        translation.y = control.value;
         break;
       case 'tz':
-        translation[2] = control.value;
+        translation.z = control.value;
         break;
       case 'rx':
-        rotation[0] = MathUtils.degToRad(control.value);
+        rotation.x = MathUtils.degToRad(control.value);
         break;
       case 'ry':
-        rotation[1] = MathUtils.degToRad(control.value);
+        rotation.y = MathUtils.degToRad(control.value);
         break;
       case 'rz':
-        rotation[2] = MathUtils.degToRad(control.value);
+        rotation.z = MathUtils.degToRad(control.value);
         break;
       case 'sx':
-        scale[0] = control.value;
+        scale.x = control.value;
         break;
       case 'sy':
-        scale[1] = control.value;
+        scale.y = control.value;
         break;
       case 'sz':
-        scale[2] = control.value;
+        scale.z = control.value;
         break;
       default:
     }
-    render();
-    // });
+    // render();
   }
 
   @override
@@ -147,8 +148,8 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
                 gl = flgl.gl;
 
                 initScene();
-                render();
-                // startRenderLoop();
+                // render();
+                startRenderLoop();
               });
             },
           ),
@@ -186,15 +187,16 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     // Add the first mesh in the scene graph.
     TriangleGeometry triangleGeometry = TriangleGeometry(gl);
-    triangleMesh = Mesh(gl, triangleGeometry);
-    triangleMesh!.uniforms['u_colorMult'] = [0.0, 1.0, 0.0, 1.0];
-    triangleMesh!.setPosition(Vector3(0, 0, 0));
+    Mesh triangleMesh = Mesh(gl, triangleGeometry);
+    triangleMesh.uniforms['u_colorMult'] = [0.0, 1.0, 0.0, 1.0]; // green
+    triangleMesh.setPosition(Vector3(0, 0, 0));
+    triangleMesh.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh);
 
     // Add the second mesh.
     TriangleGeometry triangleGeometry2 = TriangleGeometry(gl);
     Mesh triangleMesh2 = Mesh(gl, triangleGeometry2);
-    triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0];
+    triangleMesh2.uniforms['u_colorMult'] = [1.0, 0.0, 0.0, 1.0]; // red
     triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
     triangleMesh2.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh2);
@@ -202,16 +204,16 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     // Create a plane mesh
     PlaneGeometry planeGeometry = PlaneGeometry(gl);
     Mesh planeMesh = Mesh(gl, planeGeometry);
-    planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
-    planeMesh.setPosition(Vector3(0, 0, 0));
-    planeMesh.setScale(Vector3(1, 1, 1));
+    planeMesh.uniforms['u_colorMult'] = [1.0, 1.0, 1.0, 1.0]; // white
+    planeMesh.setPosition(Vector3(2, 0, 0));
+    planeMesh.setScale(Vector3(1, 1, 0));
     scene.add(planeMesh);
 
     // Create a sphere mesh
     // SphereGeometry sphereGeometry = SphereGeometry(gl, 1, 12, 6);
     // Mesh sphereMesh = Mesh(gl, sphereGeometry);
-    // sphereMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0];
-    // sphereMesh.setPosition(Vector3(0, 0, 0));
+    // sphereMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0]; // yellow
+    // sphereMesh.setPosition(Vector3(-2, 0, 0));
     // sphereMesh.setScale(Vector3(1, 1, 1));
     // scene.add(sphereMesh);
 
@@ -227,8 +229,9 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     // triangleMesh!.setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
     // triangleMesh!.setScale(Vector3(scale[0], scale[1], scale[2]));
 
-    scene.children[0].setPosition(Vector3(translation[0], translation[1], translation[2]));
-    scene.children[0].setRotation(Vector3(rotation[0], rotation[1], rotation[2]));
+    scene.children[0].setPosition(Vector3(translation.x, translation.y, translation.z));
+    scene.children[0].setRotation(Vector3(rotation.x, rotation.y, rotation.z));
+    scene.children[0].setScale(Vector3(scale.x, scale.y, scale.z));
 
     renderer!.render(scene, camera!);
   }
