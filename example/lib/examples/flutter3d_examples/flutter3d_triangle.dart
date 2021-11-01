@@ -217,6 +217,14 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     planeMesh2.setScale(Vector3(1, 1, 0));
     scene.add(planeMesh2);
 
+    // Create a plane mesh 3
+    PlaneGeometry planeGeometry3 = PlaneGeometry(gl);
+    Mesh planeMesh3 = Mesh(gl, planeGeometry3);
+    planeMesh3.uniforms['u_colorMult'] = [0.3, 0.0, 1.0, 1.0]; // mov white
+    planeMesh3.setPosition(Vector3(-2, -2, 0));
+    planeMesh3.setScale(Vector3(1, 1, 0));
+    scene.add(planeMesh3);
+
     // Create a sphere mesh
     // SphereGeometry sphereGeometry = SphereGeometry(gl, 0.5, 12, 6);
     // Mesh sphereMesh = Mesh(gl, sphereGeometry);
