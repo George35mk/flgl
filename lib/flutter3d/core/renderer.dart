@@ -28,14 +28,17 @@ class Renderer {
 
   Renderer(this.gl, this.flgl);
 
+  /// Sets the viewport width.
   void setWidth(double width) {
     this.width = width;
   }
 
+  /// Set's the viewport height.
   void setHeight(double height) {
     this.height = height;
   }
 
+  /// Set's the device pixel ration.
   void setDPR(double dpr) {
     this.dpr = dpr;
   }
@@ -52,6 +55,10 @@ class Renderer {
     _backgroundColor[3] = a;
   }
 
+  /// Renders the scene
+  ///
+  /// - [scene] the scene to render.
+  /// - [camera] the scene camera.
   void render(Scene scene, Camera camera) {
     // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, (width * dpr).toInt() + 1, (height * dpr).toInt());
