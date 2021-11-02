@@ -1,4 +1,5 @@
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane.dart';
 import 'package:flutter/material.dart';
 import 'package:flgl_example/home.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
@@ -149,6 +150,7 @@ class _MyAppState extends State<MyApp> {
         // flutter3D examples
         '/flutter3d_examples': (context) => const Flutter3DExamples(),
         '/flutter3d_examples/triangle': (context) => const Flutter3DTriangle(),
+        '/flutter3d_examples/plane': (context) => const Flutter3DPlane(),
       },
     );
   }
