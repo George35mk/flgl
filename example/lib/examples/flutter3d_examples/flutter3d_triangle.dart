@@ -176,7 +176,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   initScene() {
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 10));
+    camera!.setPosition(Vector3(0, 0, 5));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -194,96 +194,6 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     triangleMesh.setPosition(Vector3(0, 0, 0));
     triangleMesh.setScale(Vector3(1, 1, 1));
     scene.add(triangleMesh);
-
-    // Add the second mesh.
-    TriangleGeometry triangleGeometry2 = TriangleGeometry();
-    MeshBasicMaterial material1 = MeshBasicMaterial(
-      color: Color(1.0, 0.0, 0.0, 1.0),
-    );
-    Mesh triangleMesh2 = Mesh(gl, triangleGeometry2, material1);
-    triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
-    triangleMesh2.setScale(Vector3(1, 1, 1));
-    scene.add(triangleMesh2);
-
-    // Create a plane mesh 1
-    PlaneGeometry planeGeometry = PlaneGeometry();
-    MeshBasicMaterial material2 = MeshBasicMaterial(
-      color: Color(1.0, 1.0, 1.0, 1.0),
-    );
-    Mesh planeMesh = Mesh(gl, planeGeometry, material2);
-    planeMesh.setPosition(Vector3(2, 0, 0));
-    planeMesh.setScale(Vector3(1, 1, 0));
-    scene.add(planeMesh);
-
-    // Create a plane mesh 2
-    PlaneGeometry planeGeometry2 = PlaneGeometry();
-    MeshBasicMaterial material3 = MeshBasicMaterial(
-      color: Color(0.0, 1.0, 1.0, 1.0),
-    );
-    Mesh planeMesh2 = Mesh(gl, planeGeometry2, material3);
-    planeMesh2.setPosition(Vector3(-2, 0, 0));
-    planeMesh2.setScale(Vector3(1, 1, 0));
-    scene.add(planeMesh2);
-
-    // Create a plane mesh 3
-    PlaneGeometry planeGeometry3 = PlaneGeometry();
-    MeshBasicMaterial material4 = MeshBasicMaterial(
-      color: Color(0.3, 0.0, 1.0, 1.0),
-    );
-    Mesh planeMesh3 = Mesh(gl, planeGeometry3, material4);
-    planeMesh3.setPosition(Vector3(-2, -2, 0));
-    planeMesh3.setScale(Vector3(1, 1, 0));
-    scene.add(planeMesh3);
-
-    // Create a sphere mesh
-    SphereGeometry sphereGeometry = SphereGeometry(0.5, 12, 6);
-    MeshBasicMaterial spherematerial = MeshBasicMaterial(
-      color: Color(1.0, 1.0, 0.0, 1.0),
-    );
-    Mesh sphereMesh = Mesh(gl, sphereGeometry, spherematerial);
-    sphereMesh.setPosition(Vector3(-4, 0, 0));
-    sphereMesh.setScale(Vector3(1, 1, 1));
-    scene.add(sphereMesh);
-
-    // Create box mesh.
-    BoxGeometry boxGeometry = BoxGeometry(0.5);
-    MeshBasicMaterial material5 = MeshBasicMaterial(
-      color: Color(1.0, 1.0, 0.0, 1.0),
-    );
-    Mesh boxMesh = Mesh(gl, boxGeometry, material5);
-    boxMesh.setPosition(Vector3(4, 0, 0));
-    boxMesh.setScale(Vector3(1, 1, 1));
-    scene.add(boxMesh);
-
-    // Create box mesh.
-    BoxGeometry boxGeometry1 = BoxGeometry();
-    MeshBasicMaterial material6 = MeshBasicMaterial(
-      color: Color(1, 0.3, 1, 1.0),
-    ); // Magenta / Fuchsia
-    Mesh boxMesh1 = Mesh(gl, boxGeometry1, material6);
-    boxMesh1.setPosition(Vector3(-2, 3, 0));
-    boxMesh1.setScale(Vector3(1, 1, 1));
-    scene.add(boxMesh1);
-
-    // Create a cone mesh.
-    ConeGeometry coneGeometry = ConeGeometry(2, 0, 2, 4, 1, true, false);
-    MeshBasicMaterial coneMaterial = MeshBasicMaterial(
-      color: Color(0.2, 0.7, 0.2, 1.0),
-    );
-    Mesh coneMesh = Mesh(gl, coneGeometry, coneMaterial);
-    coneMesh.setPosition(Vector3(2, 3, 0));
-    coneMesh.setScale(Vector3(1, 1, 1));
-    scene.add(coneMesh);
-
-    // Create a cylinder mesh.
-    CylinderGeometry cylinderGeometry = CylinderGeometry(1, 4, 8, 5, true, true);
-    MeshBasicMaterial cylinderMaterial = MeshBasicMaterial(
-      color: Color(0.2, 0.3, 0.9, 1.0),
-    );
-    Mesh cylinderMesh = Mesh(gl, cylinderGeometry, cylinderMaterial);
-    cylinderMesh.setPosition(Vector3(2, 3, 0));
-    cylinderMesh.setScale(Vector3(1, 1, 1));
-    scene.add(cylinderMesh);
   }
 
   /// Render's the scene.
@@ -292,7 +202,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
 
     int index = scene.children.length - 1;
     scene.children[index].setPosition(translation);
-    scene.children[index].setRotation(rotation.addScalar(0.01));
+    scene.children[index].setRotation(rotation.addScalar(0.03));
     scene.children[index].setScale(scale);
 
     renderer!.render(scene, camera!);
