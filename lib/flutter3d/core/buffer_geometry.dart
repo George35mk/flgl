@@ -131,14 +131,14 @@ class BufferInfo {
   BufferInfo();
 }
 
-/// 0:"buffer" -> Buffer
-/// 1:"numComponents" -> 3
-/// 2:"type" -> 5126
-/// 3:"normalize" -> false
-/// 4:"stride" -> 0
-/// 5:"offset" -> 0
-/// 6:"drawType" -> 35044
-
+/// The attribut Buffer Info.
+/// - 0 : buffer -> Buffer
+/// - 1 : numComponents -> 3
+/// - 2 : type -> 5126
+/// - 3 : normalize -> false
+/// - 4 : stride -> 0
+/// - 5 : offset -> 0
+/// - 6 : drawType -> 35044
 class AttributeBufferInfo {
   /// The buffer position or Buffer instance.
   /// var buffer = gl.createBuffer();

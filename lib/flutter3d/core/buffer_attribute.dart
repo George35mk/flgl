@@ -40,6 +40,8 @@ class BufferAttribute {
     usage = 35044; // gl.STATIC_DRAW
   }
 
+  /// returns the number of elements inside the array.
+  /// a use this method instead of `array.length`
   int getLength() {
     return array.lengthInBytes ~/ array.elementSizeInBytes;
   }
