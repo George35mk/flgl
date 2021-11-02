@@ -35,6 +35,11 @@ class _Flutter3DExamplesState extends State<Flutter3DExamples> {
       "name": "flutter 3D cone geometry",
       "description": "Example of drawing a cone using flutter 3D",
       "route": 'cone',
+    },
+    5: {
+      "name": "flutter 3D cylinder geometry",
+      "description": "Example of drawing a cylinder using flutter 3D",
+      "route": 'cylinder',
     }
   };
 

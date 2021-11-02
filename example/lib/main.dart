@@ -1,4 +1,5 @@
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_sphere.dart';
@@ -157,6 +158,7 @@ class _MyAppState extends State<MyApp> {
         '/flutter3d_examples/box': (context) => const Flutter3DBox(),
         '/flutter3d_examples/sphere': (context) => const Flutter3DSphere(),
         '/flutter3d_examples/cone': (context) => const Flutter3DCone(),
+        '/flutter3d_examples/cylinder': (context) => const Flutter3DCylinder(),
       },
     );
   }
