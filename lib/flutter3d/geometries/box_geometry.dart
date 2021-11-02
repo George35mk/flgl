@@ -1,16 +1,13 @@
 import 'package:flgl/flutter3d/core/buffer_attribute.dart';
 import 'package:flgl/flutter3d/core/buffer_geometry.dart';
-import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 class BoxGeometry extends BufferGeometry {
-  OpenGLContextES gl;
-
   List<int> indices = [];
   List<double> vertices = [];
   List<double> normals = [];
   List<double> uvs = [];
 
-  BoxGeometry(this.gl, [double size = 1.0]) {
+  BoxGeometry([double size = 1.0]) {
     double k = size / 2;
 
     List<List<double>> cornerVertices = [

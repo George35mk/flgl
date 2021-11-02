@@ -46,6 +46,7 @@ function main() {
   // normal with a_normal etc..
   twgl.setAttributePrefix("a_");
 
+  // var x = flattenedPrimitives.createCylinderBufferInfo(gl);
   var sphereBufferInfo = flattenedPrimitives.createSphereBufferInfo(gl, 1, 12, 6);
   var cubeBufferInfo   = flattenedPrimitives.createCubeBufferInfo(gl, 20);
   var coneBufferInfo   = flattenedPrimitives.createTruncatedConeBufferInfo(gl, 10, 0, 20, 12, 1, true, false);

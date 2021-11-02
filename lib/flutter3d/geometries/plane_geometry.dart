@@ -1,16 +1,13 @@
 import 'package:flgl/flutter3d/core/buffer_attribute.dart';
 import 'package:flgl/flutter3d/core/buffer_geometry.dart';
-import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 class PlaneGeometry extends BufferGeometry {
-  OpenGLContextES gl;
-
   List<int> indices = [];
   List<double> vertices = [];
   List<double> normals = [];
   List<double> uvs = [];
 
-  PlaneGeometry(this.gl) {
+  PlaneGeometry() {
     // Compute the indices, vertices, normals and uvs.
     indices = [
       0, 2, 1, //

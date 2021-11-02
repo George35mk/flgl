@@ -1,14 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:flgl/flutter3d/core/buffer_attribute.dart';
 import 'package:flgl/flutter3d/core/buffer_geometry.dart';
-import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import 'dart:math' as math;
 
 class SphereGeometry extends BufferGeometry {
-  OpenGLContextES gl;
-
   double radius;
   int subdivisionsAxis;
   int subdivisionsHeight;
@@ -23,7 +18,6 @@ class SphereGeometry extends BufferGeometry {
   List<double> uvs = [];
 
   SphereGeometry(
-    this.gl,
     this.radius,
     this.subdivisionsAxis,
     this.subdivisionsHeight, [
