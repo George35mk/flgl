@@ -9,6 +9,12 @@ class Flutter3D {
 
   Flutter3D();
 
+  /// Creates shader.
+  /// - [gl] the OpenGlES context.
+  /// - [type] the shader type.
+  ///   - `gl.VERTEX_SHADER`
+  ///   - `gl.FRAGMENT_SHADER`
+  /// - [source] the shader source
   static int createShader(OpenGLContextES gl, int type, String source) {
     int shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -21,6 +27,14 @@ class Flutter3D {
     return shader;
   }
 
+  /// Creates the program.
+  ///
+  /// This creates a program then attatch the vertex
+  /// and fragment shaders and if succed returns the program id.
+  ///
+  /// - [gl] the OpenGlES context.
+  /// - [vertexShader] the vertex shader id.
+  /// - [fragmentShader] the fragment shader id.
   static int createProgram(OpenGLContextES gl, int vertexShader, int fragmentShader) {
     int program = gl.createProgram();
     gl.attachShader(program, vertexShader);
@@ -35,6 +49,13 @@ class Flutter3D {
     throw 'failed to create the program';
   }
 
+  /// Draws the buffer info.
+  ///
+  /// - [gl] the OpenGlES context.
+  /// - [bufferInfo] the object buffer info.
+  /// - [type] the draw type. default value is `gl.TRIANGLES`.
+  /// - [tycountpe] the count value. default value is `0`.
+  /// - [offset] the offset value. default value is `0`.
   static drawBufferInfo(OpenGLContextES gl, BufferInfo bufferInfo, [type, count, offset]) {
     // type = type == null ? gl.TRIANGLES : type;
     type ??= gl.TRIANGLES;
@@ -60,6 +81,10 @@ class Flutter3D {
     }
   }
 
+  /// Sets the program uniforms.
+  ///
+  /// - [programInfo] the program info.
+  /// - [uniforms] the uniforms to set.
   static setUniforms(ProgramInfo programInfo, Map<String, dynamic> uniforms) {
     var uniformSetters = programInfo.uniformSetters;
     uniforms.forEach((key, value) {
@@ -70,6 +95,10 @@ class Flutter3D {
     });
   }
 
+  /// Creates uniform setters.
+  ///
+  /// - [gl] the OpenGlES context.
+  /// - [program] the program id
   static createUniformSetters(OpenGLContextES gl, int program) {
     var textureUnit = 0;
 
@@ -120,6 +149,10 @@ class Flutter3D {
     return uniformSetters;
   }
 
+  /// Creates attribute setters.
+  ///
+  /// - [gl] the OpenGlES context.
+  /// - [program] the program id
   static Map<String, dynamic> createAttributeSetters(OpenGLContextES gl, int program) {
     Map<String, dynamic> attribSetters = {};
 
@@ -184,6 +217,7 @@ class Flutter3D {
     return vao;
   }
 
+  /// Creates VAO from buffer info and set's the attributes.
   static createVAOFromBufferInfo(OpenGLContextES gl, ProgramInfo programInfo, BufferInfo bufferInfo) {
     return createVAOAndSetAttributes(gl, programInfo.attribSetters, bufferInfo.attribs, bufferInfo.indices);
   }
