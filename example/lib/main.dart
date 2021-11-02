@@ -60,6 +60,7 @@ import 'examples/Structure_and_Organization/scene_graph_4.dart';
 
 import 'package:flgl_example/examples/drawing_objects/cube_example.dart';
 
+import 'examples/flutter3d_examples/flutter3d_cone.dart';
 import 'examples/flutter3d_examples/flutter3d_triangle.dart';
 
 void main() {
@@ -155,6 +156,7 @@ class _MyAppState extends State<MyApp> {
         '/flutter3d_examples/plane': (context) => const Flutter3DPlane(),
         '/flutter3d_examples/box': (context) => const Flutter3DBox(),
         '/flutter3d_examples/sphere': (context) => const Flutter3DSphere(),
+        '/flutter3d_examples/cone': (context) => const Flutter3DCone(),
       },
     );
   }

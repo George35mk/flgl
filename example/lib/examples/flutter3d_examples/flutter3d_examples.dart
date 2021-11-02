@@ -13,23 +13,28 @@ class _Flutter3DExamplesState extends State<Flutter3DExamples> {
   final Map<int, Map<String, String>> _pages = {
     0: {
       "name": "flutter 3D triangle geometry",
-      "description": "Example of drawing a triangle with flutter 3D",
+      "description": "Example of drawing a triangle using flutter 3D",
       "route": 'triangle',
     },
     1: {
       "name": "flutter 3D plane geometry",
-      "description": "Example of drawing a plane with flutter 3D",
+      "description": "Example of drawing a plane using flutter 3D",
       "route": 'plane',
     },
     2: {
       "name": "flutter 3D box geometry",
-      "description": "Example of drawing a box with flutter 3D",
+      "description": "Example of drawing a box using flutter 3D",
       "route": 'box',
     },
     3: {
       "name": "flutter 3D sphere geometry",
-      "description": "Example of drawing a sphere with flutter 3D",
+      "description": "Example of drawing a sphere using flutter 3D",
       "route": 'sphere',
+    },
+    4: {
+      "name": "flutter 3D cone geometry",
+      "description": "Example of drawing a cone using flutter 3D",
+      "route": 'cone',
     }
   };
 
