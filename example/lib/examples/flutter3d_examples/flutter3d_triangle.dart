@@ -236,12 +236,14 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     scene.add(planeMesh3);
 
     // Create a sphere mesh
-    // SphereGeometry sphereGeometry = SphereGeometry(gl, 0.5, 12, 6);
-    // Mesh sphereMesh = Mesh(gl, sphereGeometry);
-    // sphereMesh.uniforms['u_colorMult'] = [1.0, 1.0, 0.0, 1.0]; // yellow
-    // sphereMesh.setPosition(Vector3(-4, 0, 0));
-    // sphereMesh.setScale(Vector3(1, 1, 1));
-    // scene.add(sphereMesh);
+    SphereGeometry sphereGeometry = SphereGeometry(gl, 0.5, 12, 6);
+    MeshBasicMaterial spherematerial = MeshBasicMaterial(
+      color: Color(1.0, 1.0, 0.0, 1.0),
+    );
+    Mesh sphereMesh = Mesh(gl, sphereGeometry, spherematerial);
+    sphereMesh.setPosition(Vector3(-4, 0, 0));
+    sphereMesh.setScale(Vector3(1, 1, 1));
+    scene.add(sphereMesh);
 
     // Create box mesh.
     BoxGeometry boxGeometry = BoxGeometry(gl, 0.5);
@@ -262,6 +264,16 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     boxMesh1.setPosition(Vector3(2, 3, 0));
     boxMesh1.setScale(Vector3(1, 1, 1));
     scene.add(boxMesh1);
+
+    // Create a cone mesh.
+    ConeGeometry coneGeometry = ConeGeometry(gl, 2, 0, 2, 4, 1, true, false);
+    MeshBasicMaterial coneMaterial = MeshBasicMaterial(
+      color: Color(0.2, 0.3, 0.9, 1.0),
+    );
+    Mesh coneMesh = Mesh(gl, coneGeometry, coneMaterial);
+    coneMesh.setPosition(Vector3(2, 3, 0));
+    coneMesh.setScale(Vector3(1, 1, 1));
+    scene.add(coneMesh);
   }
 
   /// Render's the scene.

@@ -18,6 +18,7 @@ export './flutter3d/geometries/plane_geometry.dart';
 export './flutter3d/geometries/triangle_geometry.dart';
 export './flutter3d/geometries/sphere_geometry.dart';
 export './flutter3d/geometries/box_geometry.dart';
+export './flutter3d/geometries/cone_geometry.dart';
 
 export './flutter3d/math/m4.dart';
 export './flutter3d/math/math_utils.dart';

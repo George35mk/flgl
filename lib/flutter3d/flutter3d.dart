@@ -178,6 +178,9 @@ class Flutter3D {
     // https://gamedev.stackexchange.com/questions/107793/binding-and-unbinding-what-would-you-do
     // gl.bindVertexArray(null); // error fails, I can't pass null value.
 
+    /// https://community.khronos.org/t/do-i-need-to-bind-and-unbind-my-vertex-buffer-every-draw-call/104150
+    gl.bindVertexArray(0); // and this line fixed alot of problems.
+
     return vao;
   }
 
