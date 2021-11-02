@@ -79,11 +79,7 @@ class Renderer {
       // Setup all the needed attributes.
       gl.bindVertexArray(object.vao);
 
-      // Set the camera related uniforms. camera.uniforms
-      // object.uniforms['u_projection'] = camera.projectionMatrix;
-      // object.uniforms['u_view'] = camera.viewMatrix;
-
-      // Update the camera uniforms.
+      // Set the camera uniforms.
       Flutter3D.setUniforms(programInfo, camera.uniforms);
 
       // Set the object uniforms
