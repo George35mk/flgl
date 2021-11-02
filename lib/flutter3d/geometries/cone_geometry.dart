@@ -47,22 +47,17 @@ class ConeGeometry extends BufferGeometry {
       throw ('verticalSubdivisions must be 1 or greater');
     }
 
-    // bool topCap = opt_topCap == null ? true : opt_topCap;
-    // bool bottomCap = opt_bottomCap == null ? true : opt_bottomCap;
-
-    var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-
-    var numVertices = (radialSubdivisions + 1) * (verticalSubdivisions + 1 + extra);
-
-    var vertsAroundEdge = radialSubdivisions + 1;
+    int extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
+    int numVertices = (radialSubdivisions + 1) * (verticalSubdivisions + 1 + extra);
+    int vertsAroundEdge = radialSubdivisions + 1;
 
     // The slant of the cone is constant across its surface
-    var slant = math.atan2(bottomRadius - topRadius, height);
-    var cosSlant = math.cos(slant);
-    var sinSlant = math.sin(slant);
+    double slant = math.atan2(bottomRadius - topRadius, height);
+    double cosSlant = math.cos(slant);
+    double sinSlant = math.sin(slant);
 
-    var start = topCap ? -2 : 0;
-    var end = verticalSubdivisions + (bottomCap ? 2 : 0);
+    int start = topCap ? -2 : 0;
+    int end = verticalSubdivisions + (bottomCap ? 2 : 0);
 
     for (int yy = start; yy <= end; ++yy) {
       double v = yy / verticalSubdivisions;
