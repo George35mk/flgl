@@ -45,6 +45,11 @@ class _Flutter3DExamplesState extends State<Flutter3DExamples> {
       "name": "flutter 3D multiple geometries",
       "description": "Example of drawing multiple geometries using flutter 3D",
       "route": 'multiple_geometries',
+    },
+    7: {
+      "name": "flutter 3D plane with texture",
+      "description": "Example of drawing a plane with texture using flutter 3D",
+      "route": 'plane_geometry_with_texture',
     }
   };
 

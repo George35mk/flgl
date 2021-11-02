@@ -5,5 +5,9 @@ import '../core/buffer_geometry.dart';
 import '../core/object_3d.dart';
 
 class Mesh extends Object3D {
-  Mesh(OpenGLContextES gl, BufferGeometry geometry, Material material) : super(gl, geometry, material);
+  Mesh(
+    OpenGLContextES gl,
+    BufferGeometry geometry,
+    Material material,
+  ) : super(gl, geometry, material);
 }

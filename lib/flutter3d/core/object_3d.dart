@@ -1,3 +1,4 @@
+import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flutter3d/geometries/box_geometry.dart';
 import 'package:flgl/flutter3d/geometries/cone_geometry.dart';
 import 'package:flgl/flutter3d/geometries/cylinder_geometry.dart';
@@ -5,10 +6,12 @@ import 'package:flgl/flutter3d/geometries/plane_geometry.dart';
 import 'package:flgl/flutter3d/geometries/sphere_geometry.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
 import 'package:flgl/flutter3d/materials/material.dart';
+import 'package:flgl/flutter3d/materials/mesh_basic_material.dart';
 import 'package:flgl/flutter3d/math/m4.dart';
 import 'package:flgl/flutter3d/math/vector3.dart';
 import 'package:flgl/flutter3d/shaders/box_shader.dart';
 import 'package:flgl/flutter3d/shaders/plane_shaders.dart';
+import 'package:flgl/flutter3d/shaders/plane_with_textures.dart';
 import 'package:flgl/flutter3d/shaders/sphere_shader.dart';
 import 'package:flgl/flutter3d/shaders/triangle_shaders.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -47,10 +50,10 @@ class Object3D {
   List<double> matrix = M4.identity();
 
   Object3D(this.gl, this.geometry, this.material) {
-    if (geometry is PlaneGeometry) {
-      setupPlane(geometry);
-    } else if (geometry is TriangleGeometry) {
+    if (geometry is TriangleGeometry) {
       setupTriangle(geometry);
+    } else if (geometry is PlaneGeometry) {
+      setupPlane(geometry, material);
     } else if (geometry is SphereGeometry) {
       setupSphere(geometry);
     } else if (geometry is BoxGeometry) {
@@ -82,9 +85,11 @@ class Object3D {
     updateMatrix();
   }
 
-  /// Set's the object rotation.
+  /// Set's the object rotation in degrees.
   setRotation(Vector3 v) {
-    rotation.copy(v);
+    rotation.x = MathUtils.degToRad(v.x);
+    rotation.y = MathUtils.degToRad(v.y);
+    rotation.z = MathUtils.degToRad(v.z);
     updateMatrix();
   }
 
@@ -109,13 +114,36 @@ class Object3D {
     vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
   }
 
-  void setupPlane(BufferGeometry geometry) {
+  void setupPlane(BufferGeometry geometry, Material material) {
     // 1. init program based on geometry and material
-    programInfo = Flutter3D.createProgramInfo(
-      gl,
-      planeShaders['vertexShader']!,
-      planeShaders['fragmentShader']!,
-    );
+    // programInfo = Flutter3D.createProgramInfo(
+    //   gl,
+    //   planeShaders['vertexShader']!,
+    //   planeShaders['fragmentShader']!,
+    // );
+
+    // planeWithTextureShaders
+    if (material is MeshBasicMaterial) {
+      if (material.map != null) {
+        programInfo = Flutter3D.createProgramInfo(
+          gl,
+          planeWithTextureShaders['vertexShader']!,
+          planeWithTextureShaders['fragmentShader']!,
+        );
+      } else {
+        programInfo = Flutter3D.createProgramInfo(
+          gl,
+          planeShaders['vertexShader']!,
+          planeShaders['fragmentShader']!,
+        );
+      }
+    } else {
+      programInfo = Flutter3D.createProgramInfo(
+        gl,
+        planeShaders['vertexShader']!,
+        planeShaders['fragmentShader']!,
+      );
+    }
 
     // 2. Compute the buffer info
     geometry.computeBufferInfo(gl);
@@ -123,32 +151,38 @@ class Object3D {
     // 3. Setup VAO
     vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
 
-    // make a 8x8 checkerboard texture
-    // int checkerboardTexture = gl.createTexture();
-    // gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
-    // gl.texImage2D(
-    //     gl.TEXTURE_2D,
-    //     0, // mip level
-    //     gl.LUMINANCE, // internal format
-    //     8, // width
-    //     8, // height
-    //     0, // border
-    //     gl.LUMINANCE, // format
-    //     gl.UNSIGNED_BYTE, // type
-    //     Uint8List.fromList([
-    //       0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-    //       0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-    //       0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-    //       0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-    //       0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-    //       0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-    //       0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-    //       0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-    //     ]));
-    // gl.generateMipmap(gl.TEXTURE_2D);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // if the material has map texture.
+    if (material is MeshBasicMaterial) {
+      if (material.map != null) {
+        // make a 8x8 checkerboard texture
+        int checkerboardTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0, // mip level
+            gl.LUMINANCE, // internal format
+            8, // width
+            8, // height
+            0, // border
+            gl.LUMINANCE, // format
+            gl.UNSIGNED_BYTE, // type
+            // Uint8List.fromList([
+            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+            // ]),
+            material.map);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    // uniforms['u_texture'] = checkerboardTexture;
+        material.uniforms['u_texture'] = checkerboardTexture;
+      }
+    }
   }
 
   void setupSphere(BufferGeometry geometry) {

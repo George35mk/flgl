@@ -57,12 +57,11 @@ function main() {
       12, // subdivisions around
       6,  // subdivisions down
   );
-  const sphereVAO = twgl.createVAOFromBufferInfo(
-      gl, textureProgramInfo, sphereBufferInfo);
+  const sphereVAO = twgl.createVAOFromBufferInfo(gl, textureProgramInfo, sphereBufferInfo);
   const planeBufferInfo = twgl.primitives.createPlaneBufferInfo(
       gl,
-      20,  // width
-      20,  // height
+      1,  // width
+      1,  // height
       1,   // subdivisions across
       1,   // subdivisions down
   );
