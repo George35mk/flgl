@@ -136,7 +136,7 @@ class _Flutter3DConeState extends State<Flutter3DCone> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flutter 3D: Sphere geometry example"),
+        title: const Text("Flutter 3D: Cone geometry example"),
       ),
       body: Stack(
         children: [
