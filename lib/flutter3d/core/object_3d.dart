@@ -91,7 +91,7 @@ class Object3D {
     updateMatrix();
   }
 
-  setupTriangle(BufferGeometry geometry) {
+  void setupTriangle(BufferGeometry geometry) {
     // 1. Create a program based on geometry and material
     programInfo = Flutter3D.createProgramInfo(
       gl,
