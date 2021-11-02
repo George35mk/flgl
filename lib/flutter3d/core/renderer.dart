@@ -5,8 +5,6 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import '../cameras/camera.dart';
 import '../flutter3d.dart';
-import '../math/m4.dart';
-import '../math/math_utils.dart';
 import '../scene.dart';
 
 class Renderer {
