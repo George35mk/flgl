@@ -203,32 +203,6 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     );
   }
 
-  loadImage() async {
-    ByteData bytes = await rootBundle.load('assets/images/a.png');
-    Uint8List imageData = Uint8List.view(bytes.buffer);
-
-    var decodedImage = await decodeImageFromList(bytes.buffer.asUint8List());
-    int imgWidth = decodedImage.width;
-    int imgHeight = decodedImage.height;
-    var finalImageData = await decodedImage.toByteData(format: ImageByteFormat.rawRgba);
-
-    Color whiteColor = Color(1, 1, 1, 1);
-
-    // Create a plane mesh 3
-    PlaneGeometry planeGeometry4 = PlaneGeometry(imgWidth.toDouble(), imgHeight.toDouble(), 2, 2);
-    MeshBasicMaterial material5 = MeshBasicMaterial(
-      color: whiteColor,
-      map: Uint8List.view(finalImageData!.buffer),
-      mapWidth: imgWidth,
-      mapHeigth: imgHeight,
-    );
-    Mesh planeMesh4 = Mesh(gl, planeGeometry4, material5);
-    planeMesh4.setPosition(Vector3(0, 0, 0));
-    planeMesh4.setRotation(Vector3(90, 0, 0));
-    planeMesh4.setScale(Vector3(1, 1, 1));
-    scene.add(planeMesh4);
-  }
-
   /// Initialize's the scene.
   initScene() async {
     // colors
