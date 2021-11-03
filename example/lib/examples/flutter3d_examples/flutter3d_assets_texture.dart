@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui';
-// import 'package:image/image.dart' as image;
 
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
@@ -60,9 +58,12 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   void initState() {
     super.initState();
 
+    var maxTranslate = 100.0;
+    var minTranslate = -100.0;
+
     // init control manager.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: -100.0, max: 100.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'tx', min: minTranslate, max: maxTranslate, value: 0));
     controlsManager!.add(TransformControl(name: 'ty', min: -100.0, max: 100.0, value: 0));
     controlsManager!.add(TransformControl(name: 'tz', min: -500.0, max: 100.0, value: 0));
 
@@ -179,25 +180,6 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
               },
             ),
           ),
-
-          // Positioned(
-          //   top: 10,
-          //   left: 10,
-          //   // child: Image.asset('assets/images/star.jpg'),
-          //   child: FutureBuilder(
-          //     future: imgData,
-          //     builder: (context, snapshot) {
-          //       print('data: ${snapshot.data}');
-          //       if (snapshot.data == null) {
-          //         return Container();
-          //       } else {
-          //         return Image.memory(snapshot.data as dynamic);
-          //       }
-          //     },
-          //   ),
-          // ),
-
-          // GLControls(),
         ],
       ),
     );
@@ -213,7 +195,7 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 20));
+    camera!.setPosition(Vector3(0, 0, 300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -223,34 +205,33 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     renderer!.setDPR(dpr);
 
     // Create a plane mesh 1
-    PlaneGeometry planeGeometry = PlaneGeometry();
-    MeshBasicMaterial material2 = MeshBasicMaterial(color: redColor);
-    Mesh planeMesh = Mesh(gl, planeGeometry, material2);
-    planeMesh.setPosition(Vector3(0, 0, 0));
-    planeMesh.setRotation(Vector3(90, 0, 0));
-    planeMesh.setScale(Vector3(3, 2, 1));
-    scene.add(planeMesh);
+    PlaneGeometry planeGeometry1 = PlaneGeometry();
+    MeshBasicMaterial material1 = MeshBasicMaterial(color: redColor);
+    Mesh planeMesh1 = Mesh(gl, planeGeometry1, material1);
+    planeMesh1.setPosition(Vector3(0, 0, 0));
+    planeMesh1.setRotation(Vector3(90, 0, 0));
+    planeMesh1.setScale(Vector3(10, 10, 10));
+    scene.add(planeMesh1);
 
     // Create a plane mesh 2
-    PlaneGeometry planeGeometry2 = PlaneGeometry();
-    MeshBasicMaterial material3 = MeshBasicMaterial(color: greenColor);
-    Mesh planeMesh2 = Mesh(gl, planeGeometry2, material3);
-    planeMesh2.setPosition(Vector3(-2, -10, 1));
+    PlaneGeometry planeGeometry2 = PlaneGeometry(10, 10);
+    MeshBasicMaterial material2 = MeshBasicMaterial(color: blueColor);
+    Mesh planeMesh2 = Mesh(gl, planeGeometry2, material2);
+    planeMesh2.setPosition(Vector3(0, 0, 0));
     planeMesh2.setRotation(Vector3(90, 0, 0));
     planeMesh2.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh2);
 
-    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
-
     // Create a plane mesh 3
-    PlaneGeometry planeGeometry4 = PlaneGeometry(textureInfo.width.toDouble(), textureInfo.height.toDouble(), 2, 2);
-    MeshBasicMaterial material5 = MeshBasicMaterial(
+    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
+    PlaneGeometry planeGeometry3 = PlaneGeometry(textureInfo.width.toDouble(), textureInfo.height.toDouble(), 2, 2);
+    MeshBasicMaterial material3 = MeshBasicMaterial(
       color: whiteColor,
       map: textureInfo.imageData,
       mapWidth: textureInfo.width,
       mapHeigth: textureInfo.height,
     );
-    Mesh planeMesh4 = Mesh(gl, planeGeometry4, material5);
+    Mesh planeMesh4 = Mesh(gl, planeGeometry3, material3);
     planeMesh4.setPosition(Vector3(0, 0, 0));
     planeMesh4.setRotation(Vector3(90, 0, 0));
     planeMesh4.setScale(Vector3(1, 1, 1));

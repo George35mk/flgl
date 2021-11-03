@@ -76,19 +76,19 @@ class PlaneGeometry extends BufferGeometry {
       return array;
     }
 
-    var matrix = M4.identity();
-    var list = ['position', 'normal'];
-    for (var name in list) {
-      if (name == 'position') {
-        reorientPositions(vertices, matrix);
-      } else if (name == 'normal') {
-        reorientPositions(normals, matrix);
-      } else if (name == 'uv') {
-        reorientPositions(uvs, matrix);
-      } else {
-        print('Unknown name');
-      }
-    }
+    // var matrix = M4.identity();
+    // var list = ['position', 'normal'];
+    // for (var name in list) {
+    //   if (name == 'position') {
+    //     reorientPositions(vertices, matrix);
+    //   } else if (name == 'normal') {
+    //     reorientPositions(normals, matrix);
+    //   } else if (name == 'uv') {
+    //     reorientPositions(uvs, matrix);
+    //   } else {
+    //     print('Unknown name');
+    //   }
+    // }
 
     // Set index buffers and attributes.
     setIndex(indices);
