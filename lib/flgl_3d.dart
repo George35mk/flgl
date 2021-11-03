@@ -28,3 +28,5 @@ export './flutter3d/math/color.dart';
 
 export './flutter3d/materials/material.dart';
 export './flutter3d/materials/mesh_basic_material.dart';
+
+export './flutter3d/managers/texture_manager.dart';

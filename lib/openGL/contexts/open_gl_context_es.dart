@@ -118,13 +118,33 @@ class OpenGLContextES extends OpenGL30Constant {
     gl.glTexParameteri(target, pname, param);
   }
 
-  texImage2D(target, level, internalformat, width, height, border, format, type, data) {
+  texImage2D(
+    int target,
+    int level,
+    int internalformat,
+    int width,
+    int height,
+    int border,
+    int format,
+    int type,
+    data,
+  ) {
     Pointer<Int8> nativeBuffer;
 
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nativeBuffer.cast<Void>());
+      gl.glTexImage2D(
+        target,
+        level,
+        internalformat,
+        width,
+        height,
+        border,
+        format,
+        type,
+        nativeBuffer.cast<Void>(),
+      );
       calloc.free(nativeBuffer);
     } else {
       gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nullptr);

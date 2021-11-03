@@ -154,35 +154,58 @@ class Object3D {
     // if the material has map texture.
     if (material is MeshBasicMaterial) {
       if (material.map != null) {
-        // make a 8x8 checkerboard texture
-        int checkerboardTexture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
-        gl.texImage2D(
-            gl.TEXTURE_2D,
-            0, // mip level
-            gl.LUMINANCE, // internal format
-            8, // width
-            8, // height
-            0, // border
-            gl.LUMINANCE, // format
-            gl.UNSIGNED_BYTE, // type
-            // Uint8List.fromList([
-            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-            //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-            //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-            // ]),
-            material.map);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        material.uniforms['u_texture'] = checkerboardTexture;
+        if (material.checkerboard) {
+          setupCheckerboardTexture(material);
+        } else {
+          setupTexture(material);
+        }
       }
     }
+  }
+
+  setupTexture(MeshBasicMaterial material) {
+    int width = material.mapWidth!;
+    int height = material.mapHeigth!;
+
+    int checkerboardTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, material.map);
+
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    material.uniforms['u_texture'] = checkerboardTexture;
+  }
+
+  // make a 8x8 checkerboard texture
+  setupCheckerboardTexture(MeshBasicMaterial material) {
+    int checkerboardTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0, // mip level
+      gl.LUMINANCE, // internal format
+      8, // width
+      8, // height
+      0, // border
+      gl.LUMINANCE, // format
+      gl.UNSIGNED_BYTE, // type
+      // Uint8List.fromList([
+      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+      // ]),
+      material.map,
+    );
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    material.uniforms['u_texture'] = checkerboardTexture;
   }
 
   void setupSphere(BufferGeometry geometry) {

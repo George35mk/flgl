@@ -11,10 +11,27 @@ class MeshBasicMaterial extends Material {
   /// `gl.LINES` instead of `gl.TRIANGES`.
   bool wireframe = false;
 
-  /// The texture map data.
+  /// set this to true if you want to use the
+  /// checkboard texture. but you need to
+  /// provide the correct data.
+  bool checkerboard = false;
+
+  /// The texture map data as Uint8List.
   Uint8List? map; // the texture map.
 
-  MeshBasicMaterial({this.color, this.map}) {
+  /// the texture map width.
+  int? mapWidth;
+
+  /// The texture map height.
+  int? mapHeigth;
+
+  MeshBasicMaterial({
+    this.color,
+    this.map,
+    this.mapWidth,
+    this.mapHeigth,
+    this.checkerboard = false,
+  }) {
     color ??= Color(1, 1, 1, 1);
 
     // Set the material uniforms;

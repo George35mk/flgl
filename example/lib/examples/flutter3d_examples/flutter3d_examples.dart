@@ -50,6 +50,11 @@ class _Flutter3DExamplesState extends State<Flutter3DExamples> {
       "name": "flutter 3D plane with texture",
       "description": "Example of drawing a plane with texture using flutter 3D",
       "route": 'plane_geometry_with_texture',
+    },
+    8: {
+      "name": "flutter 3D loading texture from assets",
+      "description": "Example of loading a texture from assets using flutter 3D",
+      "route": 'plane_assets_texture',
     }
   };
 

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
+// import 'package:image/image.dart' as image;
 
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
@@ -12,15 +14,16 @@ import 'package:flutter/material.dart';
 import '../controls/gl_controls.dart';
 
 import 'package:flgl/flgl_3d.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
-class Flutter3DPlaneWithTexture extends StatefulWidget {
-  const Flutter3DPlaneWithTexture({Key? key}) : super(key: key);
+class Flutter3DAssetsTexture extends StatefulWidget {
+  const Flutter3DAssetsTexture({Key? key}) : super(key: key);
 
   @override
-  _Flutter3DPlaneWithTextureState createState() => _Flutter3DPlaneWithTextureState();
+  _Flutter3DAssetsTextureState createState() => _Flutter3DAssetsTextureState();
 }
 
-class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
+class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
 
@@ -59,9 +62,9 @@ class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
 
     // init control manager.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: -10.0, max: 10.0, value: 0));
-    controlsManager!.add(TransformControl(name: 'ty', min: -10.0, max: 10.0, value: 0));
-    controlsManager!.add(TransformControl(name: 'tz', min: -10.0, max: 10.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'tx', min: -100.0, max: 100.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'ty', min: -100.0, max: 100.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'tz', min: -500.0, max: 100.0, value: 0));
 
     controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 90));
     controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
@@ -129,15 +132,23 @@ class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
     // render();
   }
 
+  Future<Uint8List> getImageData() async {
+    ByteData bytes = await rootBundle.load('assets/images/star.jpg');
+    Uint8List imageData = Uint8List.view(bytes.buffer);
+    return imageData;
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     dpr = MediaQuery.of(context).devicePixelRatio;
 
+    var imgData = getImageData();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flutter 3D: Plane with texture example"),
+        title: const Text("Flutter 3D: Assets texture example"),
       ),
       body: Stack(
         children: [
@@ -167,7 +178,24 @@ class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
                 handleControlsMangerChanges(control);
               },
             ),
-          )
+          ),
+
+          // Positioned(
+          //   top: 10,
+          //   left: 10,
+          //   // child: Image.asset('assets/images/star.jpg'),
+          //   child: FutureBuilder(
+          //     future: imgData,
+          //     builder: (context, snapshot) {
+          //       print('data: ${snapshot.data}');
+          //       if (snapshot.data == null) {
+          //         return Container();
+          //       } else {
+          //         return Image.memory(snapshot.data as dynamic);
+          //       }
+          //     },
+          //   ),
+          // ),
 
           // GLControls(),
         ],
@@ -175,20 +203,43 @@ class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
     );
   }
 
+  loadImage() async {
+    ByteData bytes = await rootBundle.load('assets/images/a.png');
+    Uint8List imageData = Uint8List.view(bytes.buffer);
+
+    var decodedImage = await decodeImageFromList(bytes.buffer.asUint8List());
+    int imgWidth = decodedImage.width;
+    int imgHeight = decodedImage.height;
+    var finalImageData = await decodedImage.toByteData(format: ImageByteFormat.rawRgba);
+
+    Color whiteColor = Color(1, 1, 1, 1);
+
+    // Create a plane mesh 3
+    PlaneGeometry planeGeometry4 = PlaneGeometry(imgWidth.toDouble(), imgHeight.toDouble(), 2, 2);
+    MeshBasicMaterial material5 = MeshBasicMaterial(
+      color: whiteColor,
+      map: Uint8List.view(finalImageData!.buffer),
+      mapWidth: imgWidth,
+      mapHeigth: imgHeight,
+    );
+    Mesh planeMesh4 = Mesh(gl, planeGeometry4, material5);
+    planeMesh4.setPosition(Vector3(0, 0, 0));
+    planeMesh4.setRotation(Vector3(90, 0, 0));
+    planeMesh4.setScale(Vector3(1, 1, 1));
+    scene.add(planeMesh4);
+  }
+
   /// Initialize's the scene.
-  initScene() {
+  initScene() async {
     // colors
     Color redColor = Color(1, 0, 0, 1);
     Color greenColor = Color(0, 1, 0, 1);
     Color blueColor = Color(0, 0, 1, 1);
     Color whiteColor = Color(1, 1, 1, 1);
 
-    // default 90 degree angle.
-    var d = Vector3(90, 0, 0);
-
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 10));
+    camera!.setPosition(Vector3(0, 0, 20));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -217,29 +268,21 @@ class _Flutter3DPlaneWithTextureState extends State<Flutter3DPlaneWithTexture> {
     planeMesh2.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh2);
 
+    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
+
     // Create a plane mesh 3
-    PlaneGeometry planeGeometry3 = PlaneGeometry(2, 2, 2, 2);
-    MeshBasicMaterial material4 = MeshBasicMaterial(
+    PlaneGeometry planeGeometry4 = PlaneGeometry(textureInfo.width.toDouble(), textureInfo.height.toDouble(), 2, 2);
+    MeshBasicMaterial material5 = MeshBasicMaterial(
       color: whiteColor,
-      mapWidth: 8,
-      mapHeigth: 8,
-      checkerboard: true,
-      map: Uint8List.fromList([
-        0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-        0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-        0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-        0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-        0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-        0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-        0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-        0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-      ]),
+      map: textureInfo.imageData,
+      mapWidth: textureInfo.width,
+      mapHeigth: textureInfo.height,
     );
-    Mesh planeMesh3 = Mesh(gl, planeGeometry3, material4);
-    planeMesh3.setPosition(Vector3(0, 0, 0));
-    planeMesh3.setRotation(Vector3(90, 0, 0));
-    planeMesh3.setScale(Vector3(1, 1, 1));
-    scene.add(planeMesh3);
+    Mesh planeMesh4 = Mesh(gl, planeGeometry4, material5);
+    planeMesh4.setPosition(Vector3(0, 0, 0));
+    planeMesh4.setRotation(Vector3(90, 0, 0));
+    planeMesh4.setScale(Vector3(1, 1, 1));
+    scene.add(planeMesh4);
   }
 
   /// Render's the scene.

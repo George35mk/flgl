@@ -1,3 +1,4 @@
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_assets_texture.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
@@ -163,6 +164,7 @@ class _MyAppState extends State<MyApp> {
         '/flutter3d_examples/cylinder': (context) => const Flutter3DCylinder(),
         '/flutter3d_examples/multiple_geometries': (context) => const Flutter3DMultipleGeometries(),
         '/flutter3d_examples/plane_geometry_with_texture': (context) => const Flutter3DPlaneWithTexture(),
+        '/flutter3d_examples/plane_assets_texture': (context) => const Flutter3DAssetsTexture(),
       },
     );
   }
