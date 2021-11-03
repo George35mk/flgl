@@ -224,20 +224,18 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
     // Create a plane mesh 1
     PlaneGeometry planeGeometry = PlaneGeometry();
-    MeshBasicMaterial material2 = MeshBasicMaterial(
-      color: redColor,
-    );
+    MeshBasicMaterial material2 = MeshBasicMaterial(color: redColor);
     Mesh planeMesh = Mesh(gl, planeGeometry, material2);
     planeMesh.setPosition(Vector3(0, 0, 0));
     planeMesh.setRotation(Vector3(90, 0, 0));
-    planeMesh.setScale(Vector3(2, 2, 1));
+    planeMesh.setScale(Vector3(3, 2, 1));
     scene.add(planeMesh);
 
     // Create a plane mesh 2
     PlaneGeometry planeGeometry2 = PlaneGeometry();
     MeshBasicMaterial material3 = MeshBasicMaterial(color: greenColor);
     Mesh planeMesh2 = Mesh(gl, planeGeometry2, material3);
-    planeMesh2.setPosition(Vector3(-2, 0, 0));
+    planeMesh2.setPosition(Vector3(-2, -10, 1));
     planeMesh2.setRotation(Vector3(90, 0, 0));
     planeMesh2.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh2);
