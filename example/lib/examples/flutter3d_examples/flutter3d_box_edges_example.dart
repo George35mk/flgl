@@ -94,10 +94,11 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
     return Future.delayed(const Duration(milliseconds: 33), () => render());
   }
 
+  /// Starts the render loop.
+  /// - draws 25 frames per second.
   void startRenderLoop() {
-    // Draw 50 frames per second.
     timer = Timer.periodic(
-      const Duration(milliseconds: 50),
+      const Duration(milliseconds: 40),
       (Timer t) => {
         render(),
       },
