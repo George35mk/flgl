@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flutter3d/core/buffer_attribute.dart';
 import 'package:flgl/flutter3d/core/buffer_geometry.dart';
