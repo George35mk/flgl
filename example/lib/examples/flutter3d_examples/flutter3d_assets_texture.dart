@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:math' as math;
 
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import '../controls/gl_controls.dart';
 
 import 'package:flgl/flgl_3d.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 class Flutter3DAssetsTexture extends StatefulWidget {
   const Flutter3DAssetsTexture({Key? key}) : super(key: key);
@@ -133,10 +132,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     // render();
   }
 
-  Future<Uint8List> getImageData() async {
-    ByteData bytes = await rootBundle.load('assets/images/star.jpg');
-    Uint8List imageData = Uint8List.view(bytes.buffer);
-    return imageData;
+  double roundDouble(double value, int places) {
+    double mod = math.pow(10.0, places).toDouble();
+    return ((value * mod).round().toDouble() / mod);
   }
 
   @override
@@ -145,7 +143,8 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     height = MediaQuery.of(context).size.height;
     dpr = MediaQuery.of(context).devicePixelRatio;
 
-    var imgData = getImageData();
+    // int pointerCount = 0;
+    // Offset startOffset = Offset(0, 0);
 
     return Scaffold(
       appBar: AppBar(
@@ -153,6 +152,49 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
       ),
       body: Stack(
         children: [
+          // GestureDetector(
+          //   onScaleStart: (details) {
+          //     pointerCount = details.pointerCount;
+          //     startOffset = details.localFocalPoint;
+          //   },
+          //   onScaleUpdate: (ScaleUpdateDetails details) {
+          //     bool isPos = details.scale > 1 ? true : false;
+
+          //     // if user use 2 fingers.
+          //     if (pointerCount == 2) {
+          //       if (isPos) {
+          //         // print('POSITIVE');
+          //         if (camera!.position.z > 300) {
+          //           camera!.position.z -= 10 * 0.90;
+          //         }
+          //       } else {
+          //         // print('NEGATIVE');
+          //         camera!.position.z += 10 * 0.90;
+          //       }
+          //       camera!.setPosition(Vector3(camera!.position.x, camera!.position.y, camera!.position.z));
+          //     } else if (pointerCount == 1) {
+          //       Offset x = details.localFocalPoint - startOffset;
+          //       var dx = -x.dx * 0.9;
+          //       var dy = x.dy * 0.9;
+          //       camera!.setPosition(Vector3(dx, dy, camera!.position.z));
+          //     }
+          //   },
+          //   child: FLGLViewport(
+          //     width: width.toInt() + 1,
+          //     height: height.toInt(),
+          //     onInit: (Flgl _flgl) {
+          //       setState(() {
+          //         initialized = true;
+          //         flgl = _flgl;
+          //         gl = flgl.gl;
+
+          //         initScene();
+          //         // render();
+          //         startRenderLoop();
+          //       });
+          //     },
+          //   ),
+          // ),
           FLGLViewport(
             width: width.toInt() + 1,
             height: height.toInt(),
