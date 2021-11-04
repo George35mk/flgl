@@ -1,5 +1,6 @@
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_assets_texture.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box_edges_example.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
 import 'package:flgl_example/examples/flutter3d_examples/flutter3d_multiple_geometries.dart';
@@ -165,6 +166,7 @@ class _MyAppState extends State<MyApp> {
         '/flutter3d_examples/multiple_geometries': (context) => const Flutter3DMultipleGeometries(),
         '/flutter3d_examples/plane_geometry_with_texture': (context) => const Flutter3DPlaneWithTexture(),
         '/flutter3d_examples/plane_assets_texture': (context) => const Flutter3DAssetsTexture(),
+        '/flutter3d_examples/box_edges_example': (context) => const Flutter3DBoxEdgesExample(),
       },
     );
   }

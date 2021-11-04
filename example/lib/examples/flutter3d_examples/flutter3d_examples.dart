@@ -55,6 +55,11 @@ class _Flutter3DExamplesState extends State<Flutter3DExamples> {
       "name": "flutter 3D loading texture from assets",
       "description": "Example of loading a texture from assets using flutter 3D",
       "route": 'plane_assets_texture',
+    },
+    9: {
+      "name": "flutter 3D Box Edges Geometry",
+      "description": "Example of box with edges using flutter 3D",
+      "route": 'box_edges_example',
     }
   };
 
