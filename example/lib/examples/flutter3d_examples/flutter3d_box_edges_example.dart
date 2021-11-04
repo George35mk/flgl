@@ -56,12 +56,15 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
   void initState() {
     super.initState();
 
+    // the min and max translation.
     double translationMin = -200.0;
     double translationMax = 200.0;
 
+    // the min and max rotation.
     double rotationMin = 0.0;
     double rotationMax = 360.0;
 
+    // the min and max scale.
     double scaleMin = 1.0;
     double scaleMax = 100.0;
 
