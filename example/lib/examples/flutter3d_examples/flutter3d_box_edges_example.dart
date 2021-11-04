@@ -48,9 +48,9 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
   PerspectiveCamera? camera;
   Renderer? renderer;
 
-  Vector3 translation = Vector3(0.0, 0.0, 0.0);
-  Vector3 rotation = Vector3(90, 0.0, 0.0);
-  Vector3 scale = Vector3(20.0, 20.0, 20.0);
+  Vector3 translation = Vector3(0, 0, 0);
+  Vector3 rotation = Vector3(0, 0, 0);
+  Vector3 scale = Vector3(20, 20, 20);
 
   @override
   void initState() {
@@ -189,7 +189,7 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 300));
+    camera!.setPosition(Vector3(0, 0, -300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -203,7 +203,7 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
     MeshBasicMaterial edgeMat = MeshBasicMaterial(color: lightGreenColor);
     Mesh edgedBoxMesh = Mesh(gl, edgedBoxGeometry, edgeMat);
     edgedBoxMesh.setPosition(Vector3(0, 0, 0));
-    edgedBoxMesh.setRotation(Vector3(90, 0, 0));
+    edgedBoxMesh.setRotation(Vector3(0, 0, 0));
     edgedBoxMesh.setScale(Vector3(50, 50, 50));
     scene.add(edgedBoxMesh);
   }
@@ -212,7 +212,7 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
   render() {
     int index = scene.children.length - 1;
     scene.children[index].setPosition(translation);
-    scene.children[index].setRotation(rotation.addScalar(0.2));
+    scene.children[index].setRotation(rotation);
     scene.children[index].setScale(scale);
 
     renderer!.render(scene, camera!);
