@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flgl/flgl.dart';
+import 'package:flgl/flutter3d/geometries/edged_box_geometry.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import '../cameras/camera.dart';
@@ -93,8 +94,12 @@ class Renderer {
       // Set the object material related uniforms
       Flutter3D.setUniforms(programInfo, object.material.uniforms);
 
-      // calls gl.drawArrays or gl.drawElements
-      Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);
+      if (object.geometry is EdgedBoxGeometry) {
+        Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo, gl.LINES);
+      } else {
+        // calls gl.drawArrays or gl.drawElements
+        Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);
+      }
     }
     // ! super important.
     // ! never put this inside a loop because it takes some time

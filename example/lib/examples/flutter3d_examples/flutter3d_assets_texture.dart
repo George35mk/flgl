@@ -51,7 +51,7 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
   Vector3 translation = Vector3(0.0, 0.0, 0.0);
   Vector3 rotation = Vector3(90, 0.0, 0.0);
-  Vector3 scale = Vector3(1.0, 1.0, 1.0);
+  Vector3 scale = Vector3(20.0, 20.0, 20.0);
 
   @override
   void initState() {
@@ -59,6 +59,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
     var maxTranslate = 100.0;
     var minTranslate = -100.0;
+
+    double scaleMin = 1.0;
+    double scaleMax = 100.0;
 
     // init control manager.
     controlsManager = TransformControlsManager({});
@@ -70,9 +73,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
     controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
 
-    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sx', min: scaleMin, max: scaleMax, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sy', min: scaleMin, max: scaleMax, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sz', min: scaleMin, max: scaleMax, value: 1.0));
   }
 
   @override
@@ -234,6 +237,7 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     Color greenColor = Color(0, 1, 0, 1);
     Color blueColor = Color(0, 0, 1, 1);
     Color whiteColor = Color(1, 1, 1, 1);
+    Color lightGreenColor = Color().fromRGBA(121, 255, 47, 255);
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
@@ -245,24 +249,6 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     renderer!.setWidth(width);
     renderer!.setHeight(height);
     renderer!.setDPR(dpr);
-
-    // Create a plane mesh 1
-    PlaneGeometry planeGeometry1 = PlaneGeometry();
-    MeshBasicMaterial material1 = MeshBasicMaterial(color: redColor);
-    Mesh planeMesh1 = Mesh(gl, planeGeometry1, material1);
-    planeMesh1.setPosition(Vector3(0, 0, 0));
-    planeMesh1.setRotation(Vector3(90, 0, 0));
-    planeMesh1.setScale(Vector3(10, 10, 10));
-    scene.add(planeMesh1);
-
-    // Create a plane mesh 2
-    PlaneGeometry planeGeometry2 = PlaneGeometry(10, 10);
-    MeshBasicMaterial material2 = MeshBasicMaterial(color: blueColor);
-    Mesh planeMesh2 = Mesh(gl, planeGeometry2, material2);
-    planeMesh2.setPosition(Vector3(0, 0, 0));
-    planeMesh2.setRotation(Vector3(90, 0, 0));
-    planeMesh2.setScale(Vector3(1, 1, 1));
-    scene.add(planeMesh2);
 
     // Create a plane mesh 3
     TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
@@ -278,6 +264,15 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     planeMesh4.setRotation(Vector3(90, 0, 0));
     planeMesh4.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh4);
+
+    // Create a Edged Box Geometry
+    EdgedBoxGeometry edgedBoxGeometry = EdgedBoxGeometry();
+    MeshBasicMaterial edgeMat = MeshBasicMaterial(color: lightGreenColor);
+    Mesh edgedBoxMesh = Mesh(gl, edgedBoxGeometry, edgeMat);
+    edgedBoxMesh.setPosition(Vector3(0, 0, 0));
+    edgedBoxMesh.setRotation(Vector3(90, 0, 0));
+    edgedBoxMesh.setScale(Vector3(50, 50, 50));
+    scene.add(edgedBoxMesh);
   }
 
   /// Render's the scene.

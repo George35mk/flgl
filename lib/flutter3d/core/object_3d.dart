@@ -2,6 +2,7 @@ import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flutter3d/geometries/box_geometry.dart';
 import 'package:flgl/flutter3d/geometries/cone_geometry.dart';
 import 'package:flgl/flutter3d/geometries/cylinder_geometry.dart';
+import 'package:flgl/flutter3d/geometries/edged_box_geometry.dart';
 import 'package:flgl/flutter3d/geometries/plane_geometry.dart';
 import 'package:flgl/flutter3d/geometries/sphere_geometry.dart';
 import 'package:flgl/flutter3d/geometries/triangle_geometry.dart';
@@ -62,6 +63,8 @@ class Object3D {
       setupCone(geometry);
     } else if (geometry is CylinderGeometry) {
       setupCylinder(geometry);
+    } else if (geometry is EdgedBoxGeometry) {
+      setupEdgedBox(geometry);
     } else {
       print('Unkown geometry');
     }
@@ -254,6 +257,21 @@ class Object3D {
   }
 
   void setupCylinder(BufferGeometry geometry) {
+    // 1. Create a program based on geometry and material
+    programInfo = Flutter3D.createProgramInfo(
+      gl,
+      boxShaders['vertexShader']!,
+      boxShaders['fragmentShader']!,
+    );
+
+    // 2. Compute the buffer info
+    geometry.computeBufferInfo(gl);
+
+    // Setup VAO
+    vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
+  }
+
+  void setupEdgedBox(BufferGeometry geometry) {
     // 1. Create a program based on geometry and material
     programInfo = Flutter3D.createProgramInfo(
       gl,
