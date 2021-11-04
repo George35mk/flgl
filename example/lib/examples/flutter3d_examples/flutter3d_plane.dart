@@ -104,13 +104,13 @@ class _Flutter3DPlaneState extends State<Flutter3DPlane> {
         translation.z = control.value;
         break;
       case 'rx':
-        rotation.x = MathUtils.degToRad(control.value);
+        rotation.x = control.value;
         break;
       case 'ry':
-        rotation.y = MathUtils.degToRad(control.value);
+        rotation.y = control.value;
         break;
       case 'rz':
-        rotation.z = MathUtils.degToRad(control.value);
+        rotation.z = control.value;
         break;
       case 'sx':
         scale.x = control.value;
@@ -224,7 +224,7 @@ class _Flutter3DPlaneState extends State<Flutter3DPlane> {
 
     int index = scene.children.length - 1;
     scene.children[index].setPosition(translation);
-    scene.children[index].setRotation(rotation.addScalar(0.01));
+    scene.children[index].setRotation(rotation.addScalar(0.05));
     scene.children[index].setScale(scale);
 
     renderer!.render(scene, camera!);

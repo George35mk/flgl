@@ -104,13 +104,13 @@ class _Flutter3DCylinderState extends State<Flutter3DCylinder> {
         translation.z = control.value;
         break;
       case 'rx':
-        rotation.x = MathUtils.degToRad(control.value);
+        rotation.x = control.value;
         break;
       case 'ry':
-        rotation.y = MathUtils.degToRad(control.value);
+        rotation.y = control.value;
         break;
       case 'rz':
-        rotation.z = MathUtils.degToRad(control.value);
+        rotation.z = control.value;
         break;
       case 'sx':
         scale.x = control.value;
