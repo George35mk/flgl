@@ -1,6 +1,6 @@
 ## 0.0.3
 
-* improved the render method now the app renders faster.
+* improved the render method now the Renderer renders faster.
 * added new Geometries:
   * PlaneGeometry
   * CylinderGeometry
