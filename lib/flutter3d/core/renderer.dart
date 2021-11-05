@@ -75,6 +75,7 @@ class Renderer {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
+    // draw the objects.
     for (var object in scene.children) {
       ProgramInfo programInfo = object.programInfo!;
       // Tell it to use our program (pair of shaders)
