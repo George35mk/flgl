@@ -76,6 +76,16 @@ class Renderer {
     gl.enable(gl.DEPTH_TEST);
 
     // draw the objects.
+    drawObjects(scene, camera);
+
+    // ! super important.
+    // ! never put this inside a loop because it takes some time
+    // ! to update the texture.
+    gl.finish();
+    flgl.updateTexture();
+  }
+
+  void drawObjects(Scene scene, Camera camera) {
     for (var object in scene.children) {
       ProgramInfo programInfo = object.programInfo!;
       // Tell it to use our program (pair of shaders)
@@ -102,11 +112,6 @@ class Renderer {
         Flutter3D.drawBufferInfo(gl, object.geometry.bufferInfo);
       }
     }
-    // ! super important.
-    // ! never put this inside a loop because it takes some time
-    // ! to update the texture.
-    gl.finish();
-    flgl.updateTexture();
   }
 
   void render2() {
