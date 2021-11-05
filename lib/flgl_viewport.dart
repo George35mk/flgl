@@ -14,9 +14,9 @@ class FLGLViewport extends StatefulWidget {
 
   const FLGLViewport({
     Key? key,
-    this.onInit,
-    this.width = 500, // default
-    this.height = 500, // default
+    required this.onInit,
+    required this.width,
+    required this.height,
   }) : super(key: key);
 
   @override
@@ -24,7 +24,7 @@ class FLGLViewport extends StatefulWidget {
 }
 
 class _FLGLViewportState extends State<FLGLViewport> {
-  /// The device Pixel Ratio
+  /// The device pixel ratio
   num dpr = 1.0;
 
   /// The screen size.

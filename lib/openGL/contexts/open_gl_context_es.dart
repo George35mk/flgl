@@ -118,13 +118,33 @@ class OpenGLContextES extends OpenGL30Constant {
     gl.glTexParameteri(target, pname, param);
   }
 
-  texImage2D(target, level, internalformat, width, height, border, format, type, data) {
+  texImage2D(
+    int target,
+    int level,
+    int internalformat,
+    int width,
+    int height,
+    int border,
+    int format,
+    int type,
+    data,
+  ) {
     Pointer<Int8> nativeBuffer;
 
     if (data != null) {
       nativeBuffer = calloc<Int8>(data.length);
       nativeBuffer.asTypedList(data.length).setAll(0, data);
-      gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nativeBuffer.cast<Void>());
+      gl.glTexImage2D(
+        target,
+        level,
+        internalformat,
+        width,
+        height,
+        border,
+        format,
+        type,
+        nativeBuffer.cast<Void>(),
+      );
       calloc.free(nativeBuffer);
     } else {
       gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, nullptr);
@@ -356,7 +376,8 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(ptr);
   }
 
-  bindBuffer(int target, dynamic buffer) {
+  bindBuffer(int target, Buffer buffer) {
+    // added the correct type on the second param, replace dynamic with Buffer.
     return gl.glBindBuffer(target, buffer.bufferId);
   }
 
@@ -516,7 +537,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
   }
 
-  createVertexArray() {
+  int createVertexArray() {
     final v = calloc<Uint32>();
     gl.glGenVertexArrays(1, v);
     int _v = v.value;
@@ -623,8 +644,10 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glDeleteProgram(program);
   }
 
-  bindVertexArray(int array) {
-    return gl.glBindVertexArray(array);
+  // Accepts int value type,
+  // but I need to pass a null value to unbind the VAO.
+  void bindVertexArray(int array) {
+    gl.glBindVertexArray(array);
   }
 
   /// Delete vertex array object

@@ -1,3 +1,30 @@
+## 0.0.3
+
+* improved the render method now the Renderer renders faster.
+* added new Geometries:
+  * PlaneGeometry
+  * CylinderGeometry
+  * ConeGeometry
+  * BoxGeometry
+  * EdgedBoxGeometry
+  * SphereGeometry
+
+* added Color class.
+* added abstract class Material
+* added MeshBasicMaterial
+* added texture support.
+* added more shaders.
+* in mathUtils added new methods:
+  * clamp
+  * lerp
+  * euclideanModulo
+* in Vector3 class added new methods.
+
+* fixed VAO issue. (fixed the unbind VAO step).
+* fixed the plane geometry indices and vertices.
+
+* replaced array values with Vector3.
+
 ## 0.0.2
 
 * replaced `List<num>` with `List<double>` in M4 class

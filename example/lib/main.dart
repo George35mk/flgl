@@ -1,3 +1,12 @@
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_assets_texture.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box_edges_example.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_cylinder.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_multiple_geometries.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane_with_texture.dart';
+import 'package:flgl_example/examples/flutter3d_examples/flutter3d_sphere.dart';
 import 'package:flutter/material.dart';
 import 'package:flgl_example/home.dart';
 import 'package:flgl_example/examples/Fundamentals/examples_page_fundamentals.dart';
@@ -55,6 +64,9 @@ import 'examples/Structure_and_Organization/scene_graph_3.dart';
 import 'examples/Structure_and_Organization/scene_graph_4.dart';
 
 import 'package:flgl_example/examples/drawing_objects/cube_example.dart';
+
+import 'examples/flutter3d_examples/flutter3d_cone.dart';
+import 'examples/flutter3d_examples/flutter3d_triangle.dart';
 
 void main() {
   runApp(const MyApp());
@@ -142,6 +154,19 @@ class _MyAppState extends State<MyApp> {
         // drawing_objects
         '/drawing_objects': (context) => const DrawingObjects(),
         '/drawing_objects/cube_example': (context) => const CubeExample(),
+
+        // flutter3D examples
+        '/flutter3d_examples': (context) => const Flutter3DExamples(),
+        '/flutter3d_examples/triangle': (context) => const Flutter3DTriangle(),
+        '/flutter3d_examples/plane': (context) => const Flutter3DPlane(),
+        '/flutter3d_examples/box': (context) => const Flutter3DBox(),
+        '/flutter3d_examples/sphere': (context) => const Flutter3DSphere(),
+        '/flutter3d_examples/cone': (context) => const Flutter3DCone(),
+        '/flutter3d_examples/cylinder': (context) => const Flutter3DCylinder(),
+        '/flutter3d_examples/multiple_geometries': (context) => const Flutter3DMultipleGeometries(),
+        '/flutter3d_examples/plane_geometry_with_texture': (context) => const Flutter3DPlaneWithTexture(),
+        '/flutter3d_examples/plane_assets_texture': (context) => const Flutter3DAssetsTexture(),
+        '/flutter3d_examples/box_edges_example': (context) => const Flutter3DBoxEdgesExample(),
       },
     );
   }
