@@ -89,11 +89,6 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
     super.dispose();
   }
 
-  Future<String> asyncRender() {
-    // Imagine that this function is more complex and slow.
-    return Future.delayed(const Duration(milliseconds: 33), () => render());
-  }
-
   /// Starts the render loop.
   /// - draws 25 frames per second.
   void startRenderLoop() {
