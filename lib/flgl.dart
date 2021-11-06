@@ -64,6 +64,7 @@ class Flgl {
 
     await prepareContext();
     sourceTexture = setupDefaultFBO(gl, width, height, dpr);
+    setupDBO(gl, width.toDouble(), height.toDouble(), dpr.toDouble());
 
     return Map<String, dynamic>.from(res);
   }
@@ -77,7 +78,7 @@ class Flgl {
 
   /// Updates the texture.
   /// Call this method to update the texture.
-  /// Super importand,
+  /// Super importand.
   Future<bool> updateTexture() async {
     // check for textureId and sourceTexture if defined before updating the texture.
     final args = {"textureId": textureId, "sourceTexture": sourceTexture};
@@ -107,18 +108,35 @@ class Flgl {
   dispose() async {
     isDisposed = true;
 
+    // dispose fbo
+    // dispose dbo
+
     final args = {"textureId": textureId};
     await _channel.invokeMethod('dispose', args);
   }
 
+  /// Dispose the Frame Buffer Object (FBO)
+  /// #### Alse read this stackoverflow post.
+  /// https://stackoverflow.com/questions/56254797/opengl-es-2-0-gldeleteframebuffers-after-drawing-to-texture
+  disposeFBO(OpenGLContextES _gl, int fbo, int fboTexture) {
+    _gl.deleteTexture(fboTexture);
+    _gl.deleteFramebuffer(fbo);
+  }
+
+  /// Dispose the Depth Buffer Object (DBO)
+  disposeDBO(OpenGLContextES _gl, int dbo, int dboTexture) {
+    _gl.deleteTexture(dboTexture);
+    _gl.deleteFramebuffer(dbo);
+  }
+
   /// https://stackoverflow.com/questions/24122859/glenablegl-depth-test-not-working
   /// https://www.khronos.org/opengl/wiki/Framebuffer_Object_Extension_Examples
-  setupDefaultFBO(OpenGLContextES _gl, num width, num height, num dpr) {
+  int setupDefaultFBO(OpenGLContextES _gl, num width, num height, num dpr) {
     int glWidth = (width * dpr).toInt();
     int glHeight = (height * dpr).toInt();
 
-    dynamic defaultFramebuffer = _gl.createFramebuffer();
-    dynamic defaultFramebufferTexture = _gl.createTexture();
+    int defaultFramebuffer = _gl.createFramebuffer();
+    int defaultFramebufferTexture = _gl.createTexture();
     _gl.activeTexture(_gl.TEXTURE0);
 
     _gl.bindTexture(_gl.TEXTURE_2D, defaultFramebufferTexture);
@@ -129,35 +147,36 @@ class Flgl {
     _gl.bindFramebuffer(_gl.FRAMEBUFFER, defaultFramebuffer);
     _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, defaultFramebufferTexture, 0);
 
-    // ===================== Setup the Depth Buffer Start =====================
+    return defaultFramebufferTexture;
+  }
 
-    // _gl.gl.createRenderbuffer();
-    // _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.DEPTH24_STENCIL8, glWidth, glHeight, 0, _gl.DEPTH_STENCIL,
-    //     _gl.UNSIGNED_INT_24_8, null);
-    // _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.DEPTH_STENCIL_ATTACHMENT, _gl.TEXTURE_2D,
-    //     defaultFramebufferTexture, 0);
+  int setupDBO(OpenGLContextES _gl, double width, double height, double dpr) {
+    int glWidth = (width * dpr).toInt();
+    int glHeight = (height * dpr).toInt();
+
+    // ===================== Setup the Depth Buffer Object Start =====================
 
     var frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      // print("Framebuffer (color) check failed: $frameBufferCheck");
+      print("Framebuffer (color) check failed: $frameBufferCheck");
     }
 
-    Pointer<Int32> depthBuffer = calloc();
+    Pointer<Uint32> depthBuffer = calloc();
     _gl.gl.glGenRenderbuffers(1, depthBuffer.cast());
     _gl.gl.glBindRenderbuffer(_gl.RENDERBUFFER, depthBuffer.value);
     _gl.gl.glRenderbufferStorage(_gl.RENDERBUFFER, _gl.DEPTH_COMPONENT16, glWidth, glHeight);
     _gl.gl.glFramebufferRenderbuffer(_gl.FRAMEBUFFER, _gl.DEPTH_ATTACHMENT, _gl.RENDERBUFFER, depthBuffer.value);
 
-    int _v = depthBuffer.value; // just in case you need this value
+    int depthBufferValue = depthBuffer.value; // just in case you need this value
     calloc.free(depthBuffer); // free
 
     frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      // print("Framebuffer (depth) check failed: $frameBufferCheck");
+      print("Framebuffer (depth) check failed: $frameBufferCheck");
     }
 
     // ===================== Setup the Depth Buffer End =====================
 
-    return defaultFramebufferTexture;
+    return depthBufferValue;
   }
 }

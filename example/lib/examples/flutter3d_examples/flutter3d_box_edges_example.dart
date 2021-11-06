@@ -3,11 +3,8 @@ import 'dart:async';
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
-import 'package:flgl_example/examples/controls/transform_control.dart';
-import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
+import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
-
-import '../controls/gl_controls.dart';
 
 import 'package:flgl/flgl_3d.dart';
 
@@ -40,46 +37,13 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
   /// The timer for the render loop.
   Timer? timer;
 
-  /// The transform controls manager.
-  TransformControlsManager? controlsManager;
-
   Scene scene = Scene();
   PerspectiveCamera? camera;
   Renderer? renderer;
 
-  Vector3 translation = Vector3(0, 0, 0);
-  Vector3 rotation = Vector3(0, 0, 0);
-  Vector3 scale = Vector3(20, 20, 20);
-
   @override
   void initState() {
     super.initState();
-
-    // the min and max translation.
-    double translationMin = -200.0;
-    double translationMax = 200.0;
-
-    // the min and max rotation.
-    double rotationMin = 0.0;
-    double rotationMax = 360.0;
-
-    // the min and max scale.
-    double scaleMin = 1.0;
-    double scaleMax = 100.0;
-
-    // init control manager.
-    controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: translationMin, max: translationMax, value: translation.x));
-    controlsManager!.add(TransformControl(name: 'ty', min: translationMin, max: translationMax, value: translation.y));
-    controlsManager!.add(TransformControl(name: 'tz', min: translationMin, max: translationMax, value: translation.z));
-
-    controlsManager!.add(TransformControl(name: 'rx', min: rotationMin, max: rotationMax, value: rotation.x));
-    controlsManager!.add(TransformControl(name: 'ry', min: rotationMin, max: rotationMax, value: rotation.y));
-    controlsManager!.add(TransformControl(name: 'rz', min: rotationMin, max: rotationMax, value: rotation.z));
-
-    controlsManager!.add(TransformControl(name: 'sx', min: scaleMin, max: scaleMax, value: scale.x));
-    controlsManager!.add(TransformControl(name: 'sy', min: scaleMin, max: scaleMax, value: scale.y));
-    controlsManager!.add(TransformControl(name: 'sz', min: scaleMin, max: scaleMax, value: scale.z));
   }
 
   @override
@@ -97,41 +61,6 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
         render(),
       },
     );
-  }
-
-  void handleControlsMangerChanges(TransformControl control) {
-    switch (control.name) {
-      case 'tx':
-        translation.x = control.value;
-        break;
-      case 'ty':
-        translation.y = control.value;
-        break;
-      case 'tz':
-        translation.z = control.value;
-        break;
-      case 'rx':
-        rotation.x = control.value;
-        break;
-      case 'ry':
-        rotation.y = control.value;
-        break;
-      case 'rz':
-        rotation.z = control.value;
-        break;
-      case 'sx':
-        scale.x = control.value;
-        break;
-      case 'sy':
-        scale.y = control.value;
-        break;
-      case 'sz':
-        scale.z = control.value;
-        break;
-      default:
-        print('Unknown control name: ${control.name}');
-        break;
-    }
   }
 
   @override
@@ -160,18 +89,13 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
               });
             },
           ),
-          Positioned(
-            width: 420,
-            // height: 150,
-            top: 10,
-            right: 10,
-            child: GLControls(
-              transformControlsManager: controlsManager,
-              onChange: (TransformControl control) {
-                handleControlsMangerChanges(control);
-              },
+          if (camera != null && scene != null)
+            Positioned(
+              width: 420,
+              top: 10,
+              right: 10,
+              child: FLGLControls(camera: camera!, scene: scene),
             ),
-          ),
         ],
       ),
     );
@@ -196,19 +120,25 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
     EdgedBoxGeometry edgedBoxGeometry = EdgedBoxGeometry();
     MeshBasicMaterial edgeMat = MeshBasicMaterial(color: lightGreenColor);
     Mesh edgedBoxMesh = Mesh(gl, edgedBoxGeometry, edgeMat);
+    edgedBoxMesh.name = 'Box 1';
     edgedBoxMesh.setPosition(Vector3(0, 0, 0));
     edgedBoxMesh.setRotation(Vector3(0, 0, 0));
     edgedBoxMesh.setScale(Vector3(50, 50, 50));
     scene.add(edgedBoxMesh);
+
+    // Create a Edged Box Geometry
+    EdgedBoxGeometry edgedBoxGeometry1 = EdgedBoxGeometry();
+    MeshBasicMaterial edgeMat1 = MeshBasicMaterial(color: lightGreenColor);
+    Mesh edgedBoxMesh1 = Mesh(gl, edgedBoxGeometry1, edgeMat1);
+    edgedBoxMesh1.name = 'Box 2';
+    edgedBoxMesh1.setPosition(Vector3(0, 0, 0));
+    edgedBoxMesh1.setRotation(Vector3(0, 0, 0));
+    edgedBoxMesh1.setScale(Vector3(50, 50, 50));
+    scene.add(edgedBoxMesh1);
   }
 
   /// Render's the scene.
   render() {
-    int index = scene.children.length - 1;
-    scene.children[index].setPosition(translation);
-    scene.children[index].setRotation(rotation);
-    scene.children[index].setScale(scale);
-
     renderer!.render(scene, camera!);
   }
 }

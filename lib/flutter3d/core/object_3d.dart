@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flutter3d/geometries/box_geometry.dart';
 import 'package:flgl/flutter3d/geometries/cone_geometry.dart';
@@ -28,6 +30,8 @@ class Object3D {
   BufferGeometry geometry;
 
   Material material;
+
+  String name = '';
 
   /// The object3d program info.
   ProgramInfo? programInfo;
@@ -166,22 +170,33 @@ class Object3D {
     }
   }
 
-  setupTexture(MeshBasicMaterial material) {
+  /// Creates a new texture and sets the material uniforms texture location.
+  void setupTexture(MeshBasicMaterial material) {
     int width = material.mapWidth!;
     int height = material.mapHeigth!;
 
-    int checkerboardTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
+    int texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, material.map);
 
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    material.uniforms['u_texture'] = checkerboardTexture;
+    material.uniforms['u_texture'] = texture;
   }
 
   // make a 8x8 checkerboard texture
-  setupCheckerboardTexture(MeshBasicMaterial material) {
+  void setupCheckerboardTexture(MeshBasicMaterial material) {
+    // Uint8List imageData = Uint8List.fromList([
+    //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+    //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+    //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+    //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+    //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+    //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+    //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
+    //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
+    // ]);
     int checkerboardTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, checkerboardTexture);
     gl.texImage2D(
@@ -193,16 +208,7 @@ class Object3D {
       0, // border
       gl.LUMINANCE, // format
       gl.UNSIGNED_BYTE, // type
-      // Uint8List.fromList([
-      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-      //   0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, //
-      //   0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, 0xCC, 0xFF, //
-      // ]),
+      // imageData
       material.map,
     );
     gl.generateMipmap(gl.TEXTURE_2D);

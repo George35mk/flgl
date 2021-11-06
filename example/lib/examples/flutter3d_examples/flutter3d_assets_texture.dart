@@ -50,37 +50,52 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   Renderer? renderer;
 
   Vector3 translation = Vector3(0.0, 0.0, 0.0);
-  Vector3 rotation = Vector3(90, 0.0, 0.0);
-  Vector3 scale = Vector3(20.0, 20.0, 20.0);
+  Vector3 rotation = Vector3(-90, 180, 0.0);
+  Vector3 scale = Vector3(1.0, 1.0, 1.0);
 
   @override
   void initState() {
     super.initState();
+    initControlsManager();
+  }
 
-    var maxTranslate = 100.0;
-    var minTranslate = -100.0;
+  initControlsManager() {
+    // the min and max translation.
+    double translationMin = -500.0;
+    double translationMax = 500.0;
 
+    // the min and max rotation.
+    double rotationMin = -180.0;
+    double rotationMax = 180.0;
+
+    // the min and max scale.
     double scaleMin = 1.0;
     double scaleMax = 100.0;
 
     // init control manager.
     controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: minTranslate, max: maxTranslate, value: 0));
-    controlsManager!.add(TransformControl(name: 'ty', min: -100.0, max: 100.0, value: 0));
-    controlsManager!.add(TransformControl(name: 'tz', min: -500.0, max: 100.0, value: 0));
+    controlsManager!.add(TransformControl(name: 'tx', min: translationMin, max: translationMax, value: translation.x));
+    controlsManager!.add(TransformControl(name: 'ty', min: translationMin, max: translationMax, value: translation.y));
+    controlsManager!.add(TransformControl(name: 'tz', min: translationMin, max: translationMax, value: translation.z));
 
-    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 90));
-    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
+    controlsManager!.add(TransformControl(name: 'rx', min: rotationMin, max: rotationMax, value: rotation.x));
+    controlsManager!.add(TransformControl(name: 'ry', min: rotationMin, max: rotationMax, value: rotation.y));
+    controlsManager!.add(TransformControl(name: 'rz', min: rotationMin, max: rotationMax, value: rotation.z));
 
-    controlsManager!.add(TransformControl(name: 'sx', min: scaleMin, max: scaleMax, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sy', min: scaleMin, max: scaleMax, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sz', min: scaleMin, max: scaleMax, value: 1.0));
+    controlsManager!.add(TransformControl(name: 'sx', min: scaleMin, max: scaleMax, value: scale.x));
+    controlsManager!.add(TransformControl(name: 'sy', min: scaleMin, max: scaleMax, value: scale.y));
+    controlsManager!.add(TransformControl(name: 'sz', min: scaleMin, max: scaleMax, value: scale.z));
   }
 
   @override
   void dispose() {
     timer?.cancel();
+
+    // cleanes all the textures.
+    // scene.dispose(gl);
+
+    // dispose FBO and DBO
+    // flgl.dispose();
     super.dispose();
   }
 
@@ -208,7 +223,6 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
                 gl = flgl.gl;
 
                 initScene();
-                // render();
                 startRenderLoop();
               });
             },
@@ -232,16 +246,16 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
   /// Initialize's the scene.
   initScene() async {
-    // colors
-    Color redColor = Color(1, 0, 0, 1);
-    Color greenColor = Color(0, 1, 0, 1);
-    Color blueColor = Color(0, 0, 1, 1);
+    // Initialize Colors:
+    // Color redColor = Color(1, 0, 0, 1);
+    // Color greenColor = Color(0, 1, 0, 1);
+    // Color blueColor = Color(0, 0, 1, 1);
     Color whiteColor = Color(1, 1, 1, 1);
     Color lightGreenColor = Color().fromRGBA(121, 255, 47, 255);
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 300));
+    camera!.setPosition(Vector3(0, 0, -300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -249,6 +263,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     renderer!.setWidth(width);
     renderer!.setHeight(height);
     renderer!.setDPR(dpr);
+
+    // var activeTextures = gl.getParameter(gl.ACTIVE_TEXTURE);
+    // print('activeTextures: $activeTextures'); // returns "33984" (0x84C0, gl.TEXTURE0 enum value)
 
     // Create a plane mesh 3
     TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
@@ -261,11 +278,11 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     );
     Mesh planeMesh4 = Mesh(gl, planeGeometry3, material3);
     planeMesh4.setPosition(Vector3(0, 0, 0));
-    planeMesh4.setRotation(Vector3(90, 0, 0));
+    planeMesh4.setRotation(Vector3(-90, 180, 0));
     planeMesh4.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh4);
 
-    // Create a Edged Box Geometry
+    // Create an Edged Box Geometry
     EdgedBoxGeometry edgedBoxGeometry = EdgedBoxGeometry();
     MeshBasicMaterial edgeMat = MeshBasicMaterial(color: lightGreenColor);
     Mesh edgedBoxMesh = Mesh(gl, edgedBoxGeometry, edgeMat);
@@ -273,6 +290,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     edgedBoxMesh.setRotation(Vector3(90, 0, 0));
     edgedBoxMesh.setScale(Vector3(50, 50, 50));
     scene.add(edgedBoxMesh);
+
+    // activeTextures = gl.getParameter(gl.ACTIVE_TEXTURE);
+    // print(activeTextures);
   }
 
   /// Render's the scene.
