@@ -20,6 +20,9 @@ class Scene {
           gl.deleteTexture(child.material.uniforms['u_texture']);
         }
       }
+
+      // dispose program and shaders.
+      child.dispose();
     });
   }
 }

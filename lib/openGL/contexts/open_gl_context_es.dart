@@ -198,6 +198,10 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glUseProgram(program);
   }
 
+  void detachShader(int program, int shader) {
+    gl.glDetachShader(program, shader);
+  }
+
   blendFuncSeparate(v0, v1, v2, v3) {
     return gl.glBlendFuncSeparate(v0, v1, v2, v3);
   }

@@ -19,6 +19,7 @@ class Flutter3DAssetsTexture extends StatefulWidget {
 class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
+  bool isReady = false;
 
   /// The flutter graphics library instance.
   late Flgl flgl;
@@ -51,11 +52,12 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   void dispose() {
     timer?.cancel();
 
-    // cleanes all the textures.
-    // scene.dispose(gl);
+    // dispose all the textures.
+    scene.dispose(gl);
 
     // dispose FBO and DBO
-    // flgl.dispose();
+    flgl.dispose();
+
     super.dispose();
   }
 
@@ -146,7 +148,7 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
               });
             },
           ),
-          if (camera != null && scene != null)
+          if (isReady && (camera != null && scene != null))
             Positioned(
               width: 420,
               top: 10,
@@ -205,6 +207,10 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
     // activeTextures = gl.getParameter(gl.ACTIVE_TEXTURE);
     // print(activeTextures);
+
+    setState(() {
+      isReady = true;
+    });
   }
 
   render() {

@@ -28,7 +28,10 @@ class Flgl {
   late OpenGLES openGLES;
 
   /// The source texture.
-  dynamic sourceTexture;
+  late int sourceTexture;
+  late int defaultFramebuffer;
+  late int defaultFramebufferTexture;
+  late int dbo;
 
   /// Returns true if the textureId is not set.
   bool get isInitialized => textureId != null;
@@ -63,8 +66,9 @@ class Flgl {
     openGLES = OpenGLES(_options);
 
     await prepareContext();
-    sourceTexture = setupDefaultFBO(gl, width, height, dpr);
-    setupDBO(gl, width.toDouble(), height.toDouble(), dpr.toDouble());
+
+    sourceTexture = setupFBO(gl, width, height, dpr);
+    dbo = setupDBO(gl, width.toDouble(), height.toDouble(), dpr.toDouble());
 
     return Map<String, dynamic>.from(res);
   }
@@ -105,14 +109,32 @@ class Flgl {
   }
 
   /// Use this on dispose.
+  /// https://www.khronos.org/registry/EGL/sdk/docs/man/html/eglDestroySurface.xhtml
+  ///
+  /// Description
+  /// If the EGL surface surface is not current to any thread, eglDestroySurface destroys it immediately. Otherwise, surface is destroyed when it becomes not current to any thread. Furthermore, resources associated with a pbuffer surface are not released until all color buffers of that pbuffer bound to a texture object have been released.
+  ///
+  /// Errors
+  /// EGL_FALSE is returned if destruction of the surface fails, EGL_TRUE otherwise.
+  ///
+  /// EGL_BAD_DISPLAY is generated if display is not an EGL display connection.
+  ///
+  /// EGL_NOT_INITIALIZED is generated if display has not been initialized.
+  ///
+  /// EGL_BAD_SURFACE is generated if surface is not an EGL surface.
   dispose() async {
     isDisposed = true;
 
-    // dispose fbo
-    // dispose dbo
-
     final args = {"textureId": textureId};
     await _channel.invokeMethod('dispose', args);
+
+    // dispose fbo
+    print('disposeFBO');
+    disposeFBO(gl, defaultFramebuffer, defaultFramebufferTexture);
+
+    // dispose dbo
+    print('disposeDBO');
+    disposeDBO(gl, dbo);
   }
 
   /// Dispose the Frame Buffer Object (FBO)
@@ -124,19 +146,19 @@ class Flgl {
   }
 
   /// Dispose the Depth Buffer Object (DBO)
-  disposeDBO(OpenGLContextES _gl, int dbo, int dboTexture) {
-    _gl.deleteTexture(dboTexture);
-    _gl.deleteFramebuffer(dbo);
+  disposeDBO(OpenGLContextES _gl, int dbo) {
+    // _gl.deleteTexture(dboTexture);
+    _gl.deleteRenderbuffer(dbo);
   }
 
   /// https://stackoverflow.com/questions/24122859/glenablegl-depth-test-not-working
   /// https://www.khronos.org/opengl/wiki/Framebuffer_Object_Extension_Examples
-  int setupDefaultFBO(OpenGLContextES _gl, num width, num height, num dpr) {
+  int setupFBO(OpenGLContextES _gl, num width, num height, num dpr) {
     int glWidth = (width * dpr).toInt();
     int glHeight = (height * dpr).toInt();
 
-    int defaultFramebuffer = _gl.createFramebuffer();
-    int defaultFramebufferTexture = _gl.createTexture();
+    defaultFramebuffer = _gl.createFramebuffer();
+    defaultFramebufferTexture = _gl.createTexture();
     _gl.activeTexture(_gl.TEXTURE0);
 
     _gl.bindTexture(_gl.TEXTURE_2D, defaultFramebufferTexture);
@@ -150,6 +172,8 @@ class Flgl {
     return defaultFramebufferTexture;
   }
 
+  /// Setups the Depth Buffer Object (DBO)
+  /// returns the DBO id.
   int setupDBO(OpenGLContextES _gl, double width, double height, double dpr) {
     int glWidth = (width * dpr).toInt();
     int glHeight = (height * dpr).toInt();

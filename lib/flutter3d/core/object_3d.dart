@@ -106,6 +106,16 @@ class Object3D {
     updateMatrix();
   }
 
+  void dispose() {
+    gl.useProgram(0);
+    gl.detachShader(programInfo!.program, programInfo!.vertexShader);
+    gl.detachShader(programInfo!.program, programInfo!.fragmentShader);
+    gl.deleteShader(programInfo!.vertexShader);
+    gl.deleteShader(programInfo!.fragmentShader);
+    gl.deleteProgram(programInfo!.program);
+    print('mesh.dispose called');
+  }
+
   void setupTriangle(BufferGeometry geometry) {
     // 1. Create a program based on geometry and material
     programInfo = Flutter3D.createProgramInfo(

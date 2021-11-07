@@ -185,7 +185,7 @@ class Flutter3D {
     var uniformSetters = createUniformSetters(gl, program);
     var attribSetters = createAttributeSetters(gl, program);
 
-    ProgramInfo programInfo = ProgramInfo(program, uniformSetters, attribSetters);
+    ProgramInfo programInfo = ProgramInfo(program, vertexShader, fragmentShader, uniformSetters, attribSetters);
     return programInfo;
   }
 
@@ -231,9 +231,20 @@ class UniformInfo {
 }
 
 class ProgramInfo {
+  /// The program id.
   int program;
+
+  /// The vertex shader id.
+  int vertexShader;
+
+  /// The fragment shader id.
+  int fragmentShader;
+
+  /// The uniform setters.
   Map<String, dynamic> uniformSetters;
+
+  /// The attribute setters.
   Map<String, dynamic> attribSetters;
 
-  ProgramInfo(this.program, this.uniformSetters, this.attribSetters);
+  ProgramInfo(this.program, this.vertexShader, this.fragmentShader, this.uniformSetters, this.attribSetters);
 }
