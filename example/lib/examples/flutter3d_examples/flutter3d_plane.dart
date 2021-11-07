@@ -5,7 +5,6 @@ import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
-import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -37,9 +36,6 @@ class _Flutter3DPlaneState extends State<Flutter3DPlane> {
 
   /// The timer for the render loop.
   Timer? timer;
-
-  /// The transform controls manager.
-  TransformControlsManager? controlsManager;
 
   Scene scene = Scene();
   PerspectiveCamera? camera;
@@ -88,7 +84,6 @@ class _Flutter3DPlaneState extends State<Flutter3DPlane> {
                 gl = flgl.gl;
 
                 initScene();
-                // render();
                 startRenderLoop();
               });
             },
