@@ -107,7 +107,7 @@ class _Flutter3DBoxEdgesExampleState extends State<Flutter3DBoxEdgesExample> {
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, -300));
+    camera!.setPosition(Vector3(0, 0, 300)); // {0, 0, +z} is the OpenGL camera coordinates. Right-handed system
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
