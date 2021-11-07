@@ -2,16 +2,12 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flgl/flgl.dart';
+import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
-import 'package:flgl_example/examples/controls/transform_control.dart';
-import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
+import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../controls/gl_controls.dart';
-
-import 'package:flgl/flgl_3d.dart';
 
 class Flutter3DAssetsTexture extends StatefulWidget {
   const Flutter3DAssetsTexture({Key? key}) : super(key: key);
@@ -42,49 +38,13 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
   /// The timer for the render loop.
   Timer? timer;
 
-  /// The transform controls manager.
-  TransformControlsManager? controlsManager;
-
   Scene scene = Scene();
   PerspectiveCamera? camera;
   Renderer? renderer;
 
-  Vector3 translation = Vector3(0.0, 0.0, 0.0);
-  Vector3 rotation = Vector3(-90, 180, 0.0);
-  Vector3 scale = Vector3(1.0, 1.0, 1.0);
-
   @override
   void initState() {
     super.initState();
-    initControlsManager();
-  }
-
-  initControlsManager() {
-    // the min and max translation.
-    double translationMin = -500.0;
-    double translationMax = 500.0;
-
-    // the min and max rotation.
-    double rotationMin = -180.0;
-    double rotationMax = 180.0;
-
-    // the min and max scale.
-    double scaleMin = 1.0;
-    double scaleMax = 100.0;
-
-    // init control manager.
-    controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: translationMin, max: translationMax, value: translation.x));
-    controlsManager!.add(TransformControl(name: 'ty', min: translationMin, max: translationMax, value: translation.y));
-    controlsManager!.add(TransformControl(name: 'tz', min: translationMin, max: translationMax, value: translation.z));
-
-    controlsManager!.add(TransformControl(name: 'rx', min: rotationMin, max: rotationMax, value: rotation.x));
-    controlsManager!.add(TransformControl(name: 'ry', min: rotationMin, max: rotationMax, value: rotation.y));
-    controlsManager!.add(TransformControl(name: 'rz', min: rotationMin, max: rotationMax, value: rotation.z));
-
-    controlsManager!.add(TransformControl(name: 'sx', min: scaleMin, max: scaleMax, value: scale.x));
-    controlsManager!.add(TransformControl(name: 'sy', min: scaleMin, max: scaleMax, value: scale.y));
-    controlsManager!.add(TransformControl(name: 'sz', min: scaleMin, max: scaleMax, value: scale.z));
   }
 
   @override
@@ -99,55 +59,14 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     super.dispose();
   }
 
-  Future<String> asyncRender() {
-    // Imagine that this function is more complex and slow.
-    return Future.delayed(const Duration(milliseconds: 33), () => render());
-  }
-
+  // Draw 50 frames per second.
   void startRenderLoop() {
-    // Draw 50 frames per second.
     timer = Timer.periodic(
       const Duration(milliseconds: 50),
       (Timer t) => {
         render(),
       },
     );
-  }
-
-  void handleControlsMangerChanges(TransformControl control) {
-    switch (control.name) {
-      case 'tx':
-        translation.x = control.value;
-        break;
-      case 'ty':
-        translation.y = control.value;
-        break;
-      case 'tz':
-        translation.z = control.value;
-        break;
-      case 'rx':
-        rotation.x = control.value;
-        break;
-      case 'ry':
-        rotation.y = control.value;
-        break;
-      case 'rz':
-        rotation.z = control.value;
-        break;
-      case 'sx':
-        scale.x = control.value;
-        break;
-      case 'sy':
-        scale.y = control.value;
-        break;
-      case 'sz':
-        scale.z = control.value;
-        break;
-      default:
-        print('Unknown control name: ${control.name}');
-        break;
-    }
-    // render();
   }
 
   double roundDouble(double value, int places) {
@@ -227,18 +146,13 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
               });
             },
           ),
-          Positioned(
-            width: 420,
-            // height: 150,
-            top: 10,
-            right: 10,
-            child: GLControls(
-              transformControlsManager: controlsManager,
-              onChange: (TransformControl control) {
-                handleControlsMangerChanges(control);
-              },
+          if (camera != null && scene != null)
+            Positioned(
+              width: 420,
+              top: 10,
+              right: 10,
+              child: FLGLControls(camera: camera!, scene: scene),
             ),
-          ),
         ],
       ),
     );
@@ -246,16 +160,12 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
 
   /// Initialize's the scene.
   initScene() async {
-    // Initialize Colors:
-    // Color redColor = Color(1, 0, 0, 1);
-    // Color greenColor = Color(0, 1, 0, 1);
-    // Color blueColor = Color(0, 0, 1, 1);
     Color whiteColor = Color(1, 1, 1, 1);
     Color lightGreenColor = Color().fromRGBA(121, 255, 47, 255);
 
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, -300));
+    camera!.setPosition(Vector3(0, 0, 300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -277,8 +187,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
       mapHeigth: textureInfo.height,
     );
     Mesh planeMesh4 = Mesh(gl, planeGeometry3, material3);
+    planeMesh4.name = 'plane';
     planeMesh4.setPosition(Vector3(0, 0, 0));
-    planeMesh4.setRotation(Vector3(-90, 180, 0));
+    planeMesh4.setRotation(Vector3(90, 0, 0));
     planeMesh4.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh4);
 
@@ -286,8 +197,9 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     EdgedBoxGeometry edgedBoxGeometry = EdgedBoxGeometry();
     MeshBasicMaterial edgeMat = MeshBasicMaterial(color: lightGreenColor);
     Mesh edgedBoxMesh = Mesh(gl, edgedBoxGeometry, edgeMat);
+    edgedBoxMesh.name = 'box';
     edgedBoxMesh.setPosition(Vector3(0, 0, 0));
-    edgedBoxMesh.setRotation(Vector3(90, 0, 0));
+    edgedBoxMesh.setRotation(Vector3(0, 0, 0));
     edgedBoxMesh.setScale(Vector3(50, 50, 50));
     scene.add(edgedBoxMesh);
 
@@ -295,16 +207,7 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     // print(activeTextures);
   }
 
-  /// Render's the scene.
   render() {
-    // print('Render runining...');
-
-    int index = scene.children.length - 1;
-    scene.children[index].setPosition(translation);
-    // scene.children[index].setRotation(rotation.addScalar(0.01));
-    scene.children[index].setRotation(rotation);
-    scene.children[index].setScale(scale);
-
     renderer!.render(scene, camera!);
   }
 }
