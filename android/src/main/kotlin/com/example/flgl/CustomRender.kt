@@ -100,7 +100,7 @@ class CustomRender {
         dartEglEnv.buildOffScreenSurface(glWidth, glHeight);
 
         eglEnv.makeCurrent();
-        eglEnv.makeCurrent();
+        // eglEnv.makeCurrent();
     }
 
 
@@ -120,10 +120,10 @@ class CustomRender {
     }
 
     fun getEgl() : List<Long> {
-        var _res = mutableListOf<Long>();
-        _res.addAll(this.eglEnv.getEgl());
-        _res.addAll(this.dartEglEnv.getEgl());
-        return _res;
+        var res = mutableListOf<Long>();
+        res.addAll(this.eglEnv.getEgl());
+        res.addAll(this.dartEglEnv.getEgl());
+        return res;
     }
 
     fun dispose() {

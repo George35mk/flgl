@@ -47,4 +47,16 @@ class Camera {
     position.copy(v);
     updateCameraMatrix();
   }
+
+  /// Set's the object target.
+  setTarget(Vector3 v) {
+    target.copy(v);
+    updateCameraMatrix();
+  }
+
+  /// Set's the object target.
+  setUp(Vector3 v) {
+    up.copy(v);
+    updateCameraMatrix();
+  }
 }

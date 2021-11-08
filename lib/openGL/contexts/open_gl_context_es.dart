@@ -74,7 +74,8 @@ class OpenGLContextES extends OpenGL30Constant {
       DEPTH_TEST,
       VERSION,
       SHADING_LANGUAGE_VERSION,
-      VENDOR
+      VENDOR,
+      ACTIVE_TEXTURE
     ];
 
     if (_intValues.indexOf(key) >= 0) {
@@ -86,7 +87,7 @@ class OpenGLContextES extends OpenGL30Constant {
     }
   }
 
-  createTexture() {
+  int createTexture() {
     final vPointer = calloc<Uint32>();
     gl.glGenTextures(1, vPointer);
     int _v = vPointer.value;
@@ -195,6 +196,10 @@ class OpenGLContextES extends OpenGL30Constant {
 
   useProgram(int program) {
     return gl.glUseProgram(program);
+  }
+
+  void detachShader(int program, int shader) {
+    gl.glDetachShader(program, shader);
   }
 
   blendFuncSeparate(v0, v1, v2, v3) {
@@ -448,8 +453,9 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glDrawArrays(mode, first, count);
   }
 
-  bindFramebuffer(v0, v1) {
-    return gl.glBindFramebuffer(v0, v1 ?? 0);
+  bindFramebuffer(int target, int framebuffer) {
+    // return gl.glBindFramebuffer(target, framebuffer ?? 0); // original code
+    return gl.glBindFramebuffer(target, framebuffer);
   }
 
   checkFramebufferStatus(v0) {
@@ -521,7 +527,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glGenRenderbuffers(v0, v1);
   }
 
-  createFramebuffer() {
+  int createFramebuffer() {
     final v = calloc<Uint32>();
     gl.glGenFramebuffers(1, v);
     int _v = v.value;

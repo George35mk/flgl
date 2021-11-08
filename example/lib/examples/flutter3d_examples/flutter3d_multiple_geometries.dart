@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:flgl/flgl.dart';
+import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
-import 'package:flgl_example/examples/controls/transform_control.dart';
-import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
+import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../controls/gl_controls.dart';
-
-import 'package:flgl/flgl_3d.dart';
 
 class Flutter3DMultipleGeometries extends StatefulWidget {
   const Flutter3DMultipleGeometries({Key? key}) : super(key: key);
@@ -41,89 +37,30 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
   /// The timer for the render loop.
   Timer? timer;
 
-  /// The transform controls manager.
-  TransformControlsManager? controlsManager;
-
   Scene scene = Scene();
   PerspectiveCamera? camera;
   Renderer? renderer;
 
-  Vector3 translation = Vector3(0.0, 0.0, 0.0);
-  Vector3 rotation = Vector3(0.0, 0.0, 0.0);
-  Vector3 scale = Vector3(1.0, 1.0, 1.0);
-
   @override
   void initState() {
     super.initState();
-
-    // init control manager.
-    controlsManager = TransformControlsManager({});
-    controlsManager!.add(TransformControl(name: 'tx', min: -1.0, max: 1.0, value: 0));
-    controlsManager!.add(TransformControl(name: 'ty', min: -5.0, max: 5.0, value: 0));
-    controlsManager!.add(TransformControl(name: 'tz', min: -5.0, max: 5.0, value: 0));
-
-    controlsManager!.add(TransformControl(name: 'rx', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'ry', min: 0, max: 360, value: 0));
-    controlsManager!.add(TransformControl(name: 'rz', min: 0, max: 360, value: 0));
-
-    controlsManager!.add(TransformControl(name: 'sx', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: 1.0));
-    controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: 1.0));
   }
 
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 
-  Future<String> asyncRender() {
-    // Imagine that this function is more complex and slow.
-    return Future.delayed(const Duration(milliseconds: 33), () => render());
-  }
-
+  // Draw 50 frames per second.
   void startRenderLoop() {
-    // Draw 50 frames per second.
     timer = Timer.periodic(
       const Duration(milliseconds: 33),
       (Timer t) => {
         render(),
       },
     );
-  }
-
-  void handleControlsMangerChanges(TransformControl control) {
-    switch (control.name) {
-      case 'tx':
-        translation.x = control.value;
-        break;
-      case 'ty':
-        translation.y = control.value;
-        break;
-      case 'tz':
-        translation.z = control.value;
-        break;
-      case 'rx':
-        rotation.x = control.value;
-        break;
-      case 'ry':
-        rotation.y = control.value;
-        break;
-      case 'rz':
-        rotation.z = control.value;
-        break;
-      case 'sx':
-        scale.x = control.value;
-        break;
-      case 'sy':
-        scale.y = control.value;
-        break;
-      case 'sz':
-        scale.z = control.value;
-        break;
-      default:
-    }
-    // render();
   }
 
   @override
@@ -153,20 +90,13 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
               });
             },
           ),
-          Positioned(
-            width: 420,
-            // height: 150,
-            top: 10,
-            right: 10,
-            child: GLControls(
-              transformControlsManager: controlsManager,
-              onChange: (TransformControl control) {
-                handleControlsMangerChanges(control);
-              },
+          if (camera != null && scene != null)
+            Positioned(
+              width: 420,
+              top: 10,
+              right: 10,
+              child: FLGLControls(camera: camera!, scene: scene),
             ),
-          )
-
-          // GLControls(),
         ],
       ),
     );
@@ -176,7 +106,7 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
   initScene() {
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 10));
+    camera!.setPosition(Vector3(0, 0, 300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -191,8 +121,9 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
       color: Color(0.0, 1.0, 0.0, 1.0),
     );
     Mesh triangleMesh = Mesh(gl, triangleGeometry, material0);
-    triangleMesh.setPosition(Vector3(0, 0, 0));
-    triangleMesh.setScale(Vector3(1, 1, 1));
+    triangleMesh.name = 'triangle 1';
+    triangleMesh.setPosition(Vector3(0, -50, 0));
+    triangleMesh.setScale(Vector3(50, 50, 50));
     scene.add(triangleMesh);
 
     // Add the second mesh.
@@ -201,100 +132,104 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
       color: Color(1.0, 0.0, 0.0, 1.0),
     );
     Mesh triangleMesh2 = Mesh(gl, triangleGeometry2, material1);
-    triangleMesh2.setPosition(Vector3(-0.7, 0, 0));
-    triangleMesh2.setScale(Vector3(1, 1, 1));
+    triangleMesh2.name = 'triangle 2';
+    triangleMesh2.setPosition(Vector3(0, -50, 25));
+    triangleMesh2.setScale(Vector3(25, 25, 1));
     scene.add(triangleMesh2);
 
     // Create a plane mesh 1
-    PlaneGeometry planeGeometry = PlaneGeometry();
+    PlaneGeometry planeGeometry = PlaneGeometry(50, 50);
     MeshBasicMaterial material2 = MeshBasicMaterial(
       color: Color(1.0, 1.0, 1.0, 1.0),
     );
     Mesh planeMesh = Mesh(gl, planeGeometry, material2);
-    planeMesh.setPosition(Vector3(2, 0, 0));
-    planeMesh.setScale(Vector3(1, 1, 0));
+    planeMesh.name = 'plane 1';
+    planeMesh.setPosition(Vector3(0, 0, 0));
+    planeMesh.setRotation(Vector3(90, 0, 0));
+    planeMesh.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh);
 
     // Create a plane mesh 2
-    PlaneGeometry planeGeometry2 = PlaneGeometry();
+    PlaneGeometry planeGeometry2 = PlaneGeometry(30, 30);
     MeshBasicMaterial material3 = MeshBasicMaterial(
       color: Color(0.0, 1.0, 1.0, 1.0),
     );
     Mesh planeMesh2 = Mesh(gl, planeGeometry2, material3);
-    planeMesh2.setPosition(Vector3(-2, 0, 0));
-    planeMesh2.setScale(Vector3(1, 1, 0));
+    planeMesh2.name = 'plane 2';
+    planeMesh2.setPosition(Vector3(0, 0, 20));
+    planeMesh2.setRotation(Vector3(90, 0, 0));
+    planeMesh2.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh2);
 
     // Create a plane mesh 3
-    PlaneGeometry planeGeometry3 = PlaneGeometry();
+    PlaneGeometry planeGeometry3 = PlaneGeometry(15, 15);
     MeshBasicMaterial material4 = MeshBasicMaterial(
       color: Color(0.3, 0.0, 1.0, 1.0),
     );
     Mesh planeMesh3 = Mesh(gl, planeGeometry3, material4);
-    planeMesh3.setPosition(Vector3(-2, -2, 0));
-    planeMesh3.setScale(Vector3(1, 1, 0));
+    planeMesh3.name = 'plane 3';
+    planeMesh3.setPosition(Vector3(0, 0, 40));
+    planeMesh3.setRotation(Vector3(90, 0, 0));
+    planeMesh3.setScale(Vector3(1, 1, 1));
     scene.add(planeMesh3);
 
     // Create a sphere mesh
-    SphereGeometry sphereGeometry = SphereGeometry(0.5, 12, 6);
+    SphereGeometry sphereGeometry = SphereGeometry(25, 12, 6);
     MeshBasicMaterial spherematerial = MeshBasicMaterial(
       color: Color(1.0, 1.0, 0.0, 1.0),
     );
     Mesh sphereMesh = Mesh(gl, sphereGeometry, spherematerial);
-    sphereMesh.setPosition(Vector3(-4, 0, 0));
+    sphereMesh.name = 'sphere 1';
+    sphereMesh.setPosition(Vector3(60, 0, 0));
     sphereMesh.setScale(Vector3(1, 1, 1));
     scene.add(sphereMesh);
 
     // Create box mesh.
-    BoxGeometry boxGeometry = BoxGeometry(0.5);
-    MeshBasicMaterial material5 = MeshBasicMaterial(
+    BoxGeometry boxGeometry1 = BoxGeometry(0.5);
+    MeshBasicMaterial boxMaterial1 = MeshBasicMaterial(
       color: Color(1.0, 1.0, 0.0, 1.0),
     );
-    Mesh boxMesh = Mesh(gl, boxGeometry, material5);
-    boxMesh.setPosition(Vector3(4, 0, 0));
-    boxMesh.setScale(Vector3(1, 1, 1));
+    Mesh boxMesh = Mesh(gl, boxGeometry1, boxMaterial1);
+    boxMesh.name = 'box 1';
+    boxMesh.setPosition(Vector3(-45, 0, 0));
+    boxMesh.setScale(Vector3(50, 50, 50));
     scene.add(boxMesh);
 
     // Create box mesh.
-    BoxGeometry boxGeometry1 = BoxGeometry();
-    MeshBasicMaterial material6 = MeshBasicMaterial(
+    BoxGeometry boxGeometry2 = BoxGeometry();
+    MeshBasicMaterial boxMaterial2 = MeshBasicMaterial(
       color: Color(1, 0.3, 1, 1.0),
     ); // Magenta / Fuchsia
-    Mesh boxMesh1 = Mesh(gl, boxGeometry1, material6);
-    boxMesh1.setPosition(Vector3(-2, 3, 0));
-    boxMesh1.setScale(Vector3(1, 1, 1));
-    scene.add(boxMesh1);
+    Mesh boxMesh2 = Mesh(gl, boxGeometry2, boxMaterial2);
+    boxMesh2.name = 'box 2';
+    boxMesh2.setPosition(Vector3(-87, 75, 0));
+    boxMesh2.setScale(Vector3(50, 50, 50));
+    scene.add(boxMesh2);
 
     // Create a cone mesh.
-    ConeGeometry coneGeometry = ConeGeometry(2, 0, 2, 4, 1, true, false);
+    ConeGeometry coneGeometry = ConeGeometry(30, 0, 50, 4, 1, true, false);
     MeshBasicMaterial coneMaterial = MeshBasicMaterial(
       color: Color(0.2, 0.7, 0.2, 1.0),
     );
     Mesh coneMesh = Mesh(gl, coneGeometry, coneMaterial);
-    coneMesh.setPosition(Vector3(2, 3, 0));
+    coneMesh.name = 'cone';
+    coneMesh.setPosition(Vector3(-84, -45, 0));
     coneMesh.setScale(Vector3(1, 1, 1));
     scene.add(coneMesh);
 
     // Create a cylinder mesh.
-    CylinderGeometry cylinderGeometry = CylinderGeometry(1, 4, 8, 5, true, true);
+    CylinderGeometry cylinderGeometry = CylinderGeometry(20, 40, 8, 5, true, true);
     MeshBasicMaterial cylinderMaterial = MeshBasicMaterial(
       color: Color(0.2, 0.3, 0.9, 1.0),
     );
     Mesh cylinderMesh = Mesh(gl, cylinderGeometry, cylinderMaterial);
-    cylinderMesh.setPosition(Vector3(2, 3, 0));
+    cylinderMesh.name = 'cylinder';
+    cylinderMesh.setPosition(Vector3(-160, 0, 0));
     cylinderMesh.setScale(Vector3(1, 1, 1));
     scene.add(cylinderMesh);
   }
 
-  /// Render's the scene.
   render() {
-    // print('Render runining...');
-
-    int index = scene.children.length - 1;
-    scene.children[index].setPosition(translation);
-    scene.children[index].setRotation(rotation.addScalar(0.01));
-    scene.children[index].setScale(scale);
-
     renderer!.render(scene, camera!);
   }
 }

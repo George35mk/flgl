@@ -1,3 +1,7 @@
+## 0.0.4
+* added dispose methods.
+
+
 ## 0.0.3
 
 * improved the render method now the Renderer renders faster.

@@ -29,6 +29,8 @@ class Renderer {
 
   Renderer(this.gl, this.flgl);
 
+  dispose() {}
+
   /// Sets the viewport width.
   void setWidth(double width) {
     this.width = width;
