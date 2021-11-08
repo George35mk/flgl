@@ -56,7 +56,7 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
   // Draw 50 frames per second.
   void startRenderLoop() {
     timer = Timer.periodic(
-      const Duration(milliseconds: 200),
+      const Duration(milliseconds: 33),
       (Timer t) => {
         if (!flgl.isDisposed)
           {
