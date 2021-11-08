@@ -55,9 +55,6 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
     // dispose all the textures.
     scene.dispose(gl);
 
-    // dispose FBO and DBO
-    flgl.dispose();
-
     super.dispose();
   }
 

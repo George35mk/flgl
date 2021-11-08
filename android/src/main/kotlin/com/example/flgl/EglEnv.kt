@@ -115,7 +115,7 @@ class EglEnv {
             EGL14.eglReleaseThread()
             EGL14.eglTerminate(eglDisplay)
 
-            // Log.d(this.javaClass.name, "dispose method called")
+            Log.d(this.javaClass.name, "dispose method called")
         }
         eglSurface = EGL14.EGL_NO_SURFACE
         eglContext = EGL14.EGL_NO_CONTEXT

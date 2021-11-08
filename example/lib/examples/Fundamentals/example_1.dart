@@ -37,7 +37,6 @@ class _Example1State extends State<Example1> {
     // ignore: todo
     // TODO: implement dispose
     super.dispose();
-    flgl.dispose();
   }
 
   @override

@@ -49,6 +49,7 @@ class _Flutter3DMultipleGeometriesState extends State<Flutter3DMultipleGeometrie
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 

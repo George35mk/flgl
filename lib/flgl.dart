@@ -62,6 +62,7 @@ class Flgl {
     });
 
     textureId = res["textureId"];
+    print('textureId: $textureId');
 
     openGLES = OpenGLES(_options);
 
@@ -123,6 +124,7 @@ class Flgl {
   ///
   /// EGL_BAD_SURFACE is generated if surface is not an EGL surface.
   dispose() async {
+    print(' ====================== dispose start ====================== ');
     isDisposed = true;
 
     final args = {"textureId": textureId};
@@ -130,11 +132,12 @@ class Flgl {
 
     // dispose fbo
     print('disposeFBO');
-    disposeFBO(gl, defaultFramebuffer, defaultFramebufferTexture);
+    disposeFBO(gl, defaultFramebuffer, defaultFramebufferTexture); // textureId
 
     // dispose dbo
     print('disposeDBO');
     disposeDBO(gl, dbo);
+    print(' ====================== dispose end ====================== ');
   }
 
   /// Dispose the Frame Buffer Object (FBO)
