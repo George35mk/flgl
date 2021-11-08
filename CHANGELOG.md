@@ -1,4 +1,9 @@
+## 0.0.5
+* new version
+
+
 ## 0.0.4
+
 * added dispose methods.
 
 
