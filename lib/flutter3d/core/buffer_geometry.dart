@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:typed_data';
 
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -23,10 +25,13 @@ var FLOAT_32_UNSIGNED_INT_24_8_REV = 0x8DAD;
 var UNSIGNED_INT_24_8 = 0x84FA;
 
 class BufferGeometry {
+  /// The BufferGeometry index.
   BufferAttribute? index;
+
+  /// The BufferGeometry attributes.
   Map<String, BufferAttribute> attributes = {};
 
-  // new
+  /// The buffer info.
   BufferInfo bufferInfo = BufferInfo();
 
   BufferGeometry();
@@ -58,6 +63,7 @@ class BufferGeometry {
     return this;
   }
 
+  /// Returns the named attribute from the attributes Map.
   BufferAttribute getAttribute(String name) {
     return attributes[name]!;
   }
