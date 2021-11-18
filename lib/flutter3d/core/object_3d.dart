@@ -106,6 +106,10 @@ class Object3D {
     updateMatrix();
   }
 
+  /// Call this method to:
+  /// - detach the vertex and fragment shaders
+  /// - delete the vertex and fragment shaders
+  /// - delete the object program.
   void dispose() {
     gl.useProgram(0);
     gl.detachShader(programInfo!.program, programInfo!.vertexShader);

@@ -48,13 +48,13 @@ class _Flutter3DBoxState extends State<Flutter3DBox> {
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 
-  // Draw 50 frames per second.
   void startRenderLoop() {
     timer = Timer.periodic(
-      const Duration(milliseconds: 33),
+      const Duration(milliseconds: 50),
       (Timer t) => {
         render(),
       },

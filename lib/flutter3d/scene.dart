@@ -11,6 +11,7 @@ class Scene {
     children.add(object);
   }
 
+  // Dispose scene objects.
   dispose(OpenGLContextES gl) {
     children.map((child) {
       if (child.material is MeshBasicMaterial) {
