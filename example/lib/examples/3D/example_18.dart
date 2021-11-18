@@ -7,7 +7,6 @@ import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flgl_example/examples/math/m4.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 

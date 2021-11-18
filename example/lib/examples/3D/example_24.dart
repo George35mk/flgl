@@ -7,7 +7,6 @@ import 'package:flgl_example/examples/controls/transform_control.dart';
 import 'package:flgl_example/examples/controls/transform_controls_manager.dart';
 import 'package:flgl_example/examples/math/m4.dart';
 import 'package:flgl_example/examples/math/math_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
@@ -65,8 +64,7 @@ class _Example24State extends State<Example24> {
     controlsManager!.add(TransformControl(name: 'sy', min: 1.0, max: 5.0, value: scale[1]));
     controlsManager!.add(TransformControl(name: 'sz', min: 1.0, max: 5.0, value: scale[2]));
 
-    controlsManager!
-        .add(TransformControl(name: 'FoV', min: 1, max: 180, value: fieldOfViewRadians));
+    controlsManager!.add(TransformControl(name: 'FoV', min: 1, max: 180, value: fieldOfViewRadians));
   }
 
   @override

@@ -1,23 +1,105 @@
 # flgl
 
-One more plugin to use the openGL ES in Flutter apps.
+One more plugin to expose OpenGL ES in Flutter applications.
+
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`flutter pub add flgl`
 
 
-## How to use the package
+## How FLGL plugin renders 3D graphics?
+
+FLGL plugin uses the Texture widget to render 3D graphics 
+but the texture widget needs a texture id, to get the texture id in android 
+devices for example I use platform-specific android code using platform 
+channels.
+
+Then I make a second call to init egl in android code and then I use the 
+OpenGL ES bindings from dart side to expose the gl context.
+
+The plugin needs your help if you know what to do to improved I am open for 
+pull requests from anybody know about 3D graphics.
+
+
+## What I can do with FLGL_3D class? 
+
+FLGL plugin expose the gl context but is more powerful when you combined with 
+`flgl_3d`, then you can build 3D apps with less code like three.js
+
+An example on how to use the `flgl_3d` class.
 
 ```dart
+import 'package:flgl/flgl.dart';
+import 'package:flgl/flgl_3d.dart';
 
+initScene() {
+  // Setup the camera.
+  camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
+  camera.setPosition(Vector3(0, 0, 300));
+
+  // Setup the renderer.
+  renderer = Renderer(gl, flgl);
+  renderer.setBackgroundColor(0, 0, 0, 1);
+  renderer.setWidth(width);
+  renderer.setHeight(height);
+  renderer.setDPR(dpr);
+
+  // Create the box geometry.
+  BoxGeometry boxGeometry = BoxGeometry(0.5);
+
+  // Create the box material.
+  MeshBasicMaterial material = MeshBasicMaterial(
+    color: Color(1.0, 1.0, 0.0, 1.0),
+  );
+
+  // Create the box mesh.
+  Mesh boxMesh = Mesh(gl, boxGeometry, material);
+  boxMesh.name = 'box';
+  boxMesh.setPosition(Vector3(4, 0, 0));
+  boxMesh.setScale(Vector3(100, 100, 100));
+
+  scene.add(boxMesh);
+}
+
+/// Render's the scene.
+render() {
+  renderer.render(scene, camera);
+}
+```
+
+
+## need help?
+
+Check in examples dir.
+
+## known issues
+The plugin is not stable, renders 3D objects but I need help to
+fix some issues with memory and make sure the app not crashes.
+
+I have tested the plugin only in android devices.
+
+Maybe the issue is with the egl setup or the egl dispose. For unknown reason the app freezes after the 28th reload. 
+
+`¯\_(ツ)_/¯`
+
+
+## How to help
+
+The core files are inside the `lib/`
+
+For example in `lib/flgl.dart` is the root of the plugin, there you will find 
+- how I get the texture id, 
+- how I init the egl
+- how I prepare the egl context
+- how I update the texture.
+- how I dispose the plugin.
+
+
+
+## Example rendering 
+
+```dart
 import 'package:flgl/flgl.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl/flgl_viewport.dart';
@@ -117,11 +199,37 @@ class _Example1State extends State<Example1> {
     }
   """;
 
-  initGl() {
-    int vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    int fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  int createShader(OpenGLContextES gl, int type, String source) {
+    int shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (success == 0 || success == false) {
+      print("Error compiling shader: " + gl.getShaderInfoLog(shader));
+      throw 'Failed to create the shader';
+    }
+    return shader;
+  }
 
-    program = GLUtils.createProgram(gl, vertexShader, fragmentShader);
+  int createProgram(OpenGLContextES gl, int vertexShader, int fragmentShader) {
+    int program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if (success != 0 || success != false) {
+      return program;
+    }
+    print('getProgramInfoLog: ${gl.getProgramInfoLog(program)}');
+    gl.deleteProgram(program);
+    throw 'failed to create the program';
+  }
+
+  initGl() {
+    int vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    int fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    program = createProgram(gl, vertexShader, fragmentShader);
 
     positionLocation = gl.getAttribLocation(program, "a_position");
 
@@ -139,7 +247,7 @@ class _Example1State extends State<Example1> {
 
   draw() {
     // Tell WebGL how to convert from clip space to pixels
-    // gl.viewport(0, 0, width, height);
+    gl.viewport(0, 0, width, height);
 
     // Clear the canvas. sets the canvas background color.
     gl.clearColor(0, 0, 0, 1);
@@ -173,36 +281,4 @@ class _Example1State extends State<Example1> {
     flgl.updateTexture();
   }
 }
-```
-
-### GLUtils class
-```dart
-class GLUtils {
-  static int createShader(OpenGLContextES gl, int type, String source) {
-    int shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (success == 0 || success == false) {
-      print("Error compiling shader: " + gl.getShaderInfoLog(shader));
-      throw 'Failed to create the shader';
-    }
-    return shader;
-  }
-
-  static int createProgram(OpenGLContextES gl, int vertexShader, int fragmentShader) {
-    int program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-    if (success != 0 || success != false) {
-      return program;
-    }
-    print('getProgramInfoLog: ${gl.getProgramInfoLog(program)}');
-    gl.deleteProgram(program);
-    throw 'failed to create the program';
-  }
-}
-
 ```
