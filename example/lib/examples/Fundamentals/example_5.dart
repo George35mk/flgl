@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -19,31 +21,43 @@ class Example5 extends StatefulWidget {
 }
 
 class _Example5State extends State<Example5> {
+  late Flgl flgl;
+  late OpenGLContextES gl;
+
   bool initialized = false;
 
+  // uniform locations.
   dynamic positionLocation;
   dynamic matrixLocation;
   dynamic positionBuffer;
   dynamic program;
 
-  late Flgl flgl;
-  late OpenGLContextES gl;
-
-  late int width = 1333;
-  late int height = 752 - 80 - 48;
+  // viewport info
+  double width = 100;
+  double height = 100;
+  double dpr = 1;
 
   List<double> translation = [200.0, 200.0];
   double angleInRadians = 0.0;
   List<double> scale = [1.0, 1.0];
 
+  Timer? timer;
+
   TransformControlsManager? controlsManager;
 
-  @override
-  void initState() {
-    super.initState();
+  void startRenderLoop() {
+    timer = Timer.periodic(
+      const Duration(milliseconds: 33),
+      (Timer t) => {
+        if (!flgl.isDisposed)
+          {
+            render(),
+          }
+      },
+    );
+  }
 
-    // init control manager.
-    // ! add more controls for scale and rotation.
+  void initControls() {
     controlsManager = TransformControlsManager({});
     controlsManager!.add(TransformControl(name: 'tx', min: 0, max: 1000, value: 250));
     controlsManager!.add(TransformControl(name: 'ty', min: 0, max: 1000, value: 250));
@@ -52,83 +66,73 @@ class _Example5State extends State<Example5> {
     controlsManager!.add(TransformControl(name: 'sy', min: 1, max: 10, value: 1));
   }
 
+  void handleCotrols(TransformControl control) {
+    switch (control.name) {
+      case 'tx':
+        translation[0] = control.value;
+        break;
+      case 'ty':
+        translation[1] = control.value;
+        break;
+      case 'angle':
+        angleInRadians = MathUtils.degToRad(control.value);
+        break;
+      case 'sx':
+        scale[0] = control.value;
+        break;
+      case 'sy':
+        scale[1] = control.value;
+        break;
+      default:
+    }
+  }
+
+  @override
+  void initState() {
+    initControls();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+    dpr = MediaQuery.of(context).devicePixelRatio;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Example 5"),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Stack(
-            children: [
-              FLGLViewport(
-                width: width,
-                height: height,
-                onInit: (Flgl _flgl) {
-                  setState(() {
-                    initialized = true;
-                    flgl = _flgl;
-                    gl = flgl.gl;
+          FLGLViewport(
+            width: width.toInt() + 1,
+            height: height.toInt(),
+            onInit: (Flgl _flgl) {
+              setState(() {
+                initialized = true;
+                flgl = _flgl;
+                gl = flgl.gl;
 
-                    initGl();
-                    draw();
-                  });
-                },
-              ),
-              Positioned(
-                width: 350,
-                // height: 150,
-                top: 10,
-                right: 10,
-                child: GLControls(
-                  transformControlsManager: controlsManager,
-                  onChange: (TransformControl control) {
-                    setState(() {
-                      switch (control.name) {
-                        case 'tx':
-                          translation[0] = control.value;
-                          break;
-                        case 'ty':
-                          translation[1] = control.value;
-                          break;
-                        case 'angle':
-                          angleInRadians = MathUtils.degToRad(control.value);
-                          break;
-                        case 'sx':
-                          scale[0] = control.value;
-                          break;
-                        case 'sy':
-                          scale[1] = control.value;
-                          break;
-                        default:
-                      }
-                      draw();
-                    });
-                  },
-                ),
-              )
-
-              // GLControls(),
-            ],
+                initGl();
+                startRenderLoop();
+              });
+            },
           ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  render();
-                },
-                child: const Text("Render"),
-              )
-            ],
+          Positioned(
+            width: 350,
+            top: 10,
+            right: 10,
+            child: GLControls(
+              transformControlsManager: controlsManager,
+              onChange: (TransformControl control) {
+                handleCotrols(control);
+              },
+            ),
           )
         ],
       ),
     );
-  }
-
-  render() {
-    draw();
   }
 
   String vertexShaderSource = """
@@ -159,20 +163,6 @@ class _Example5State extends State<Example5> {
     }
   """;
 
-  // Fill the buffer with the values that define a triangle.
-  // Note, will put the values in whatever buffer is currently
-  // bound to the ARRAY_BUFFER bind point
-  setGeometry(OpenGLContextES gl) {
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        Float32List.fromList([
-          0, -100, //
-          150, 100, //
-          -175, 100, //
-        ]),
-        gl.STATIC_DRAW);
-  }
-
   initGl() {
     var vertexShader = GLUtils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     var fragmentShader = GLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -189,12 +179,12 @@ class _Example5State extends State<Example5> {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Set Geometry.
-    setGeometry(gl);
+    gl.bufferData(gl.ARRAY_BUFFER, Float32List.fromList([0, -100, 150, 100, -150, 100]), gl.STATIC_DRAW);
   }
 
-  draw() {
+  render() {
     // Tell WebGL how to convert from clip space to pixels
-    // gl.viewport(0, 0, width, height);
+    gl.viewport(0, 0, (width * dpr).toInt() + 1, (height * dpr).toInt());
 
     // Clear the canvas. sets the canvas background color.
     gl.clearColor(0, 0, 0, 1);
