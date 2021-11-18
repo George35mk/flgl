@@ -68,7 +68,8 @@ class BufferGeometry {
     return attributes[name]!;
   }
 
-  getGLTypeForTypedArray(BufferAttribute bufferAttribute) {
+  /// Checks the BufferAttribute and returns the corresponding gl array type.
+  int getGLTypeForTypedArray(BufferAttribute bufferAttribute) {
     var _array = bufferAttribute.array;
     if (_array is Int8List) {
       return BYTE;
@@ -87,7 +88,7 @@ class BufferGeometry {
     } else if (_array is Float32List) {
       return FLOAT;
     } else {
-      throw "unsupported typed array type";
+      throw "This array type are not supported.";
     }
   }
 
