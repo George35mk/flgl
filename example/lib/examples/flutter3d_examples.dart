@@ -1,5 +1,3 @@
-// class Flutter3DExamples {}
-
 import 'package:flutter/material.dart';
 
 class Flutter3DExamples extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'examples/flutter3d_examples/flutter3d_examples.dart';
+import 'examples/flutter3d_examples.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

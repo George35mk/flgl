@@ -1,17 +1,16 @@
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_assets_texture.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_box_edges_example.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_cylinder.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_examples.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_multiple_geometries.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_plane_with_texture.dart';
-import 'package:flgl_example/examples/flutter3d_examples/flutter3d_sphere.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_box.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_cone.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_cylinder.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_triangle.dart';
+import 'package:flgl_example/examples/textures/flutter3d_assets_texture.dart';
+import 'package:flgl_example/examples/edge_geometry/flutter3d_box_edges_example.dart';
+import 'package:flgl_example/examples/flutter3d_examples.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_multiple_geometries.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_plane.dart';
+import 'package:flgl_example/examples/textures/flutter3d_plane_with_texture.dart';
+import 'package:flgl_example/examples/geometries/flutter3d_sphere.dart';
 import 'package:flutter/material.dart';
 import 'package:flgl_example/home.dart';
-
-import 'examples/flutter3d_examples/flutter3d_cone.dart';
-import 'examples/flutter3d_examples/flutter3d_triangle.dart';
 
 void main() {
   runApp(const MyApp());
