@@ -311,10 +311,8 @@ class BFX {
     if (compiled == 0 || compiled == false) {
       // Something went wrong during compilation; get the error
       var lastError = gl.getShaderInfoLog(shader);
-      // errFn('*** Error compiling shader \' $shader' + '\':' + lastError + '\n' + shaderSource.split('\n').map((l,i) => '${i + 1}: ${l}').join('\n'));
-      print('*** Error compiling the shader, shader: $shader, lastError: $lastError');
       gl.deleteShader(shader);
-      throw 'Failed to create the shader';
+      throw ('*** Error compiling the shader, shader: $shader, lastError: $lastError');
     }
 
     return shader;

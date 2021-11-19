@@ -60,7 +60,7 @@ class _SceneGraph4State extends State<SceneGraph4> {
   List<Map<String, dynamic>> objectsToDraw = [];
   List<Node> objects = [];
   var nodeInfosByName = {};
-  var scene;
+  dynamic scene;
 
   // Let's make all the nodes
   var blockGuyNodeDescriptions = {
@@ -348,7 +348,7 @@ class _SceneGraph4State extends State<SceneGraph4> {
     // Update all world matrices in the scene graph
     scene.updateWorldMatrix();
 
-    var adjust;
+    dynamic adjust;
     var speed = 2;
     var c = time * speed;
 
@@ -401,8 +401,8 @@ class _SceneGraph4State extends State<SceneGraph4> {
 
     // ------ Draw the objects --------
 
-    var lastUsedProgramInfo = null;
-    var lastUsedBufferInfo = null;
+    dynamic lastUsedProgramInfo;
+    dynamic lastUsedBufferInfo;
 
     for (var object in objectsToDraw) {
       var programInfo = object['programInfo'];
@@ -478,9 +478,9 @@ class TRS {
   List<double> getMatrix([dst]) {
     dst ??= M4.identity();
 
-    var t = this.translation;
-    var r = this.rotation;
-    var s = this.scale;
+    var t = translation;
+    var r = rotation;
+    var s = scale;
 
     dst = M4.identity();
     dst = M4.translate(dst, t[0], t[1], t[2]);
@@ -524,20 +524,20 @@ class Node {
   updateWorldMatrix([parentWorldMatrix]) {
     var source = this.source;
     if (source != null) {
-      this.localMatrix = source.getMatrix(this.localMatrix);
+      localMatrix = source.getMatrix(localMatrix);
     }
 
     if (parentWorldMatrix != null) {
       // a matrix was passed in so do the math
-      M4.multiply(parentWorldMatrix, this.localMatrix, this.worldMatrix);
+      M4.multiply(parentWorldMatrix, localMatrix, this.worldMatrix);
     } else {
       // no matrix was passed in so just copy local to world
-      M4.copy(this.localMatrix, this.worldMatrix);
+      M4.copy(localMatrix, this.worldMatrix);
     }
 
     // now process all the children
     var worldMatrix = this.worldMatrix;
-    for (var child in this.children) {
+    for (var child in children) {
       child.updateWorldMatrix(worldMatrix);
     }
   }

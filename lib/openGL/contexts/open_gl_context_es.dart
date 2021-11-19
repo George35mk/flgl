@@ -330,13 +330,13 @@ class OpenGLContextES extends OpenGL30Constant {
     return ActiveInfo(_type, _name, _size);
   }
 
-  getActiveAttrib(v0, v1) {
+  getActiveAttrib(int program, int index) {
     var length = calloc<Int32>();
     var size = calloc<Int32>();
     var type = calloc<Uint32>();
     var name = calloc<Int8>(100);
 
-    gl.glGetActiveAttrib(v0, v1, 99, length, size, type, name);
+    gl.glGetActiveAttrib(program, index, 99, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();

@@ -177,9 +177,9 @@ class Flutter3D {
   static Map<String, dynamic> createAttributeSetters(OpenGLContextES gl, int program) {
     Map<String, dynamic> attribSetters = {};
 
-    var numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+    int numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var ii = 0; ii < numAttribs; ++ii) {
-      ActiveInfo attribInfo = gl.getActiveAttrib(program, ii); // ActiveInfo fix this in flgl package.
+      ActiveInfo? attribInfo = gl.getActiveAttrib(program, ii);
       if (attribInfo == null) {
         break;
       }

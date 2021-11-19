@@ -150,9 +150,9 @@ class _Example1State extends State<Example1> {
 
     // draw TRIANGLE
     var primitiveType = gl.TRIANGLES;
-    var offset_draw = 0;
+    var offsetDraw = 0;
     var count = 3;
-    gl.drawArrays(primitiveType, offset_draw, count);
+    gl.drawArrays(primitiveType, offsetDraw, count);
 
     // !super important.
     gl.finish();

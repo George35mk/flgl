@@ -69,7 +69,7 @@ class Object3D {
     } else if (geometry is EdgedBoxGeometry) {
       setupEdgedBox(geometry);
     } else {
-      print('Unkown geometry');
+      throw ('Unkown geometry');
     }
   }
 

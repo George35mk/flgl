@@ -270,8 +270,8 @@ class _SceneGraph1State extends State<SceneGraph1> {
 
     // ------ Draw the objects --------
 
-    var lastUsedProgramInfo = null;
-    var lastUsedBufferInfo = null;
+    dynamic lastUsedProgramInfo;
+    dynamic lastUsedBufferInfo;
 
     for (var object in objectsToDraw) {
       var programInfo = object['programInfo'];
