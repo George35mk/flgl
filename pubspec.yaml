@@ -1,6 +1,6 @@
 name: flgl
 description: One more plugin to use the openGL ES in Flutter apps.
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/George35mk/flgl
 
 environment:
