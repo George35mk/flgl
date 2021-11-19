@@ -60,7 +60,7 @@ class BFX {
   /// - @param {WebGLProgram} program the program to create setters for.
   /// - @returns {Object.<string, function>} an object with a setter by name for each uniform
   static createUniformSetters(OpenGLContextES gl, int program) {
-    var textureUnit = 0;
+    // var textureUnit = 0;
 
     /// Creates a setter for a uniform of the given program with it's
     /// location embedded in the setter.
