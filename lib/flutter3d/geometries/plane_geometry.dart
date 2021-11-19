@@ -56,38 +56,6 @@ class PlaneGeometry extends BufferGeometry {
       }
     }
 
-    /// reorient vertices.
-
-    applyFuncToV3Array(List<double> array, List<double> matrix, Function fn) {
-      var len = array.length;
-      List<double> tmp = [0, 0, 0];
-      for (var ii = 0; ii < len; ii += 3) {
-        fn(matrix, [array[ii], array[ii + 1], array[ii + 2]], tmp);
-        array[ii] = tmp[0];
-        array[ii + 1] = tmp[1];
-        array[ii + 2] = tmp[2];
-      }
-    }
-
-    reorientPositions(List<double> array, List<double> matrix) {
-      applyFuncToV3Array(array, matrix, M4.transformPoint);
-      return array;
-    }
-
-    // var matrix = M4.identity();
-    // var list = ['position', 'normal'];
-    // for (var name in list) {
-    //   if (name == 'position') {
-    //     reorientPositions(vertices, matrix);
-    //   } else if (name == 'normal') {
-    //     reorientPositions(normals, matrix);
-    //   } else if (name == 'uv') {
-    //     reorientPositions(uvs, matrix);
-    //   } else {
-    //     print('Unknown name');
-    //   }
-    // }
-
     // Set index buffers and attributes.
     setIndex(indices);
     setAttribute('position', Float32BufferAttribute(vertices, 3));

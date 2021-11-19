@@ -48,7 +48,6 @@ class ConeGeometry extends BufferGeometry {
     }
 
     int extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-    int numVertices = (radialSubdivisions + 1) * (verticalSubdivisions + 1 + extra);
     int vertsAroundEdge = radialSubdivisions + 1;
 
     // The slant of the cone is constant across its surface

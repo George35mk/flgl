@@ -1,6 +1,5 @@
 import 'package:flgl/flgl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 class FLGLViewport extends StatefulWidget {
   /// The viewport width.

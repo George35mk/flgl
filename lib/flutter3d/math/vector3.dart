@@ -102,16 +102,10 @@ class Vector3 {
   }
 
   /// Adds v to this vector.
-  Vector3 add(Vector3 v, [w]) {
-    if (w != null) {
-      print('THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.');
-      return addVectors(v, w);
-    }
-
+  Vector3 add(Vector3 v) {
     x += v.x;
     y += v.y;
     z += v.z;
-
     return this;
   }
 
@@ -140,16 +134,10 @@ class Vector3 {
   }
 
   /// Subtracts v from this vector.
-  Vector3 sub(Vector3 v, [w]) {
-    if (w != null) {
-      print('THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.');
-      return subVectors(v, w);
-    }
-
+  Vector3 sub(Vector3 v) {
     x -= v.x;
     y -= v.y;
     z -= v.z;
-
     return this;
   }
 
@@ -170,12 +158,7 @@ class Vector3 {
   }
 
   /// Multiplies this vector by v.
-  Vector3 multiply(v, [w]) {
-    if (w != null) {
-      print('THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.');
-      return multiplyVectors(v, w);
-    }
-
+  Vector3 multiply(v) {
     x *= v.x;
     y *= v.y;
     z *= v.z;
@@ -394,12 +377,7 @@ class Vector3 {
   }
 
   /// Sets this vector to cross product of itself and v.
-  Vector3 cross(Vector3 v, [w]) {
-    if (w != null) {
-      print('THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.');
-      return crossVectors(v, w);
-    }
-
+  Vector3 cross(Vector3 v) {
     return crossVectors(this, v);
   }
 

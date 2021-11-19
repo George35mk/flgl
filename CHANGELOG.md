@@ -1,3 +1,15 @@
+## 0.0.6
+* Removed OpenGL ES2 examples
+* Code refactoring
+* Improved the readme file
+* Fixed editor warnings
+* Removed dead code
+* Improved the BufferGeometry class
+* Improved core methods like createProgram
+* Improved the OpenGLContextES class, improved the methods by adding 
+  documentation and return types.
+
+
 ## 0.0.5
 * new version
 

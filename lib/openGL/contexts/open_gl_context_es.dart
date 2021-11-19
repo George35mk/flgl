@@ -330,13 +330,13 @@ class OpenGLContextES extends OpenGL30Constant {
     return ActiveInfo(_type, _name, _size);
   }
 
-  getActiveAttrib(v0, v1) {
+  getActiveAttrib(int program, int index) {
     var length = calloc<Int32>();
     var size = calloc<Int32>();
     var type = calloc<Uint32>();
     var name = calloc<Int8>(100);
 
-    gl.glGetActiveAttrib(v0, v1, 99, length, size, type, name);
+    gl.glGetActiveAttrib(program, index, 99, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
@@ -365,7 +365,16 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glClear(mask);
   }
 
-  createBuffer() {
+  /// Generates buffer's
+  Buffer genBuffers(int n) {
+    Pointer<Uint32> bufferId = calloc<Uint32>();
+    gl.glGenBuffers(n, bufferId);
+    int _v = bufferId.value;
+    calloc.free(bufferId);
+    return Buffer._create(_v);
+  }
+
+  Buffer createBuffer() {
     Pointer<Uint32> bufferId = calloc<Uint32>();
     gl.glGenBuffers(1, bufferId);
     int _v = bufferId.value;
@@ -445,20 +454,20 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   vertexAttribPointer(int index, int size, int type, bool normalized, int stride, int offset) {
-    var offsetPointer = Pointer<Void>.fromAddress(offset);
+    Pointer<Void> offsetPointer = Pointer<Void>.fromAddress(offset);
     gl.glVertexAttribPointer(index, size, type, normalized ? 1 : 0, stride, offsetPointer.cast<Void>());
   }
 
-  drawArrays(int mode, int first, int count) {
-    return gl.glDrawArrays(mode, first, count);
+  void drawArrays(int mode, int first, int count) {
+    gl.glDrawArrays(mode, first, count);
   }
 
-  bindFramebuffer(int target, int framebuffer) {
+  void bindFramebuffer(int target, int framebuffer) {
     // return gl.glBindFramebuffer(target, framebuffer ?? 0); // original code
-    return gl.glBindFramebuffer(target, framebuffer);
+    gl.glBindFramebuffer(target, framebuffer);
   }
 
-  checkFramebufferStatus(v0) {
+  int checkFramebufferStatus(v0) {
     return gl.glCheckFramebufferStatus(v0);
   }
 
@@ -589,6 +598,10 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glLinkProgram(program);
   }
 
+  void validateProgram(int program) {
+    gl.glValidateProgram(program);
+  }
+
   /// Returns the information log for a program object
   /// - [program] pecifies the program object whose information log is to be queried.
   getProgramInfoLog(int program) {
@@ -634,20 +647,20 @@ class OpenGLContextES extends OpenGL30Constant {
     }
   }
 
-  getError() {
+  int getError() {
     return gl.glGetError();
   }
 
   /// Deletes a shader object
   /// - [shader] Specifies the shader object to be deleted.
   void deleteShader(int shader) {
-    return gl.glDeleteShader(shader);
+    gl.glDeleteShader(shader);
   }
 
   /// Deletes a program object
   /// - [program] Specifies the program object to be deleted.
   void deleteProgram(int program) {
-    return gl.glDeleteProgram(program);
+    gl.glDeleteProgram(program);
   }
 
   // Accepts int value type,
@@ -746,10 +759,10 @@ class OpenGLContextES extends OpenGL30Constant {
     var params = calloc<Int32>();
     gl.glGetShaderiv(shader, pname, params);
 
-    final _v = params.value;
+    final value = params.value;
     calloc.free(params);
 
-    return _v;
+    return value;
   }
 
   // getShaderSource(v0) {

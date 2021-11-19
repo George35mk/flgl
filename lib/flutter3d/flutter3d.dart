@@ -1,3 +1,4 @@
+import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import 'core/buffer_geometry.dart';
@@ -9,41 +10,66 @@ class Flutter3D {
 
   Flutter3D();
 
-  /// Creates shader.
-  /// - [gl] the OpenGlES context.
-  /// - [type] the shader type.
-  ///   - `gl.VERTEX_SHADER`
-  ///   - `gl.FRAGMENT_SHADER`
-  /// - [source] the shader source
+  // clears the error.
+  static void glClearError(OpenGLContextES gl) {
+    while (gl.getError() != GL_NO_ERROR) {}
+  }
+
+  // checks the error
+  static void glLogCall(OpenGLContextES gl) {
+    int error = gl.getError();
+    if (error != 0) {
+      throw 'GL Error: $error';
+    }
+    // while (error != 0) {
+    //   throw 'GL Error: $error';
+    // }
+  }
+
+  /// Creates a shader.
+  ///
+  /// Takes a [type] that can be a `gl.VERTEX_SHADER` or `gl.FRAGMENT_SHADER`
+  ///
+  /// and a [source] the shader source as a String.
+  ///
+  /// Finaly returns the shader id.
   static int createShader(OpenGLContextES gl, int type, String source) {
     int shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (success == 0 || success == false) {
-      print("Error compiling shader: " + gl.getShaderInfoLog(shader));
-      throw 'Failed to create the shader';
+    var result = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (result == GL_FALSE) {
+      String shaderName = type == GL_VERTEX_SHADER ? 'vertex' : 'fragment';
+      // gl.deleteShader(shader);
+      throw 'Failed to compile $shaderName shader! the log is: ${gl.getShaderInfoLog(shader)}';
     }
     return shader;
   }
 
-  /// Creates the program.
+  /// Creates a shader program.
   ///
-  /// This creates a program then attatch the vertex
-  /// and fragment shaders and if succed returns the program id.
+  /// First creates a program then attatch the vertex
+  /// and fragment shaders, links the program finally returns the program id.
   ///
-  /// - [gl] the OpenGlES context.
-  /// - [vertexShader] the vertex shader id.
-  /// - [fragmentShader] the fragment shader id.
-  static int createProgram(OpenGLContextES gl, int vertexShader, int fragmentShader) {
+  /// Takes an OpenGl ES context, a [vs] vertex shader id, and a [fs] fragment shader id.
+  ///
+  /// Finally returns the program id.
+  static int createProgram(OpenGLContextES gl, int vs, int fs) {
     int program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
+
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
     gl.linkProgram(program);
+    gl.validateProgram(program);
+
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+
     var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-    if (success != 0 || success != false) {
+    if (success != 0) {
       return program;
     }
+
     print('getProgramInfoLog: ${gl.getProgramInfoLog(program)}');
     gl.deleteProgram(program);
     throw 'failed to create the program';
@@ -53,32 +79,27 @@ class Flutter3D {
   ///
   /// - [gl] the OpenGlES context.
   /// - [bufferInfo] the object buffer info.
-  /// - [type] the draw type. default value is `gl.TRIANGLES`.
-  /// - [tycountpe] the count value. default value is `0`.
+  /// - [mode] the draw type. default value is `gl.TRIANGLES`.
+  /// - [count] the count value. default value is `0`.
   /// - [offset] the offset value. default value is `0`.
-  static drawBufferInfo(OpenGLContextES gl, BufferInfo bufferInfo, [type, count, offset]) {
-    // type = type == null ? gl.TRIANGLES : type;
-    type ??= gl.TRIANGLES;
+  static drawBufferInfo(OpenGLContextES gl, BufferInfo bufferInfo, [mode, count, int offset = 0]) {
+    mode ??= gl.TRIANGLES;
+    count ??= bufferInfo.numElements;
+
     var indices = bufferInfo.indices;
-    var elementType = bufferInfo.elementType;
-    // var numElements = count == null ? bufferInfo.numElements : count;
-    int numElements;
-    if (count == null) {
-      numElements = bufferInfo.numElements;
-    } else {
-      numElements = count;
-    }
-    offset ??= 0;
+    dynamic elementType = bufferInfo.elementType;
+
+    // glClearError(gl);
     if (elementType != null || indices != null) {
-      int primitiveType = type;
-      int _count = numElements;
-      int _type = elementType == null ? gl.UNSIGNED_SHORT : bufferInfo.elementType;
-      int _offset = offset;
+      int type = elementType == null ? gl.UNSIGNED_SHORT : bufferInfo.elementType;
       // 4, 3, 5123, 0
-      gl.drawElements(primitiveType, _count, _type, _offset);
+      // Draw ellements if you have an index buffer.
+      gl.drawElements(mode, count, type, offset);
     } else {
-      gl.drawArrays(type, offset, numElements);
+      // Draw arrays if you don't have an index buffer.
+      gl.drawArrays(mode, offset, count);
     }
+    // glLogCall(gl);
   }
 
   /// Sets the program uniforms.
@@ -156,9 +177,9 @@ class Flutter3D {
   static Map<String, dynamic> createAttributeSetters(OpenGLContextES gl, int program) {
     Map<String, dynamic> attribSetters = {};
 
-    var numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+    int numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var ii = 0; ii < numAttribs; ++ii) {
-      ActiveInfo attribInfo = gl.getActiveAttrib(program, ii); // ActiveInfo fix this in flgl package.
+      ActiveInfo? attribInfo = gl.getActiveAttrib(program, ii);
       if (attribInfo == null) {
         break;
       }
@@ -202,7 +223,7 @@ class Flutter3D {
     Programs.setAttributes(setters, attribs);
 
     if (indices != null) {
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices); // fix the type of bindBuffer(int, int);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices);
     }
 
     // We unbind this because otherwise any change to ELEMENT_ARRAY_BUFFER

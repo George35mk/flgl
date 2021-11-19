@@ -9,8 +9,4 @@ class TransformControlsManager {
   add(TransformControl control) {
     controls[control.name] = control;
   }
-
-  /// TODO add the remove control method.
-  /// TODO add get control by name method.
-  /// TODO add get control by id method.
 }

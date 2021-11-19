@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:typed_data';
 
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
@@ -23,10 +25,13 @@ var FLOAT_32_UNSIGNED_INT_24_8_REV = 0x8DAD;
 var UNSIGNED_INT_24_8 = 0x84FA;
 
 class BufferGeometry {
+  /// The BufferGeometry index.
   BufferAttribute? index;
+
+  /// The BufferGeometry attributes.
   Map<String, BufferAttribute> attributes = {};
 
-  // new
+  /// The buffer info.
   BufferInfo bufferInfo = BufferInfo();
 
   BufferGeometry();
@@ -58,11 +63,13 @@ class BufferGeometry {
     return this;
   }
 
+  /// Returns the named attribute from the attributes Map.
   BufferAttribute getAttribute(String name) {
     return attributes[name]!;
   }
 
-  getGLTypeForTypedArray(BufferAttribute bufferAttribute) {
+  /// Checks the BufferAttribute and returns the corresponding gl array type.
+  int getGLTypeForTypedArray(BufferAttribute bufferAttribute) {
     var _array = bufferAttribute.array;
     if (_array is Int8List) {
       return BYTE;
@@ -81,7 +88,7 @@ class BufferGeometry {
     } else if (_array is Float32List) {
       return FLOAT;
     } else {
-      throw "unsupported typed array type";
+      throw "This array type are not supported.";
     }
   }
 
@@ -89,11 +96,30 @@ class BufferGeometry {
   /// - ARRAY_BUFFER
   /// - gl.ELEMENT_ARRAY_BUFFER
   ///
-  createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
-    var buffer = gl.createBuffer();
+  /// ### Info about the buffer
+  /// Basicaly a buffer is an array.
+  ///
+  Buffer createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
+    Buffer buffer = gl.createBuffer();
     gl.bindBuffer(drawType, buffer);
     gl.bufferData(drawType, bufferAttribute.array, gl.STATIC_DRAW);
     return buffer;
+  }
+
+  /// Creates an attribute buffer.
+  Buffer createAttributeBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    Buffer buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
+    return buffer;
+  }
+
+  /// Creates an index buffer.
+  Buffer createIndexBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    Buffer ibo = gl.createBuffer(); // ibo stands for Index Buffer Object.
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
+    return ibo;
   }
 
   computeBufferInfo(OpenGLContextES gl) {
@@ -123,6 +149,7 @@ class BufferGeometry {
   }
 }
 
+// you can renamed to BufferGeometryInfo.
 class BufferInfo {
   Map<String, AttributeBufferInfo> attribs = {};
   Buffer? indices;

@@ -185,7 +185,7 @@ class Flgl {
 
     var frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      print("Framebuffer (color) check failed: $frameBufferCheck");
+      throw ("Framebuffer (color) check failed: $frameBufferCheck");
     }
 
     Pointer<Uint32> depthBuffer = calloc();
@@ -199,7 +199,7 @@ class Flgl {
 
     frameBufferCheck = _gl.gl.glCheckFramebufferStatus(_gl.FRAMEBUFFER);
     if (frameBufferCheck != _gl.FRAMEBUFFER_COMPLETE) {
-      print("Framebuffer (depth) check failed: $frameBufferCheck");
+      throw ("Framebuffer (depth) check failed: $frameBufferCheck");
     }
 
     // ===================== Setup the Depth Buffer End =====================
