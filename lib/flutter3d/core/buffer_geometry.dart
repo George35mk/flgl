@@ -96,11 +96,30 @@ class BufferGeometry {
   /// - ARRAY_BUFFER
   /// - gl.ELEMENT_ARRAY_BUFFER
   ///
-  createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
-    var buffer = gl.createBuffer();
+  /// ### Info about the buffer
+  /// Basicaly a buffer is an array.
+  ///
+  Buffer createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
+    Buffer buffer = gl.createBuffer();
     gl.bindBuffer(drawType, buffer);
     gl.bufferData(drawType, bufferAttribute.array, gl.STATIC_DRAW);
     return buffer;
+  }
+
+  /// Creates an attribute buffer.
+  Buffer createAttributeBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    Buffer buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
+    return buffer;
+  }
+
+  /// Creates an index buffer.
+  Buffer createIndexBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    Buffer ibo = gl.createBuffer(); // ibo stands for Index Buffer Object.
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
+    return ibo;
   }
 
   computeBufferInfo(OpenGLContextES gl) {
@@ -130,6 +149,7 @@ class BufferGeometry {
   }
 }
 
+// you can renamed to BufferGeometryInfo.
 class BufferInfo {
   Map<String, AttributeBufferInfo> attribs = {};
   Buffer? indices;
