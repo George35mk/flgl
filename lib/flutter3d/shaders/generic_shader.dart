@@ -1,14 +1,10 @@
 String vs = """
   #version 300 es
   
-  in vec4 a_position;
+  layout(location = 0) in vec4 position;
 
-  uniform mat4 u_projection;
-  uniform mat4 u_view;
-  uniform mat4 u_world;
-  
   void main() {
-    gl_Position = u_projection * u_view * u_world * a_position;
+    gl_Position = position;
   }
 """;
 
@@ -17,17 +13,17 @@ String fs = """
   
   precision highp float;
 
-  uniform vec4 u_colorMult;
+  layout(location = 0) out vec4 color;
 
-  // we need to declare an output for the fragment shader
-  out vec4 outColor;
+  uniform vec4 u_Color;
 
   void main() {
-    outColor = u_colorMult;
+    color = u_Color;
+    // color = vec4(1, 0, 0.5, 1);
   }
 """;
 
-Map<String, String> genericShaders = {
+Map<String, String> genericShader = {
   'vertexShader': vs,
   'fragmentShader': fs,
 };

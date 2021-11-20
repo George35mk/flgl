@@ -54,7 +54,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   // Draw 50 frames per second.
   void startRenderLoop() {
     timer = Timer.periodic(
-      const Duration(milliseconds: 33),
+      const Duration(milliseconds: 50),
       (Timer t) => {
         render(),
       },
@@ -103,7 +103,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
   initScene() {
     // Setup the camera.
     camera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
-    camera!.setPosition(Vector3(0, 0, 5));
+    camera!.setPosition(Vector3(0, 0, 300));
 
     // Setup the renderer.
     renderer = Renderer(gl, flgl);
@@ -120,7 +120,7 @@ class _Flutter3DTriangleState extends State<Flutter3DTriangle> {
     Mesh triangleMesh = Mesh(gl, triangleGeometry, material0);
     triangleMesh.name = 'triangle';
     triangleMesh.setPosition(Vector3(0, 0, 0));
-    triangleMesh.setScale(Vector3(1, 1, 1));
+    triangleMesh.setScale(Vector3(20, 20, 20));
     scene.add(triangleMesh);
   }
 

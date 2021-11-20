@@ -366,33 +366,33 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 
   /// Generates buffer's
-  Buffer genBuffers(int n) {
+  int genBuffers(int n) {
     Pointer<Uint32> bufferId = calloc<Uint32>();
     gl.glGenBuffers(n, bufferId);
     int _v = bufferId.value;
     calloc.free(bufferId);
-    return Buffer._create(_v);
+    return _v;
   }
 
-  Buffer createBuffer() {
+  int createBuffer() {
     Pointer<Uint32> bufferId = calloc<Uint32>();
     gl.glGenBuffers(1, bufferId);
     int _v = bufferId.value;
     calloc.free(bufferId);
-    return Buffer._create(_v);
+    return _v;
   }
 
-  deleteBuffer(Buffer v0) {
-    var _buffersList = [v0.bufferId];
+  void deleteBuffer(int buffer) {
+    var _buffersList = [buffer];
     final ptr = calloc<Uint32>(_buffersList.length);
     ptr.asTypedList(1).setAll(0, _buffersList);
     gl.glDeleteBuffers(1, ptr);
     calloc.free(ptr);
   }
 
-  bindBuffer(int target, Buffer buffer) {
+  void bindBuffer(int target, int buffer) {
     // added the correct type on the second param, replace dynamic with Buffer.
-    return gl.glBindBuffer(target, buffer.bufferId);
+    gl.glBindBuffer(target, buffer);
   }
 
   // bufferData(int target, int size, data, int usage) {
@@ -678,8 +678,8 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(ptr);
   }
 
-  enableVertexAttribArray(v0) {
-    return gl.glEnableVertexAttribArray(v0);
+  void enableVertexAttribArray(int index) {
+    gl.glEnableVertexAttribArray(index);
   }
 
   disableVertexAttribArray(v0) {
@@ -818,7 +818,7 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(arrayPointer);
   }
 
-  uniform1i(int location, v0) {
+  uniform1i(int location, int v0) {
     return gl.glUniform1i(location, v0);
   }
 
@@ -842,8 +842,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return;
   }
 
-  uniform1f(int location, num v0) {
-    return gl.glUniform1f(location, v0.toDouble());
+  void uniform1f(int location, double v0) {
+    gl.glUniform1f(location, v0);
   }
 
   uniformMatrix2fv(location, bool transpose, List<num> value) {
@@ -960,7 +960,7 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  uniform4f(location, num v0, num v1, num v2, num v3) {
+  uniform4f(int location, num v0, num v1, num v2, num v3) {
     return gl.glUniform4f(location, v0.toDouble(), v1.toDouble(), v2.toDouble(), v3.toDouble());
   }
 
@@ -1006,10 +1006,10 @@ class OpenGLContextES extends OpenGL30Constant {
   }
 }
 
-class Buffer {
-  final int bufferId;
-  Buffer._create(this.bufferId);
-}
+// class Buffer {
+//   final int bufferId;
+//   Buffer._create(this.bufferId);
+// }
 
 class ActiveInfo {
   String name;

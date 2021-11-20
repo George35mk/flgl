@@ -177,13 +177,16 @@ class Flutter3D {
   static Map<String, dynamic> createAttributeSetters(OpenGLContextES gl, int program) {
     Map<String, dynamic> attribSetters = {};
 
+    // get the count of active attributes in the current program.
     int numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
     for (var ii = 0; ii < numAttribs; ++ii) {
+      // get the attribute type, name and size.
       ActiveInfo? attribInfo = gl.getActiveAttrib(program, ii);
       if (attribInfo == null) {
         break;
       }
-      var index = gl.getAttribLocation(program, attribInfo.name);
+      // get the attribute location - index
+      int index = gl.getAttribLocation(program, attribInfo.name);
       var typeInfo = flutter3DUtils.attrTypeMap[attribInfo.type];
       attribSetters[attribInfo.name] = typeInfo['setter'](gl, index, typeInfo);
     }

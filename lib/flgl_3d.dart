@@ -31,3 +31,14 @@ export './flutter3d/materials/material.dart';
 export './flutter3d/materials/mesh_basic_material.dart';
 
 export './flutter3d/managers/texture_manager.dart';
+
+// new stuf.
+export './flutter3d/geometries/hazel_triangle_geometry.dart';
+export './flutter3d/core/hazel_buffer_geometry.dart';
+export './flutter3d/core/hazel_renderer.dart';
+export './flutter3d/core/index_buffer.dart';
+export './flutter3d/core/vertex_buffer.dart';
+export './flutter3d/core/shader.dart';
+export './flutter3d/core/texture.dart';
+export './flutter3d/core/vertex_array.dart';
+export './flutter3d/shaders/generic_shader.dart';

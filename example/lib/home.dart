@@ -1,3 +1,4 @@
+import 'package:flgl_example/examples/hazel_examples/hazel_examples.dart';
 import 'package:flutter/material.dart';
 import 'examples/flutter3d_examples.dart';
 
@@ -9,12 +10,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final Map<String, dynamic> _pages = {
-    '1': {
+  final Map<int, dynamic> _pages = {
+    0: {
       "name": "Flutter3D Examples",
       "description": "OpenGLES: Drawing Objects with Flutter3D",
       "page": const Flutter3DExamples(),
     },
+    1: {
+      "name": "Hazel Examples",
+      "description": "Examples using the new API",
+      "page": const HazelExamples(),
+    }, // dont forget the coma, i get some errors because of that.
   };
 
   @override
@@ -29,7 +35,7 @@ class _HomeState extends State<Home> {
           itemCount: _pages.keys.length,
           separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade300),
           itemBuilder: (BuildContext context, int index) {
-            String key = _pages.keys.elementAt(index);
+            int key = _pages.keys.elementAt(index);
             var name = _pages[key]['name'];
             var page = _pages[key]['page'];
             var description = _pages[key]['description'];

@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
-
 import '../flutter3d.dart';
 
 class WorkingExample {
@@ -59,7 +57,7 @@ class WorkingExample {
     int positionLocation = gl.getAttribLocation(program, "a_position");
 
     /// Create a position buffer.
-    Buffer positionBuffer = gl.createBuffer();
+    int positionBuffer = gl.createBuffer();
 
     /// bind the buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);

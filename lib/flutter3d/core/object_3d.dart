@@ -119,63 +119,63 @@ class Object3D {
     print('Object3D.dispose called');
   }
 
-  void setupGenericProgramInfo() {
-    programInfo = Flutter3D.createProgramInfo(
-      gl,
-      genericShaders['vertexShader']!,
-      genericShaders['fragmentShader']!,
-    );
-  }
+  // void setupGenericProgramInfo() {
+  //   programInfo = Flutter3D.createProgramInfo(
+  //     gl,
+  //     genericShaders['vertexShader']!,
+  //     genericShaders['fragmentShader']!,
+  //   );
+  // }
 
-  void setupGenericPlaneProgramInfo() {
-    programInfo = Flutter3D.createProgramInfo(
-      gl,
-      planeShaders['vertexShader']!,
-      planeShaders['fragmentShader']!,
-    );
-  }
+  // void setupGenericPlaneProgramInfo() {
+  //   programInfo = Flutter3D.createProgramInfo(
+  //     gl,
+  //     planeShaders['vertexShader']!,
+  //     planeShaders['fragmentShader']!,
+  //   );
+  // }
 
-  void setupPlaneWithTextureProgramInfo() {
-    programInfo = Flutter3D.createProgramInfo(
-      gl,
-      planeWithTextureShaders['vertexShader']!,
-      planeWithTextureShaders['fragmentShader']!,
-    );
-  }
+  // void setupPlaneWithTextureProgramInfo() {
+  //   programInfo = Flutter3D.createProgramInfo(
+  //     gl,
+  //     planeWithTextureShaders['vertexShader']!,
+  //     planeWithTextureShaders['fragmentShader']!,
+  //   );
+  // }
 
-  void setupMesh(BufferGeometry geometry, Material material) {
-    if (geometry is PlaneGeometry) {
-      if (material is MeshBasicMaterial) {
-        if (material.map != null) {
-          setupPlaneWithTextureProgramInfo();
-        } else {
-          setupGenericProgramInfo();
-        }
-      } else {
-        setupGenericProgramInfo();
-      }
-    } else {
-      // 1. Create a program based on geometry and material
-      setupGenericProgramInfo();
-    }
+  // void setupMesh(BufferGeometry geometry, Material material) {
+  //   if (geometry is PlaneGeometry) {
+  //     if (material is MeshBasicMaterial) {
+  //       if (material.map != null) {
+  //         setupPlaneWithTextureProgramInfo();
+  //       } else {
+  //         setupGenericProgramInfo();
+  //       }
+  //     } else {
+  //       setupGenericProgramInfo();
+  //     }
+  //   } else {
+  //     // 1. Create a program based on geometry and material
+  //     setupGenericProgramInfo();
+  //   }
 
-    // 2. Compute the buffer info
-    geometry.computeBufferInfo(gl);
+  //   // 2. Compute the buffer info
+  //   geometry.computeBufferInfo(gl);
 
-    // 3. Setup VAO
-    vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
+  //   // 3. Setup VAO
+  //   vao = Flutter3D.createVAOFromBufferInfo(gl, programInfo!, geometry.bufferInfo);
 
-    // if the material has map texture.
-    if (material is MeshBasicMaterial) {
-      if (material.map != null) {
-        if (material.checkerboard) {
-          setupCheckerboardTexture(material);
-        } else {
-          setupTexture(material);
-        }
-      }
-    }
-  }
+  //   // if the material has map texture.
+  //   if (material is MeshBasicMaterial) {
+  //     if (material.map != null) {
+  //       if (material.checkerboard) {
+  //         setupCheckerboardTexture(material);
+  //       } else {
+  //         setupTexture(material);
+  //       }
+  //     }
+  //   }
+  // }
 
   void setupTriangle(BufferGeometry geometry) {
     // 1. Create a program based on geometry and material
@@ -194,8 +194,6 @@ class Object3D {
 
   void setupPlane(BufferGeometry geometry, Material material) {
     // 1. init program based on geometry and material
-
-    // planeWithTextureShaders
     if (material is MeshBasicMaterial) {
       if (material.map != null) {
         programInfo = Flutter3D.createProgramInfo(

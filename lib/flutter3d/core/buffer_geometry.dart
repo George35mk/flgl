@@ -99,38 +99,39 @@ class BufferGeometry {
   /// ### Info about the buffer
   /// Basicaly a buffer is an array.
   ///
-  Buffer createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
-    Buffer buffer = gl.createBuffer();
-    gl.bindBuffer(drawType, buffer);
-    gl.bufferData(drawType, bufferAttribute.array, gl.STATIC_DRAW);
-    return buffer;
-  }
+  // int createBufferFromBufferAttribute(OpenGLContextES gl, BufferAttribute bufferAttribute, int drawType) {
+  //   int buffer = gl.createBuffer();
+  //   gl.bindBuffer(drawType, buffer);
+  //   gl.bufferData(drawType, bufferAttribute.array, gl.STATIC_DRAW);
+  //   return buffer;
+  // }
 
   /// Creates an attribute buffer.
-  Buffer createAttributeBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
-    Buffer buffer = gl.createBuffer();
+  int createAttributeBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    int buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
     return buffer;
   }
 
   /// Creates an index buffer.
-  Buffer createIndexBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
-    Buffer ibo = gl.createBuffer(); // ibo stands for Index Buffer Object.
+  int createIndexBuffer(OpenGLContextES gl, BufferAttribute bufferAttribute) {
+    int ibo = gl.createBuffer(); // ibo stands for Index Buffer Object.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
     return ibo;
   }
 
-  computeBufferInfo(OpenGLContextES gl) {
+  void computeBufferInfo(OpenGLContextES gl) {
     var attributes = ['position', 'normal', 'uv']; // also the color...
     for (int i = 0; i < attributes.length; i++) {
       String attributeName = attributes[i];
       BufferAttribute attribute = getAttribute(attributeName);
 
       bufferInfo.attribs[attributeName] = AttributeBufferInfo(
-        buffer: createBufferFromBufferAttribute(gl, attribute, gl.ARRAY_BUFFER),
+        buffer: createAttributeBuffer(gl, attribute),
         numComponents: attribute.itemSize,
+        // mmm we now that the attrute buffer - vertex buffer most of the times is Float32List, so we can set FLOAT
         type: getGLTypeForTypedArray(attribute),
         normalize: attribute.normalized,
         stride: 0,
@@ -140,7 +141,7 @@ class BufferGeometry {
     }
 
     if (index != null) {
-      bufferInfo.indices = createBufferFromBufferAttribute(gl, index!, gl.ELEMENT_ARRAY_BUFFER);
+      bufferInfo.indices = createIndexBuffer(gl, index!);
       bufferInfo.numElements = index!.getLength();
       bufferInfo.elementType = getGLTypeForTypedArray(index!);
     } else {
@@ -152,7 +153,7 @@ class BufferGeometry {
 // you can renamed to BufferGeometryInfo.
 class BufferInfo {
   Map<String, AttributeBufferInfo> attribs = {};
-  Buffer? indices;
+  int? indices;
   late int numElements;
   late int elementType;
   BufferInfo();
@@ -169,7 +170,7 @@ class BufferInfo {
 class AttributeBufferInfo {
   /// The buffer position or Buffer instance.
   /// var buffer = gl.createBuffer();
-  Buffer buffer;
+  int buffer;
 
   /// components per iteration.
   int numComponents;
