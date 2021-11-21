@@ -12,12 +12,17 @@ class _NeonExamplesState extends State<NeonExamples> {
     0: {
       "name": "flutter 3D triangle geometry",
       "description": "Example of drawing a triangle using flutter 3D",
-      "route": 'triangle',
+      "route": 'quad',
     },
     1: {
-      "name": "flutter 3D texture example",
+      "name": "neon texture example",
       "description": "Example of drawing a triangle using flutter 3D",
       "route": 'texture',
+    },
+    2: {
+      "name": "batch rendering colors example",
+      "description": "Example of drawing a triangle using flutter 3D",
+      "route": 'batch_rendering_colors',
     },
   };
 

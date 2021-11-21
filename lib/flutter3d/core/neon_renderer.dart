@@ -12,9 +12,6 @@ class NeonRenderer {
   /// The OpenGL ES context.
   OpenGLContextES gl;
 
-  /// dummy var for red color.
-  double r = 0;
-
   NeonRenderer(this.flgl, this.gl);
 
   /// Clear the canvas AND the depth buffer.
@@ -25,7 +22,9 @@ class NeonRenderer {
 
   draw(VertexArray va, IndexBuffer ib, Shader shader) {
     shader.bind();
-    shader.setUniform4f('u_Color', r, 0, 1, 1); // you need to bind the shader before you set any uniform.
+
+    // This is the best place to set uniforms just before you bind the VAO object.
+    // shader.setUniform4f('u_Color', r, 0, 1, 1); // you need to bind the shader before you set any uniform.
 
     va.bind();
     ib.bind();
@@ -34,10 +33,5 @@ class NeonRenderer {
     int count = ib.getCount();
 
     gl.drawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);
-
-    if (r >= 1) {
-      r = 0;
-    }
-    r += 0.01;
   }
 }

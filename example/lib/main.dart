@@ -2,9 +2,10 @@ import 'package:flgl_example/examples/geometries/flutter3d_box.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_cone.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_triangle.dart';
+import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_colors_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
 import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
-import 'package:flgl_example/examples/neon_examples/neon_triangle.dart';
+import 'package:flgl_example/examples/neon_examples/neon_quad_example.dart';
 import 'package:flgl_example/examples/textures/flutter3d_assets_texture.dart';
 import 'package:flgl_example/examples/edge_geometry/flutter3d_box_edges_example.dart';
 import 'package:flgl_example/examples/flutter3d_examples.dart';
@@ -56,8 +57,9 @@ class _MyAppState extends State<MyApp> {
 
         // Examples using the Neon API
         '/neon': (context) => const NeonExamples(),
-        '/neon/triangle': (context) => const NeonTriangle(),
+        '/neon/quad': (context) => const NeonQuadExample(),
         '/neon/texture': (context) => const NeonTextureExample(),
+        '/neon/batch_rendering_colors': (context) => const NeonBatchRenderingColorsExample(),
       },
     );
   }

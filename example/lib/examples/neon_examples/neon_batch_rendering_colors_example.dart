@@ -4,18 +4,19 @@ import 'dart:typed_data';
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
+import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
-class NeonTriangle extends StatefulWidget {
-  const NeonTriangle({Key? key}) : super(key: key);
+class NeonBatchRenderingColorsExample extends StatefulWidget {
+  const NeonBatchRenderingColorsExample({Key? key}) : super(key: key);
 
   @override
-  _NeonTriangleState createState() => _NeonTriangleState();
+  _NeonBatchRenderingColorsExampleState createState() => _NeonBatchRenderingColorsExampleState();
 }
 
-class _NeonTriangleState extends State<NeonTriangle> {
+class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColorsExample> {
   /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
 
@@ -57,6 +58,11 @@ class _NeonTriangleState extends State<NeonTriangle> {
   @override
   void dispose() {
     timer?.cancel();
+    // dispose
+    va.dispose();
+    ib.dispose();
+    vb.dispose();
+    shader.dispose();
     super.dispose();
   }
 
@@ -65,7 +71,10 @@ class _NeonTriangleState extends State<NeonTriangle> {
     timer = Timer.periodic(
       const Duration(milliseconds: 50),
       (Timer t) => {
-        render(),
+        if (!flgl.isDisposed)
+          {
+            render(),
+          }
       },
     );
   }
@@ -78,7 +87,7 @@ class _NeonTriangleState extends State<NeonTriangle> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Triangle"),
+        title: const Text("Neon: Texture"),
       ),
       body: Stack(
         children: [
@@ -109,56 +118,74 @@ class _NeonTriangleState extends State<NeonTriangle> {
   }
 
   /// Initialize's the scene.
-  initScene() {
+  initScene() async {
     List<double> positions = [
-      -0.5, -0.5, // 0
-      0.5, -0.5, // 1
-      0.5, 0.5, // 2
-      -0.5, 0.5, // 3
-      // works with 3 elements
-      // 0.0, 0, 0, //
-      // 0, 0.5, 0, //
-      // 0.5, 0, 0, //
+      -0.5, -0.5, 0.0, 0.0, // 0
+      0.5, -0.5, 1.0, 0.0, // 1
+      0.5, 0.5, 1.0, 1.0, // 2
+      -0.5, 0.5, 0.0, 1.0, // 3
     ];
 
-    // var positions = [
-    //   -0.5, -0.5, 0.0, 0.0, // 0
-    //   0.5, -0.5, 1.0, 0.0, // 1
-    //   0.5, 0.5, 1.0, 1.0, // 2
-    //   -0.5, 0.5, 0.0, 1.0, // 2
-    // ];
-    var indices = [
+    List<int> indices = [
       0, 1, 2, //
       2, 3, 0, //
     ];
 
-    // One more example of indices using old code.
-    // [0]:0
-    // [1]:2
-    // [2]:1
-    // [3]:2
-    // [4]:3
-    // [5]:1
+    // use this when you using png textures.
+    gl.blendFunc(GL_SRC1_ALPHA_EXT, GL_ONE_MINUS_SRC_ALPHA);
 
     va = VertexArray(gl);
-    vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 2);
+    vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 4);
 
     // init vertex buffer layout.
     layout = VertexBufferLayout();
+    layout.pushFloat(2);
     layout.pushFloat(2);
     va.addBuffer(vb, layout);
 
     // init index buffer.
     ib = IndexBuffer(gl, Uint16List.fromList(indices), 6);
 
-    // init shader.
+    /// The orthographic projection matrix.
+    // List<double> projection = M4.orthographic(-2.0, 2.0, -1.0, 1.0, -1.0, 1.0);
+    var aspect = dpr; // 1.5
+    List<double> projection = M4.orthographic(
+        (width * aspect) / -2, (width * aspect) / 2, (height * aspect) / -2, (height * aspect) / 2, -1, 1);
+
+    // var cameraMatrix = M4.lookAt(
+    //   [1, 1, 50],
+    //   [1, 1, 1],
+    //   [0, 1, 0],
+    // );
+    // var viewMatrix = M4.inverse(cameraMatrix);
+    var viewMatrix = M4.translate(M4.identity(), 0, 0, 0);
+
+    var modelMatrix = M4.translate(M4.identity(), 0, 0, 0);
+    modelMatrix = M4.xRotate(modelMatrix, MathUtils.radToDeg(0));
+    modelMatrix = M4.yRotate(modelMatrix, MathUtils.radToDeg(0));
+    modelMatrix = M4.zRotate(modelMatrix, MathUtils.radToDeg(90));
+    modelMatrix = M4.scale(modelMatrix, 500, 500, 1);
+
+    var vp = M4.multiply(projection, viewMatrix);
+    var mvp = M4.multiply(vp, modelMatrix);
+
+    // initiaze shader.
     shader = Shader(gl, genericShader);
     shader.bind();
 
-    va.unBind(); // vao
-    vb.unBind(); // vertex buffer
-    ib.unBind(); // index buffer
-    shader.unBind();
+    // initialize texture.
+    NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
+    await texture.loadTexture('assets/images/pepsi_transparent.png');
+    texture.bind();
+
+    // set uniforms.
+    shader.setUniform1i('u_Texture', 0);
+    shader.setUniformMat4f('u_Projection', mvp);
+
+    va.unBind(); // unBind vao.
+    vb.unBind(); // unBind vertex buffer.
+    ib.unBind(); // unBind index buffer.
+    shader.unBind(); // unBind shader.
 
     neonRenderer = NeonRenderer(flgl, gl);
   }
@@ -168,7 +195,7 @@ class _NeonTriangleState extends State<NeonTriangle> {
     // renderer!.render(scene, camera!);
 
     gl.viewport(0, 0, (width * dpr).toInt(), (height * dpr).toInt());
-    gl.clearColor(1, 1, 1, 1);
+    gl.clearColor(0, 0, 0, 1);
 
     // Clear the canvas AND the depth buffer.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -177,9 +204,13 @@ class _NeonTriangleState extends State<NeonTriangle> {
     // enable CULL_FACE and DEPTH_TEST.
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND); // fixes the png transparent issue.
 
     // draw
-    neonRenderer.draw(va, ib, shader);
+    // otherwise I get late initialization error.
+    if (neonRenderer != null) {
+      neonRenderer.draw(va, ib, shader);
+    }
 
     // ! super important.
     // ! never put this inside a loop because it takes some time
