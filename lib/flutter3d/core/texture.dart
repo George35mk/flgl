@@ -20,9 +20,9 @@ class NeonTexture {
   Future<TextureInfo> loadTexture(String filePath) async {
     TextureInfo textureInfo = await TextureManager.loadTexture(filePath);
 
-    print('width: ${textureInfo.width}');
-    print('height: ${textureInfo.height}');
-    print('imageData: ${textureInfo.imageData}');
+    print('texture width: ${textureInfo.width}');
+    print('texture height: ${textureInfo.height}');
+    // print('texture imageData: ${textureInfo.imageData}');
 
     width = textureInfo.width;
     height = textureInfo.height;
