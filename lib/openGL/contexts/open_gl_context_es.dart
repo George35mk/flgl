@@ -769,13 +769,6 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.glGetShaderSource(v0);
   // }
 
-  void uniformMatrix4fv(int location, bool transpose, List<double> value) {
-    var count = value.length ~/ 16;
-    var arrayPointer = floatListToArrayPointer(value);
-    gl.glUniformMatrix4fv(location, count, transpose ? 1 : 0, arrayPointer);
-    calloc.free(arrayPointer);
-  }
-
   void uniformMatrix2x3fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 6;
     var arrayPointer = floatListToArrayPointer(value);
@@ -822,10 +815,6 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glUniform1i(location, v0);
   }
 
-  void uniform3f(int location, num v1, num v2, num v3) {
-    gl.glUniform3f(location, v1.toDouble(), v2.toDouble(), v3.toDouble());
-  }
-
   void uniform1fv(int location, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
@@ -840,10 +829,6 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(arrayPointer);
   }
 
-  void uniform1f(int location, double v0) {
-    gl.glUniform1f(location, v0);
-  }
-
   void uniformMatrix2fv(location, bool transpose, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
@@ -855,6 +840,13 @@ class OpenGLContextES extends OpenGL30Constant {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniformMatrix3fv(location, value.length ~/ 9, transpose ? 1 : 0, arrayPointer);
+    calloc.free(arrayPointer);
+  }
+
+  void uniformMatrix4fv(int location, bool transpose, List<double> value) {
+    var count = value.length ~/ 16;
+    var arrayPointer = floatListToArrayPointer(value);
+    gl.glUniformMatrix4fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
@@ -877,8 +869,16 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr); // free memory
   }
 
-  void uniform2f(v0, num v1, num v2) {
-    gl.glUniform2f(v0, v1.toDouble(), v2.toDouble());
+  void uniform1f(int location, double v0) {
+    gl.glUniform1f(location, v0);
+  }
+
+  void uniform2f(int location, double v1, double v2) {
+    gl.glUniform2f(location, v1, v2);
+  }
+
+  void uniform3f(int location, double v0, double v1, double v2) {
+    gl.glUniform3f(location, v0, v1, v2);
   }
 
   void uniform1iv(location, value) {

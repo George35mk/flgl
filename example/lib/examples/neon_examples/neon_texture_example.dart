@@ -207,7 +207,10 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     gl.enable(gl.BLEND); // fixes the png transparent issue.
 
     // draw
-    neonRenderer.draw(va, ib, shader);
+    // otherwise I get late initialization error.
+    if (neonRenderer != null) {
+      neonRenderer.draw(va, ib, shader);
+    }
 
     // ! super important.
     // ! never put this inside a loop because it takes some time

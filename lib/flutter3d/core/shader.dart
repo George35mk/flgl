@@ -2,17 +2,26 @@ import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 class Shader {
+  /// The OpenGL ES context.
   OpenGLContextES gl;
+
+  /// the program location id.
   int m_RendererID = 0;
-  int location = 0;
+
+  /// The shader source code.
+  Map<String, String> shaderSource;
+
+  /// Caches the uniforms location id.
   Map<String, int> m_UniformLocationCache = {};
 
-  Shader(this.gl, Map<String, String> shaderSource) {
+  Shader(this.gl, this.shaderSource) {
     // 1. Create a program based on geometry and material
 
+    // initialize shaders.
     int vertexShader = createShader(gl, gl.VERTEX_SHADER, shaderSource['vertexShader']!);
     int fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, shaderSource['fragmentShader']!);
 
+    // initialize program.
     m_RendererID = createProgram(gl, vertexShader, fragmentShader);
   }
 
@@ -77,28 +86,6 @@ class Shader {
     throw 'failed to create the program';
   }
 
-  // bool compileShader() {}
-
-  // set uniforms
-
-  // one use of this setter is on textures.
-  setUniform1i(String name, int value) {
-    gl.uniform1i(getUniformLocation(name), value);
-  }
-
-  setUniform1f(String name, double value) {
-    gl.uniform1f(getUniformLocation(name), value);
-  }
-
-  setUniform4f(String name, double v0, double v1, double v2, double v3) {
-    gl.uniform4f(getUniformLocation(name), v0, v1, v2, v3);
-  }
-
-  /// you can set uniforms with matrix4 data.
-  setUniformMat4f(String name, List<double> value) {
-    gl.uniformMatrix4fv(getUniformLocation(name), false, value);
-  }
-
   /// Get uniform location.
   ///
   /// Keep in mind.
@@ -108,12 +95,55 @@ class Shader {
     if (m_UniformLocationCache[name] != null) {
       return m_UniformLocationCache[name]!;
     } else {
-      location = gl.getUniformLocation(m_RendererID, name);
+      int location = gl.getUniformLocation(m_RendererID, name);
       if (location == -1) {
         print("Warning: Uniform [$name] location not found, the value is: $location");
       }
       m_UniformLocationCache[name] = location;
       return location;
     }
+  }
+
+  // one use of this setter is on textures.
+  setUniform1i(String name, int value) {
+    int location = getUniformLocation(name);
+    gl.uniform1i(location, value);
+  }
+
+  setUniform1f(String name, double value) {
+    int location = getUniformLocation(name);
+    gl.uniform1f(location, value);
+  }
+
+  // you ca use Vector2 here as a value.
+  setUniform2f(String name, double v0, double v1) {
+    int location = getUniformLocation(name);
+    gl.uniform2f(location, v0, v1);
+  }
+
+  // you ca use Vector3 here as a value.
+  setUniform3f(String name, double v0, double v1, double v2) {
+    int location = getUniformLocation(name);
+    gl.uniform3f(location, v0, v1, v2);
+  }
+
+  // you ca use Vector4 here as a value.
+  setUniform4f(String name, double v0, double v1, double v2, double v3) {
+    int location = getUniformLocation(name);
+    gl.uniform4f(location, v0, v1, v2, v3);
+  }
+
+  /// Sets uniform mat3f
+  /// - [value] Matrix3
+  setUniformMat3f(String name, List<double> value) {
+    int location = getUniformLocation(name);
+    gl.uniformMatrix3fv(location, false, value);
+  }
+
+  /// Sets uniform mat4f
+  /// you can set uniforms with matrix4 data.
+  setUniformMat4f(String name, List<double> value) {
+    int location = getUniformLocation(name);
+    gl.uniformMatrix4fv(location, false, value);
   }
 }
