@@ -1,4 +1,4 @@
-import 'package:flgl_example/examples/hazel_examples/hazel_examples.dart';
+import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
 import 'package:flutter/material.dart';
 import 'examples/flutter3d_examples.dart';
 
@@ -17,9 +17,9 @@ class _HomeState extends State<Home> {
       "page": const Flutter3DExamples(),
     },
     1: {
-      "name": "Hazel Examples",
-      "description": "Examples using the new API",
-      "page": const HazelExamples(),
+      "name": "Neon Examples",
+      "description": "Examples using the new API (Neon)",
+      "page": const NeonExamples(),
     }, // dont forget the coma, i get some errors because of that.
   };
 

@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 
-class HazelExamples extends StatefulWidget {
-  const HazelExamples({Key? key}) : super(key: key);
+class NeonExamples extends StatefulWidget {
+  const NeonExamples({Key? key}) : super(key: key);
 
   @override
-  _HazelExamplesState createState() => _HazelExamplesState();
+  _NeonExamplesState createState() => _NeonExamplesState();
 }
 
-class _HazelExamplesState extends State<HazelExamples> {
+class _NeonExamplesState extends State<NeonExamples> {
   final Map<int, Map<String, String>> _pages = {
     0: {
       "name": "flutter 3D triangle geometry",
       "description": "Example of drawing a triangle using flutter 3D",
       "route": 'triangle',
+    },
+    1: {
+      "name": "flutter 3D texture example",
+      "description": "Example of drawing a triangle using flutter 3D",
+      "route": 'texture',
     },
   };
 
@@ -38,7 +43,7 @@ class _HazelExamplesState extends State<HazelExamples> {
               subtitle: Text(description!),
               contentPadding: const EdgeInsets.all(5.0),
               onTap: () {
-                Navigator.pushNamed(context, '/hazel/$route');
+                Navigator.pushNamed(context, '/neon/$route');
               },
             );
           },

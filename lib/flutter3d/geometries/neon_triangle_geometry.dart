@@ -1,13 +1,13 @@
 import 'package:flgl/flutter3d/core/buffer_attribute.dart';
-import 'package:flgl/flutter3d/core/hazel_buffer_geometry.dart';
+import 'package:flgl/flutter3d/core/neon_buffer_geometry.dart';
 
-class HazelTriangleGeometry extends HazelBufferGeometry {
+class NeonTriangleGeometry extends NeonBufferGeometry {
   List<int> indices = [];
   List<double> vertices = [];
   List<double> normals = [];
   List<double> uvs = [];
 
-  TriangleGeometry() {
+  NeonTriangleGeometry() {
     // Compute the indices, vertices, normals and uvs.
     indices = [0, 2, 1]; // 1
     vertices = [0, 0, 0, 0, 0.5, 0, 0.5, 0, 0]; // 3

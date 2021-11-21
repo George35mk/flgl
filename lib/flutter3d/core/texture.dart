@@ -4,7 +4,7 @@ import 'package:flgl/flutter3d/managers/texture_manager.dart';
 import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
-class Texture {
+class NeonTexture {
   OpenGLContextES gl;
   int m_RendererID = 0;
   Uint8List? m_LocalBuffer;
@@ -13,12 +13,12 @@ class Texture {
   int height = 0;
   int bpp = 0; // bits per pixel.
 
-  Texture(this.gl, this.filePath) {
-    loadTexture();
+  NeonTexture(this.gl, this.filePath) {
+    // loadTexture(filePath);
   }
 
-  loadTexture() async {
-    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/a.png');
+  Future<TextureInfo> loadTexture(String filePath) async {
+    TextureInfo textureInfo = await TextureManager.loadTexture(filePath);
 
     print('width: ${textureInfo.width}');
     print('height: ${textureInfo.height}');
@@ -42,8 +42,10 @@ class Texture {
     // some times you need the
     if (m_LocalBuffer != null) {
       // stbi_image_free(m_LocalBuffer); // with stb lib.
-      m_LocalBuffer!.clear();
+      // m_LocalBuffer!.clear();
     }
+
+    return textureInfo;
   }
 
   getWidth() {

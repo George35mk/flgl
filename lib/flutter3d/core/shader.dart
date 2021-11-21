@@ -1,4 +1,3 @@
-import 'package:flgl/flutter3d/shaders/generic_shader.dart';
 import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 

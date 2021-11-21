@@ -2,8 +2,9 @@ import 'package:flgl_example/examples/geometries/flutter3d_box.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_cone.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_triangle.dart';
-import 'package:flgl_example/examples/hazel_examples/hazel_examples.dart';
-import 'package:flgl_example/examples/hazel_examples/hazel_triangle.dart';
+import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
+import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
+import 'package:flgl_example/examples/neon_examples/neon_triangle.dart';
 import 'package:flgl_example/examples/textures/flutter3d_assets_texture.dart';
 import 'package:flgl_example/examples/edge_geometry/flutter3d_box_edges_example.dart';
 import 'package:flgl_example/examples/flutter3d_examples.dart';
@@ -53,9 +54,10 @@ class _MyAppState extends State<MyApp> {
         '/flutter3d_examples/plane_assets_texture': (context) => const Flutter3DAssetsTexture(),
         '/flutter3d_examples/box_edges_example': (context) => const Flutter3DBoxEdgesExample(),
 
-        // hazel examples
-        '/hazel': (context) => const HazelExamples(),
-        '/hazel/triangle': (context) => const HazelTriangle(),
+        // Examples using the Neon API
+        '/neon': (context) => const NeonExamples(),
+        '/neon/triangle': (context) => const NeonTriangle(),
+        '/neon/texture': (context) => const NeonTextureExample(),
       },
     );
   }

@@ -5,7 +5,7 @@ import 'package:flgl/flutter3d/core/vertex_array.dart';
 import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
-class HazelRenderer {
+class NeonRenderer {
   /// The flgl instance.
   Flgl flgl;
 
@@ -15,7 +15,7 @@ class HazelRenderer {
   /// dummy var for red color.
   double r = 0;
 
-  HazelRenderer(this.flgl, this.gl);
+  NeonRenderer(this.flgl, this.gl);
 
   /// Clear the canvas AND the depth buffer.
   clear() {

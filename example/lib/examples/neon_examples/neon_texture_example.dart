@@ -8,14 +8,14 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
-class HazelTriangle extends StatefulWidget {
-  const HazelTriangle({Key? key}) : super(key: key);
+class NeonTextureExample extends StatefulWidget {
+  const NeonTextureExample({Key? key}) : super(key: key);
 
   @override
-  _HazelTriangleState createState() => _HazelTriangleState();
+  _NeonTextureExampleState createState() => _NeonTextureExampleState();
 }
 
-class _HazelTriangleState extends State<HazelTriangle> {
+class _NeonTextureExampleState extends State<NeonTextureExample> {
   /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
 
@@ -47,7 +47,7 @@ class _HazelTriangleState extends State<HazelTriangle> {
   late VertexBufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
-  late HazelRenderer hazelRenderer;
+  late NeonRenderer hazelRenderer;
 
   @override
   void initState() {
@@ -78,7 +78,7 @@ class _HazelTriangleState extends State<HazelTriangle> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Hazel: Triangle"),
+        title: const Text("Neon: Triangle"),
       ),
       body: Stack(
         children: [
@@ -109,42 +109,25 @@ class _HazelTriangleState extends State<HazelTriangle> {
   }
 
   /// Initialize's the scene.
-  initScene() {
+  initScene() async {
     List<double> positions = [
-      -0.5, -0.5, // 0
-      0.5, -0.5, // 1
-      0.5, 0.5, // 2
-      -0.5, 0.5, // 3
-      // works with 3 elements
-      // 0.0, 0, 0, //
-      // 0, 0.5, 0, //
-      // 0.5, 0, 0, //
+      -0.5, -0.5, 0.0, 0.0, // 0
+      0.5, -0.5, 1.0, 0.0, // 1
+      0.5, 0.5, 1.0, 1.0, // 2
+      -0.5, 0.5, 0.0, 1.0, // 3
     ];
 
-    // var positions = [
-    //   -0.5, -0.5, 0.0, 0.0, // 0
-    //   0.5, -0.5, 1.0, 0.0, // 1
-    //   0.5, 0.5, 1.0, 1.0, // 2
-    //   -0.5, 0.5, 0.0, 1.0, // 2
-    // ];
-    var indices = [
+    List<int> indices = [
       0, 1, 2, //
       2, 3, 0, //
     ];
 
-    // One more example of indices using old code.
-    // [0]:0
-    // [1]:2
-    // [2]:1
-    // [3]:2
-    // [4]:3
-    // [5]:1
-
     va = VertexArray(gl);
-    vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 2);
+    vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 4);
 
     // init vertex buffer layout.
     layout = VertexBufferLayout();
+    layout.pushFloat(2);
     layout.pushFloat(2);
     va.addBuffer(vb, layout);
 
@@ -155,12 +138,17 @@ class _HazelTriangleState extends State<HazelTriangle> {
     shader = Shader(gl, genericShader);
     shader.bind();
 
+    NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
+    await texture.loadTexture('assets/images/pepsi_transparent.png');
+    texture.bind();
+    shader.setUniform1i('u_Texture', 0);
+
     va.unBind(); // vao
     vb.unBind(); // vertex buffer
     ib.unBind(); // index buffer
     shader.unBind();
 
-    hazelRenderer = HazelRenderer(flgl, gl);
+    hazelRenderer = NeonRenderer(flgl, gl);
   }
 
   /// Render's the scene.
