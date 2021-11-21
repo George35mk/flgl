@@ -25,7 +25,7 @@ class NeonRenderer {
 
   draw(VertexArray va, IndexBuffer ib, Shader shader) {
     shader.bind();
-    shader.setUniform4f('u_Color', r, 0, 1, 1); // you need to bind the shader befor you set any uniform.
+    shader.setUniform4f('u_Color', r, 0, 1, 1); // you need to bind the shader before you set any uniform.
 
     va.bind();
     ib.bind();

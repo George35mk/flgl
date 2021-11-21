@@ -6,7 +6,8 @@ String vs = """
 
   out vec2 v_TexCoord;
 
-  uniform mat4 u_Projection; // or use u_MVP
+  // or use u_MVP
+  uniform mat4 u_Projection; 
 
   void main() {
     gl_Position = u_Projection * position;
@@ -29,6 +30,7 @@ String fs = """
   void main() {
     vec4 texColor = texture(u_Texture, v_TexCoord);
     color = texColor;
+    // color = vec4(1);
   }
 """;
 

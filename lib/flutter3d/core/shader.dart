@@ -94,17 +94,23 @@ class Shader {
     gl.uniform4f(getUniformLocation(name), v0, v1, v2, v3);
   }
 
+  /// you can set uniforms with matrix4 data.
   setUniformMat4f(String name, List<double> value) {
     gl.uniformMatrix4fv(getUniformLocation(name), false, value);
   }
 
+  /// Get uniform location.
+  ///
+  /// Keep in mind.
+  /// If a uniform is never used inside the shaders code then
+  /// gl.getUniformLocation will return -1.
   int getUniformLocation(String name) {
     if (m_UniformLocationCache[name] != null) {
       return m_UniformLocationCache[name]!;
     } else {
       location = gl.getUniformLocation(m_RendererID, name);
       if (location == -1) {
-        print("Warning: Uniform location not found, the value is: $location");
+        print("Warning: Uniform [$name] location not found, the value is: $location");
       }
       m_UniformLocationCache[name] = location;
       return location;

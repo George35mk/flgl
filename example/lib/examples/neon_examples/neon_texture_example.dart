@@ -71,7 +71,10 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     timer = Timer.periodic(
       const Duration(milliseconds: 50),
       (Timer t) => {
-        render(),
+        if (!flgl.isDisposed)
+          {
+            render(),
+          }
       },
     );
   }
@@ -144,23 +147,45 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     ib = IndexBuffer(gl, Uint16List.fromList(indices), 6);
 
     /// The orthographic projection matrix.
-    // List<double> projection = M4.orthographic(0, width, height, 0, -1, 1);
-    List<double> projection = M4.orthographic(-2.0, 2.0, -1.0, 1.0, -1.0, 1.0);
+    // List<double> projection = M4.orthographic(-2.0, 2.0, -1.0, 1.0, -1.0, 1.0);
+    var aspect = dpr; // 1.5
+    List<double> projection = M4.orthographic(
+        (width * aspect) / -2, (width * aspect) / 2, (height * aspect) / -2, (height * aspect) / 2, -1, 1);
 
-    // init shader.
+    // var cameraMatrix = M4.lookAt(
+    //   [1, 1, 50],
+    //   [1, 1, 1],
+    //   [0, 1, 0],
+    // );
+    // var viewMatrix = M4.inverse(cameraMatrix);
+    var viewMatrix = M4.translate(M4.identity(), 0, 0, 0);
+
+    var modelMatrix = M4.translate(M4.identity(), 0, 0, 0);
+    modelMatrix = M4.xRotate(modelMatrix, MathUtils.radToDeg(0));
+    modelMatrix = M4.yRotate(modelMatrix, MathUtils.radToDeg(0));
+    modelMatrix = M4.zRotate(modelMatrix, MathUtils.radToDeg(90));
+    modelMatrix = M4.scale(modelMatrix, 500, 500, 1);
+
+    var vp = M4.multiply(projection, viewMatrix);
+    var mvp = M4.multiply(vp, modelMatrix);
+
+    // initiaze shader.
     shader = Shader(gl, genericShader);
     shader.bind();
 
+    // initialize texture.
     NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
     await texture.loadTexture('assets/images/pepsi_transparent.png');
     texture.bind();
-    shader.setUniform1i('u_Texture', 0);
-    shader.setUniformMat4f('u_Projection', projection);
 
-    va.unBind(); // vao
-    vb.unBind(); // vertex buffer
-    ib.unBind(); // index buffer
-    shader.unBind();
+    // set uniforms.
+    shader.setUniform1i('u_Texture', 0);
+    shader.setUniformMat4f('u_Projection', mvp);
+
+    va.unBind(); // unBind vao.
+    vb.unBind(); // unBind vertex buffer.
+    ib.unBind(); // unBind index buffer.
+    shader.unBind(); // unBind shader.
 
     hazelRenderer = NeonRenderer(flgl, gl);
   }
