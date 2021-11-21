@@ -10,18 +10,18 @@ class NeonExamples extends StatefulWidget {
 class _NeonExamplesState extends State<NeonExamples> {
   final Map<int, Map<String, String>> _pages = {
     0: {
-      "name": "flutter 3D triangle geometry",
-      "description": "Example of drawing a triangle using flutter 3D",
+      "name": "Neon quad example",
+      "description": "Quad example with Neon",
       "route": 'quad',
     },
     1: {
-      "name": "neon texture example",
-      "description": "Example of drawing a triangle using flutter 3D",
+      "name": "Neon texture example",
+      "description": "Texture example with Neon",
       "route": 'texture',
     },
     2: {
       "name": "batch rendering colors example",
-      "description": "Example of drawing a triangle using flutter 3D",
+      "description": "batch rendering colors example with Neon",
       "route": 'batch_rendering_colors',
     },
   };

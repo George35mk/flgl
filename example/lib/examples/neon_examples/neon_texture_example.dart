@@ -170,7 +170,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     var mvp = M4.multiply(vp, modelMatrix);
 
     // initiaze shader.
-    shader = Shader(gl, genericShader);
+    shader = Shader(gl, exampleShader);
     shader.bind();
 
     // initialize texture.
@@ -256,7 +256,7 @@ String fs = """
   }
 """;
 
-Map<String, String> genericShader = {
+Map<String, String> exampleShader = {
   'vertexShader': vs,
   'fragmentShader': fs,
 };

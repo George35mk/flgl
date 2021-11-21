@@ -87,7 +87,7 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Texture"),
+        title: const Text("Neon: Batch rendering colors"),
       ),
       body: Stack(
         children: [

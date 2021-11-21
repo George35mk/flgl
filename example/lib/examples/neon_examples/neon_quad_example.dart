@@ -80,7 +80,7 @@ class _NeonQuadExampleState extends State<NeonQuadExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Triangle"),
+        title: const Text("Neon: Quad"),
       ),
       body: Stack(
         children: [
