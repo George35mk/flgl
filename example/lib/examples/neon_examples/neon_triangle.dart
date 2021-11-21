@@ -47,7 +47,7 @@ class _NeonTriangleState extends State<NeonTriangle> {
   late VertexBufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
-  late NeonRenderer hazelRenderer;
+  late NeonRenderer neonRenderer;
 
   @override
   void initState() {
@@ -160,7 +160,7 @@ class _NeonTriangleState extends State<NeonTriangle> {
     ib.unBind(); // index buffer
     shader.unBind();
 
-    hazelRenderer = NeonRenderer(flgl, gl);
+    neonRenderer = NeonRenderer(flgl, gl);
   }
 
   /// Render's the scene.
@@ -179,7 +179,7 @@ class _NeonTriangleState extends State<NeonTriangle> {
     gl.enable(gl.DEPTH_TEST);
 
     // draw
-    hazelRenderer.draw(va, ib, shader);
+    neonRenderer.draw(va, ib, shader);
 
     // ! super important.
     // ! never put this inside a loop because it takes some time

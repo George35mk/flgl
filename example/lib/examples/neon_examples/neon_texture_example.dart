@@ -48,7 +48,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
   late VertexBufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
-  late NeonRenderer hazelRenderer;
+  late NeonRenderer neonRenderer;
 
   @override
   void initState() {
@@ -187,7 +187,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     ib.unBind(); // unBind index buffer.
     shader.unBind(); // unBind shader.
 
-    hazelRenderer = NeonRenderer(flgl, gl);
+    neonRenderer = NeonRenderer(flgl, gl);
   }
 
   /// Render's the scene.
@@ -207,7 +207,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     gl.enable(gl.BLEND); // fixes the png transparent issue.
 
     // draw
-    hazelRenderer.draw(va, ib, shader);
+    neonRenderer.draw(va, ib, shader);
 
     // ! super important.
     // ! never put this inside a loop because it takes some time
