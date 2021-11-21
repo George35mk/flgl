@@ -38,10 +38,6 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
   /// The timer for the render loop.
   Timer? timer;
 
-  Scene scene = Scene();
-  PerspectiveCamera? camera;
-  Renderer? renderer;
-
   // new stuff
   late VertexArray va;
   late VertexBuffer vb;
@@ -105,13 +101,13 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
               });
             },
           ),
-          if (camera != null && scene != null)
-            Positioned(
-              width: 420,
-              top: 10,
-              right: 10,
-              child: FLGLControls(camera: camera!, scene: scene),
-            ),
+          // if (camera != null && scene != null)
+          //   Positioned(
+          //     width: 420,
+          //     top: 10,
+          //     right: 10,
+          //     child: FLGLControls(camera: camera!, scene: scene),
+          //   ),
         ],
       ),
     );
