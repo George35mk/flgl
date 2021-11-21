@@ -116,15 +116,22 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
   /// Initialize's the scene.
   initScene() async {
     List<double> positions = [
-      -0.5, -0.5, 0.0, 0.0, // 0
-      0.5, -0.5, 1.0, 0.0, // 1
-      0.5, 0.5, 1.0, 1.0, // 2
-      -0.5, 0.5, 0.0, 1.0, // 3
+      // position - color - 
+      -1.5, -0.5, 0.0, 0.18, 0.6, 0.96, 1.0, // 0.0, 0.0, // 0
+      -0.5, -0.5, 0.0, 0.18, 0.6, 0.96, 1.0, // 1.0, 0.0, // 1
+      -0.5,  0.5, 0.0, 0.18, 0.6, 0.96, 1.0, // 1.0, 1.0, // 2
+      -1.5,  0.5, 0.0, 0.18, 0.6, 0.96, 1.0, // 0.0, 1.0, // 3
+
+       0.5, -0.5, 0.0, 1.0, 0.93, 0.24, 1.0, // 0.0, 0.0, // 4
+       1.5, -0.5, 0.0, 1.0, 0.93, 0.24, 1.0, // 1.0, 0.0, // 5
+       1.5,  0.5, 0.0, 1.0, 0.93, 0.24, 1.0, // 1.0, 1.0, // 6
+       0.5,  0.5, 0.0, 1.0, 0.93, 0.24, 1.0, // 0.0, 1.0, // 7
     ];
 
     List<int> indices = [
-      0, 1, 2, //
-      2, 3, 0, //
+      0, 1, 2, 2, 3, 0,
+      4, 5, 6, 6, 7, 4,
+      
     ];
 
     // use this when you using png textures.
@@ -135,8 +142,8 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
 
     // init vertex buffer layout.
     layout = VertexBufferLayout();
-    layout.pushFloat(2);
-    layout.pushFloat(2);
+    layout.pushFloat(3); // position vertices
+    layout.pushFloat(4); // color vertices
     va.addBuffer(vb, layout);
 
     // init index buffer.
@@ -159,23 +166,19 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
     var modelMatrix = M4.translate(M4.identity(), 0, 0, 0);
     modelMatrix = M4.xRotate(modelMatrix, MathUtils.radToDeg(0));
     modelMatrix = M4.yRotate(modelMatrix, MathUtils.radToDeg(0));
-    modelMatrix = M4.zRotate(modelMatrix, MathUtils.radToDeg(90));
+    modelMatrix = M4.zRotate(modelMatrix, MathUtils.radToDeg(0));
     modelMatrix = M4.scale(modelMatrix, 500, 500, 1);
 
     var vp = M4.multiply(projection, viewMatrix);
     var mvp = M4.multiply(vp, modelMatrix);
 
     // initiaze shader.
-    shader = Shader(gl, genericShader);
+    shader = Shader(gl, exampleShader);
     shader.bind();
 
     // initialize texture.
-    NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
-    await texture.loadTexture('assets/images/pepsi_transparent.png');
-    texture.bind();
 
     // set uniforms.
-    shader.setUniform1i('u_Texture', 0);
     shader.setUniformMat4f('u_Projection', mvp);
 
     va.unBind(); // unBind vao.
@@ -215,3 +218,37 @@ class _NeonBatchRenderingColorsExampleState extends State<NeonBatchRenderingColo
     flgl.updateTexture();
   }
 }
+
+
+String vs = """
+  #version 300 es
+  
+  layout (location = 0) in vec4 a_Position;
+  layout (location = 1) in vec4 a_Color;
+
+  out vec4 v_Color;
+
+  uniform mat4 u_Projection; 
+
+  void main() {
+    v_Color = a_Color;
+    gl_Position = u_Projection * a_Position;
+  }
+""";
+
+String fs = """
+  #version 300 es
+  
+  layout(location = 0) out vec4 o_Color;
+
+  in vec4 v_Color;
+
+  void main() {
+    o_Color = v_Color;
+  }
+""";
+
+Map<String, String> exampleShader = {
+  'vertexShader': vs,
+  'fragmentShader': fs,
+};
