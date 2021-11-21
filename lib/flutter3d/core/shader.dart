@@ -114,6 +114,11 @@ class Shader {
     int location = getUniformLocation(name);
     gl.uniform1f(location, value);
   }
+  
+  setUniform1iv(String name, List<int> value) {
+    int location = getUniformLocation(name);
+    gl.uniform1iv(location, value);
+  }
 
   // you ca use Vector2 here as a value.
   setUniform2f(String name, double v0, double v1) {

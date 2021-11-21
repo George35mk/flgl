@@ -43,7 +43,7 @@ class OpenGLContextES extends OpenGL30Constant {
     return ShaderPrecisionFormat(_range, _precision);
   }
 
-  getExtension(String key) {
+  List<String> getExtension(String key) {
     Pointer _v = gl.glGetString(EXTENSIONS);
     // print("OpenGLES getExtension key: ${key} _v: ${_v} ");
 
@@ -881,7 +881,7 @@ class OpenGLContextES extends OpenGL30Constant {
     gl.glUniform3f(location, v0, v1, v2);
   }
 
-  void uniform1iv(location, value) {
+  void uniform1iv(int location, List<int>value) {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);

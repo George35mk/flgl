@@ -24,6 +24,11 @@ class _NeonExamplesState extends State<NeonExamples> {
       "description": "batch rendering colors example with Neon",
       "route": 'batch_rendering_colors',
     },
+    3: {
+      "name": "batch rendering textures example",
+      "description": "batch rendering textures example with Neon",
+      "route": 'batch_rendering_textures',
+    },
   };
 
   @override

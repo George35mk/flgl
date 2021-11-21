@@ -3,6 +3,7 @@ import 'package:flgl_example/examples/geometries/flutter3d_cone.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_cylinder.dart';
 import 'package:flgl_example/examples/geometries/flutter3d_triangle.dart';
 import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_colors_example.dart';
+import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_textures_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
 import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_example.dart';
@@ -60,6 +61,7 @@ class _MyAppState extends State<MyApp> {
         '/neon/quad': (context) => const NeonQuadExample(),
         '/neon/texture': (context) => const NeonTextureExample(),
         '/neon/batch_rendering_colors': (context) => const NeonBatchRenderingColorsExample(),
+        '/neon/batch_rendering_textures': (context) => const NeonBatchRenderingTexturesExample(),
       },
     );
   }
