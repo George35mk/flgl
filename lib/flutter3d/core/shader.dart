@@ -94,6 +94,10 @@ class Shader {
     gl.uniform4f(getUniformLocation(name), v0, v1, v2, v3);
   }
 
+  setUniformMat4f(String name, List<double> value) {
+    gl.uniformMatrix4fv(getUniformLocation(name), false, value);
+  }
+
   int getUniformLocation(String name) {
     if (m_UniformLocationCache[name] != null) {
       return m_UniformLocationCache[name]!;

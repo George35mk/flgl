@@ -206,8 +206,8 @@ class OpenGLContextES extends OpenGL30Constant {
     return gl.glBlendFuncSeparate(v0, v1, v2, v3);
   }
 
-  blendFunc(v0, v1) {
-    return gl.glBlendFunc(v0, v1);
+  blendFunc(int sfactor, int dfactor) {
+    return gl.glBlendFunc(sfactor, dfactor);
   }
 
   blendEquationSeparate(var0, var1) {
@@ -769,91 +769,89 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.glGetShaderSource(v0);
   // }
 
-  uniformMatrix4fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix4fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 16;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix4fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix2x3fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix2x3fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 6;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix2x3fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix3x2fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix3x2fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 6;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix3x2fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix2x4fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix2x4fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 8;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix2x4fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix4x2fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix4x2fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 8;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix4x2fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix3x4fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix3x4fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 12;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix3x4fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix4x3fv(int location, bool transpose, List<double> value) {
+  void uniformMatrix4x3fv(int location, bool transpose, List<double> value) {
     var count = value.length ~/ 12;
     var arrayPointer = floatListToArrayPointer(value);
     gl.glUniformMatrix4x3fv(location, count, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniform1i(int location, int v0) {
+  void uniform1i(int location, int v0) {
     return gl.glUniform1i(location, v0);
   }
 
-  uniform3f(int location, num v1, num v2, num v3) {
-    return gl.glUniform3f(location, v1.toDouble(), v2.toDouble(), v3.toDouble());
+  void uniform3f(int location, num v1, num v2, num v3) {
+    gl.glUniform3f(location, v1.toDouble(), v2.toDouble(), v3.toDouble());
   }
 
-  uniform1fv(int location, List<num> value) {
+  void uniform1fv(int location, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniform1fv(location, value.length ~/ 1, arrayPointer);
     calloc.free(arrayPointer);
-    return;
   }
 
-  uniform3fv(location, List<num> value) {
+  void uniform3fv(location, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniform3fv(location, value.length ~/ 3, arrayPointer);
     calloc.free(arrayPointer);
-    return;
   }
 
   void uniform1f(int location, double v0) {
     gl.glUniform1f(location, v0);
   }
 
-  uniformMatrix2fv(location, bool transpose, List<num> value) {
+  void uniformMatrix2fv(location, bool transpose, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniformMatrix2fv(location, value.length ~/ 6, transpose ? 1 : 0, arrayPointer);
     calloc.free(arrayPointer);
   }
 
-  uniformMatrix3fv(location, bool transpose, List<num> value) {
+  void uniformMatrix3fv(location, bool transpose, List<num> value) {
     List<double> _list = value.map((e) => e.toDouble()).toList();
     var arrayPointer = floatListToArrayPointer(_list);
     gl.glUniformMatrix3fv(location, value.length ~/ 9, transpose ? 1 : 0, arrayPointer);
@@ -879,11 +877,11 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr); // free memory
   }
 
-  uniform2f(v0, num v1, num v2) {
-    return gl.glUniform2f(v0, v1.toDouble(), v2.toDouble());
+  void uniform2f(v0, num v1, num v2) {
+    gl.glUniform2f(v0, v1.toDouble(), v2.toDouble());
   }
 
-  uniform1iv(location, value) {
+  void uniform1iv(location, value) {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
@@ -891,7 +889,7 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  uniform2iv(int location, value) {
+  void uniform2iv(int location, value) {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
@@ -899,7 +897,7 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  uniform3iv(int location, value) {
+  void uniform3iv(int location, value) {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
@@ -907,7 +905,7 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  uniform4iv(int location, value) {
+  void uniform4iv(int location, value) {
     int count = value.length;
     final valuePtr = calloc<Int32>(count);
     valuePtr.asTypedList(count).setAll(0, value);
@@ -915,11 +913,11 @@ class OpenGLContextES extends OpenGL30Constant {
     calloc.free(valuePtr);
   }
 
-  uniform1ui(int location, int value) {
+  void uniform1ui(int location, int value) {
     gl.glUniform1ui(location, value);
   }
 
-  uniform1uiv(int location, Uint32List value) {
+  void uniform1uiv(int location, Uint32List value) {
     int count = value.length;
     final valuePtr = calloc<Uint32>(count);
     valuePtr.asTypedList(count).setAll(0, value);

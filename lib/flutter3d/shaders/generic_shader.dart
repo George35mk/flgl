@@ -6,8 +6,10 @@ String vs = """
 
   out vec2 v_TexCoord;
 
+  uniform mat4 u_Projection; // or use u_MVP
+
   void main() {
-    gl_Position = position;
+    gl_Position = u_Projection * position;
     v_TexCoord = texCoord;
   }
 """;

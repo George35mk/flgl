@@ -95,6 +95,35 @@ class M4 {
     ];
   }
 
+  /// Computes a 4-by-4 othogonal transformation matrix given the left, right,
+  /// bottom, and top dimensions of the near clipping plane as well as the
+  /// near and far clipping plane distances.
+  static List<double> orthographic(double left, double right, double bottom, double top, double near, double far) {
+    List<double> dst = identity();
+
+    dst[0] = 2 / (right - left);
+    dst[1] = 0;
+    dst[2] = 0;
+    dst[3] = 0;
+
+    dst[4] = 0;
+    dst[5] = 2 / (top - bottom);
+    dst[6] = 0;
+    dst[7] = 0;
+
+    dst[8] = 0;
+    dst[9] = 0;
+    dst[10] = -1 / (far - near);
+    dst[11] = 0;
+
+    dst[12] = (right + left) / (left - right);
+    dst[13] = (top + bottom) / (bottom - top);
+    dst[14] = -near / (near - far);
+    dst[15] = 1;
+
+    return dst;
+  }
+
   static List<double> multiply(List<double> a, List<double> b, [dst]) {
     dst ??= List<double>.filled(16, 0, growable: false);
 

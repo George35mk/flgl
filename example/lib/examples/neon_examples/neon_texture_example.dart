@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
+import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,11 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
   @override
   void dispose() {
     timer?.cancel();
+    // dispose
+    va.dispose();
+    ib.dispose();
+    vb.dispose();
+    shader.dispose();
     super.dispose();
   }
 
@@ -78,7 +84,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Triangle"),
+        title: const Text("Neon: Texture"),
       ),
       body: Stack(
         children: [
@@ -122,6 +128,9 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
       2, 3, 0, //
     ];
 
+    // use this when you using png textures.
+    gl.blendFunc(GL_SRC1_ALPHA_EXT, GL_ONE_MINUS_SRC_ALPHA);
+
     va = VertexArray(gl);
     vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 4);
 
@@ -134,6 +143,10 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     // init index buffer.
     ib = IndexBuffer(gl, Uint16List.fromList(indices), 6);
 
+    /// The orthographic projection matrix.
+    // List<double> projection = M4.orthographic(0, width, height, 0, -1, 1);
+    List<double> projection = M4.orthographic(-2.0, 2.0, -1.0, 1.0, -1.0, 1.0);
+
     // init shader.
     shader = Shader(gl, genericShader);
     shader.bind();
@@ -142,6 +155,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     await texture.loadTexture('assets/images/pepsi_transparent.png');
     texture.bind();
     shader.setUniform1i('u_Texture', 0);
+    shader.setUniformMat4f('u_Projection', projection);
 
     va.unBind(); // vao
     vb.unBind(); // vertex buffer
@@ -156,7 +170,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     // renderer!.render(scene, camera!);
 
     gl.viewport(0, 0, (width * dpr).toInt(), (height * dpr).toInt());
-    gl.clearColor(1, 1, 1, 1);
+    gl.clearColor(0, 0, 0, 1);
 
     // Clear the canvas AND the depth buffer.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -165,6 +179,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     // enable CULL_FACE and DEPTH_TEST.
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND); // fixes the png transparent issue.
 
     // draw
     hazelRenderer.draw(va, ib, shader);
