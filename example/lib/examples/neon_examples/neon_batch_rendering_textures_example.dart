@@ -116,7 +116,7 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
   /// Initialize's the scene.
   initScene() async {
     List<double> vertices = [
-      // position(3) - color(4) - uv(2) - uv_id
+      // position(x, y, z) - color(r, g, b , a) - uv(2) - uv_id
       -1.5, -0.5, 0.0,   0.18, 0.6, 0.96, 1.0,   0.0, 0.0,   0, // 0
       -0.5, -0.5, 0.0,   0.18, 0.6, 0.96, 1.0,   1.0, 0.0,   0, // 1
       -0.5,  0.5, 0.0,   0.18, 0.6, 0.96, 1.0,   1.0, 1.0,   0, // 2
@@ -160,12 +160,6 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
     List<double> projection = M4.orthographic(
         (width * aspect) / -2, (width * aspect) / 2, (height * aspect) / -2, (height * aspect) / 2, -1, 1);
 
-    // var cameraMatrix = M4.lookAt(
-    //   [1, 1, 50],
-    //   [1, 1, 1],
-    //   [0, 1, 0],
-    // );
-    // var viewMatrix = M4.inverse(cameraMatrix);
     var viewMatrix = M4.translate(M4.identity(), 0, 0, 0);
 
     var modelMatrix = M4.translate(M4.identity(), 0, 0, 0);
@@ -194,8 +188,8 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
     // Set uniforms.
     // dynamic samplers = [0, 1];
     // shader.setUniform1iv('u_Textures', samplers);
-    shader.setUniform1i('u_Textures', 0); // in GLES3 you can have array sampler.
-    // shader.setUniform1i('u_Textures', 1); // in GLES3 you can have array sampler.
+    shader.setUniform1i('u_Textures', 0); // in GLES 3 you can't have array sampler.
+    // shader.setUniform1i('u_Textures', 1); // in GLES 3 you can't have array sampler.
 
 
     shader.setUniformMat4f('u_Projection', mvp);
