@@ -36,16 +36,13 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
 
   /// The timer for the render loop.
   Timer? timer;
- 
-
-  late NeonMesh mesh;
-  NeonRenderer? neonRenderer;
 
   NeonScene scene = NeonScene();
   PerspectiveCamera? perspectiveCamera;
   OrthographicCamera? orthographicCamera;
-  Camera? activeCamera;
 
+  NeonRenderer? neonRenderer;
+  Camera? activeCamera;
 
   List<bool> selectedCameras = [false, true];
 
