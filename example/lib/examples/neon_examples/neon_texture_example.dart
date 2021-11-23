@@ -45,7 +45,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
   // new stuff
   late VertexArray va;
   late VertexBuffer vb;
-  late VertexBufferLayout layout;
+  late BufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
   late NeonRenderer neonRenderer;
@@ -105,13 +105,13 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
               });
             },
           ),
-          if (camera != null && scene != null)
-            Positioned(
-              width: 420,
-              top: 10,
-              right: 10,
-              child: FLGLControls(camera: camera!, scene: scene),
-            ),
+          // if (camera != null && scene != null)
+          //   Positioned(
+          //     width: 420,
+          //     top: 10,
+          //     right: 10,
+          //     child: FLGLControls(camera: camera!, scene: scene),
+          //   ),
         ],
       ),
     );
@@ -138,9 +138,9 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 4);
 
     // init vertex buffer layout.
-    layout = VertexBufferLayout();
-    layout.pushFloat(2);
-    layout.pushFloat(2);
+    layout = BufferLayout();
+    layout.pushFloat(2, 'position');
+    layout.pushFloat(2, 'texCoord');
     va.addBuffer(vb, layout);
 
     // init index buffer.
@@ -209,7 +209,7 @@ class _NeonTextureExampleState extends State<NeonTextureExample> {
     // draw
     // otherwise I get late initialization error.
     if (neonRenderer != null) {
-      neonRenderer.draw(va, ib, shader);
+      // neonRenderer.draw(va, ib, shader);
     }
 
     // ! super important.

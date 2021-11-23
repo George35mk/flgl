@@ -43,7 +43,7 @@ class _NeonQuadExampleState extends State<NeonQuadExample> {
   // new stuff
   late VertexArray va;
   late VertexBuffer vb;
-  late VertexBufferLayout layout;
+  late BufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
   late NeonRenderer neonRenderer;
@@ -128,8 +128,8 @@ class _NeonQuadExampleState extends State<NeonQuadExample> {
     vb = VertexBuffer(gl, Float32List.fromList(positions), 4 * 2);
 
     // init vertex buffer layout.
-    layout = VertexBufferLayout();
-    layout.pushFloat(2);
+    layout = BufferLayout();
+    layout.pushFloat(2, 'a_Position');
     va.addBuffer(vb, layout);
 
     // init index buffer.
@@ -161,7 +161,7 @@ class _NeonQuadExampleState extends State<NeonQuadExample> {
     if (neonRenderer != null) {
       // shader.bind();
       shader.setUniform4f('u_Color', r, 0, 1, 1);
-      neonRenderer.draw(va, ib, shader);
+      // neonRenderer.draw(va, ib, shader);
 
       if (r >= 1) {
         r = 0;

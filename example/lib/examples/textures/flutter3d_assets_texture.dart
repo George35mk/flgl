@@ -144,13 +144,13 @@ class _Flutter3DAssetsTextureState extends State<Flutter3DAssetsTexture> {
               });
             },
           ),
-          if (isReady && (camera != null && scene != null))
-            Positioned(
-              width: 420,
-              top: 10,
-              right: 10,
-              child: FLGLControls(camera: camera!, scene: scene),
-            ),
+          // if (isReady && (camera != null && scene != null))
+          //   Positioned(
+          //     width: 420,
+          //     top: 10,
+          //     right: 10,
+          //     child: FLGLControls(camera: camera!, scene: scene),
+          //   ),
         ],
       ),
     );

@@ -29,6 +29,11 @@ class _NeonExamplesState extends State<NeonExamples> {
       "description": "batch rendering textures example with Neon",
       "route": 'batch_rendering_textures',
     },
+    4: {
+      "name": "Neon quad example 2",
+      "description": "Neon quad example 2",
+      "route": 'quad2',
+    },
   };
 
   @override

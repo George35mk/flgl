@@ -13,5 +13,7 @@ class Material {
   /// The material uniforms.
   Map<String, dynamic> uniforms = {};
 
+  Map<String, String> shaderSource = {};
+
   Material();
 }

@@ -41,7 +41,7 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
   // new stuff
   late VertexArray va;
   late VertexBuffer vb;
-  late VertexBufferLayout layout;
+  late BufferLayout layout;
   late IndexBuffer ib;
   late Shader shader;
   NeonRenderer? neonRenderer;
@@ -145,11 +145,11 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
     vb = VertexBuffer(gl, Float32List.fromList(vertices), 4 * 4);
 
     // init vertex buffer layout.
-    layout = VertexBufferLayout();
-    layout.pushFloat(3); // position vertices
-    layout.pushFloat(4); // color vertices
-    layout.pushFloat(2); // uv vertices
-    layout.pushFloat(1); // uv ifs
+    layout = BufferLayout();
+    layout.pushFloat(3, 'a_Position'); // position vertices
+    layout.pushFloat(4, 'a_Color'); // color vertices
+    layout.pushFloat(2, 'a_TexCoord'); // uv vertices
+    layout.pushFloat(1, 'a_TexIndex'); // uv ifs
     va.addBuffer(vb, layout);
 
     // init index buffer.
@@ -221,7 +221,7 @@ class _NeonBatchRenderingTexturesExampleState extends State<NeonBatchRenderingTe
     // draw
     // otherwise I get late initialization error.
     if (neonRenderer != null) {
-      neonRenderer!.draw(va, ib, shader);
+      // neonRenderer!.draw(va, ib, shader);
     }
 
     // ! super important.

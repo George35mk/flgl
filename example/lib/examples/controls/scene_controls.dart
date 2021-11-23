@@ -6,7 +6,7 @@ import 'slider_row.dart';
 // For more info check this link: https://medium.com/flutter-community/flutter-expansion-collapse-view-fde9c51ac438
 
 class SceneControls extends StatefulWidget {
-  final Scene scene;
+  final NeonScene scene;
   const SceneControls({Key? key, required this.scene}) : super(key: key);
 
   @override
@@ -31,7 +31,7 @@ class _SceneControlsState extends State<SceneControls> {
 }
 
 class MeshOptionsExpansionWidget extends StatefulWidget {
-  final Object3D object3d;
+  final NeonObject3D object3d;
   const MeshOptionsExpansionWidget({Key? key, required this.object3d}) : super(key: key);
 
   @override
@@ -74,7 +74,7 @@ class _MeshOptionsExpansionWidgetState extends State<MeshOptionsExpansionWidget>
 }
 
 class MeshOptionExpansion extends StatefulWidget {
-  final Object3D object3d;
+  final NeonObject3D object3d;
   final String controlName;
   final Vector3 attr;
   final double min;
@@ -111,7 +111,7 @@ class _MeshOptionExpansionState extends State<MeshOptionExpansion> {
 }
 
 class MeshOptionControl extends StatefulWidget {
-  final Object3D object3d;
+  final NeonObject3D object3d;
   final String controlName;
   final Vector3 attr;
   final double min;

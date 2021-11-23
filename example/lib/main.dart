@@ -17,6 +17,8 @@ import 'package:flgl_example/examples/geometries/flutter3d_sphere.dart';
 import 'package:flutter/material.dart';
 import 'package:flgl_example/home.dart';
 
+import 'examples/neon_examples/neon_quad_example_2.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -59,6 +61,7 @@ class _MyAppState extends State<MyApp> {
         // Examples using the Neon API
         '/neon': (context) => const NeonExamples(),
         '/neon/quad': (context) => const NeonQuadExample(),
+        '/neon/quad2': (context) => const NeonQuadExample2(),
         '/neon/texture': (context) => const NeonTextureExample(),
         '/neon/batch_rendering_colors': (context) => const NeonBatchRenderingColorsExample(),
         '/neon/batch_rendering_textures': (context) => const NeonBatchRenderingTexturesExample(),

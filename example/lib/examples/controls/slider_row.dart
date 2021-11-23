@@ -39,8 +39,8 @@ class _SliderRowState extends State<SliderRow> {
             width: 250,
             child: Slider(
               value: widget.value,
-              min: widget.min,
-              max: widget.max,
+              min: widget.min == 1 ? 1 : widget.min * 2,
+              max: widget.max * 2,
               // divisions: widget.max <= 1 ? 1 : (widget.max / 5).toInt(),
               // label: tx.round().toString(),
               onChanged: (double value) {

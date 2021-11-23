@@ -3,6 +3,10 @@ import 'package:flgl/flutter3d/math/vector3.dart';
 import '../math/m4.dart';
 
 class Camera {
+
+  // The camera name
+  String name = 'Camera';
+
   /// The camera position vector.
   Vector3 position = Vector3(0, 0, 0);
 
@@ -36,10 +40,6 @@ class Camera {
       [up.x, up.y, up.z],
     );
     viewMatrix = M4.inverse(cameraMatrix);
-
-    // Set the camera related uniforms.
-    uniforms['u_projection'] = projectionMatrix;
-    uniforms['u_view'] = viewMatrix;
   }
 
   /// Set's the object position.

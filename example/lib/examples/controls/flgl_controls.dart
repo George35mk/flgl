@@ -7,7 +7,7 @@ import 'camera_controls.dart';
 import 'scene_controls.dart';
 
 class FLGLControls extends StatefulWidget {
-  final Scene scene;
+  final NeonScene scene;
   final Camera camera;
   final Function? onChange;
   final TransformControlsManager? transformControlsManager;

@@ -87,13 +87,13 @@ class _Flutter3DBoxState extends State<Flutter3DBox> {
               });
             },
           ),
-          if (camera != null && scene != null)
-            Positioned(
-              width: 420,
-              top: 10,
-              right: 10,
-              child: FLGLControls(camera: camera!, scene: scene),
-            ),
+          // if (camera != null && scene != null)
+          //   Positioned(
+          //     width: 420,
+          //     top: 10,
+          //     right: 10,
+          //     child: FLGLControls(camera: camera!, scene: scene),
+          //   ),
         ],
       ),
     );

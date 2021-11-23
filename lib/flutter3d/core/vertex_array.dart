@@ -5,13 +5,15 @@ import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
 import 'vertex_buffer.dart';
 
-class VertexBufferElement {
+class BufferElement {
   int type;
+  String name;
   int count; // position 2 or 3, for normal is 3, for uv is 2.
   bool normalized; // most of the time is false.
 
-  VertexBufferElement(
+  BufferElement(
     this.type,
+    this.name,
     this.count,
     this.normalized,
   );
@@ -31,33 +33,40 @@ class VertexBufferElement {
   }
 }
 
-class VertexBufferLayout {
-  final List<VertexBufferElement> m_Elements = [];
+class BufferLayout {
+  final List<BufferElement> m_Elements = [];
   int m_Stride = 0;
 
-  VertexBufferLayout();
+  BufferLayout();
+
+  void add(BufferElement element) {
+    m_Elements.add(element);
+    int count = element.count;
+    int type = element.type;
+    m_Stride += count * BufferElement.getSizeOfType(type);
+  }
 
   // push position or color or uv data.
-  void pushFloat(int count) {
-    m_Elements.add(VertexBufferElement(GL_FLOAT, count, false));
-    m_Stride += count * VertexBufferElement.getSizeOfType(GL_FLOAT);
+  void pushFloat(int count, String name) {
+    m_Elements.add(BufferElement(GL_FLOAT, name, count, false));
+    m_Stride += count * BufferElement.getSizeOfType(GL_FLOAT);
   }
 
-  void pushInt(int count) {
-    m_Elements.add(VertexBufferElement(GL_UNSIGNED_INT, count, false));
-    m_Stride += count * VertexBufferElement.getSizeOfType(GL_UNSIGNED_INT);
+  void pushInt(int count, String name) {
+    m_Elements.add(BufferElement(GL_UNSIGNED_INT, name, count, false));
+    m_Stride += count * BufferElement.getSizeOfType(GL_UNSIGNED_INT);
   }
 
-  void pushByte(int count) {
-    m_Elements.add(VertexBufferElement(GL_BYTE, count, false));
-    m_Stride += count * VertexBufferElement.getSizeOfType(GL_BYTE);
+  void pushByte(int count, String name) {
+    m_Elements.add(BufferElement(GL_BYTE, name, count, false));
+    m_Stride += count * BufferElement.getSizeOfType(GL_BYTE);
   }
 
   int getStride() {
     return m_Stride;
   }
 
-  List<VertexBufferElement> getElements() {
+  List<BufferElement> getElements() {
     return m_Elements;
   }
 }
@@ -79,7 +88,7 @@ class VertexArray {
     gl.bindVertexArray(0);
   }
 
-  void addBuffer(VertexBuffer vb, VertexBufferLayout layout) {
+  void addBuffer(VertexBuffer vb, BufferLayout layout) {
     bind();
     vb.bind();
     var elements = layout.getElements(); // has the postions, uvs etc.
@@ -89,7 +98,7 @@ class VertexArray {
       var stride = layout.getStride(); // or use 0 for inspection
       gl.enableVertexAttribArray(i);
       gl.vertexAttribPointer(i, element.count, element.type, element.normalized, stride, offset);
-      offset += element.count * VertexBufferElement.getSizeOfType(element.type);
+      offset += element.count * BufferElement.getSizeOfType(element.type);
 
       // other examples from older code.
       // gl.vertexAttribPointer(index, b.numComponents, b.type, b.normalize, b.stride, b.offset);

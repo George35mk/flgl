@@ -113,13 +113,13 @@ class _Flutter3DCylinderState extends State<Flutter3DCylinder> {
               });
             },
           ),
-          if (camera != null && scene != null)
-            Positioned(
-              width: 420,
-              top: 10,
-              right: 10,
-              child: FLGLControls(camera: camera!, scene: scene),
-            ),
+          // if (camera != null && scene != null)
+          //   Positioned(
+          //     width: 420,
+          //     top: 10,
+          //     right: 10,
+          //     child: FLGLControls(camera: camera!, scene: scene),
+          //   ),
         ],
       ),
     );
