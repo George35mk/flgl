@@ -42,8 +42,8 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
   NeonRenderer? neonRenderer;
 
   NeonScene scene = NeonScene();
-  late PerspectiveCamera perspectiveCamera;
-  late OrthographicCamera orthographicCamera;
+  PerspectiveCamera? perspectiveCamera;
+  OrthographicCamera? orthographicCamera;
   Camera? activeCamera;
 
 
@@ -108,22 +108,6 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
               right: 10,
               child: FLGLControls(camera: activeCamera!, scene: scene),
             ),
-
-          // Positioned(
-          //   top: 10,
-          //   child: TextButton(
-          //     child: const Text('2D'),
-          //     onPressed: () {/* ... */},
-          //   ),
-          // ),
-          // Positioned(
-          //   top: 10,
-          //   left: 120,
-          //   child: TextButton(
-          //     child: const Text('3D'),
-          //     onPressed: () {/* ... */},
-          //   ),
-          // ),
             Positioned(
               top: 10,
               left: 10,
@@ -147,21 +131,19 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
 
   /// Initialize's the scene.
   initScene() async {
+
+    // init orthographic camera.
     var aspect = dpr; // 1.5
     orthographicCamera = OrthographicCamera((width * aspect) / -2, (width * aspect) / 2, (height * aspect) / -2, (height * aspect) / 2, -1, 1000);
-    orthographicCamera.name = 'OrthographicCamera';
-    orthographicCamera.setPosition(Vector3(0, 0, 100));
+    orthographicCamera!.name = 'OrthographicCamera';
+    orthographicCamera!.setPosition(Vector3(0, 0, 100));
 
+    // init perspective camera.
     perspectiveCamera = PerspectiveCamera(45, (width * dpr) / (height * dpr), 1, 2000);
-    perspectiveCamera.name = 'PerspectiveCamera';
-    perspectiveCamera.setPosition(Vector3(0, 0, 300));
+    perspectiveCamera!.name = 'PerspectiveCamera';
+    perspectiveCamera!.setPosition(Vector3(0, 0, 300));
 
-
-    // initialize texture.
-    // NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
-    // await texture.loadTexture('assets/images/pepsi_transparent.png');
-    // texture.bind();
-
+    // init texture info.
     TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
 
     var geometry = NeonQuadGeometry();
@@ -181,7 +163,6 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
     neonRenderer!.dpr = dpr;
     neonRenderer!.setClearColor(Color(0 , 0, 0, 1));
     neonRenderer!.init();
-
 
     // activeCamera = orthographicCamera;
     activeCamera = perspectiveCamera;
