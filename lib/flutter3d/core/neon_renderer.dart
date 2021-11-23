@@ -21,7 +21,13 @@ class NeonRenderer {
   /// The OpenGL ES context.
   OpenGLContextES gl;
 
+  Color clearColor = Color(0, 0, 0, 1);
+
   NeonRenderer(this.flgl, this.gl);
+
+  setClearColor(Color c) {
+    clearColor = c;
+  }
 
   init() {
     gl.blendFunc(GL_SRC1_ALPHA_EXT, GL_ONE_MINUS_SRC_ALPHA); // for transparent textures
@@ -32,27 +38,17 @@ class NeonRenderer {
     gl.enable(gl.DEPTH_TEST);
 
     gl.viewport(0, 0, (width * dpr).toInt(), (height * dpr).toInt());
-    gl.clearColor(0.1, 0.1, 0.1, 1); // the renderer background color.
+    gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a); // the renderer background color.
   }
 
   /// Clear the canvas AND the depth buffer.
   clear() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    // gl.clear(gl.COLOR_BUFFER_BIT);
   }
 
   render(NeonScene scene, Camera camera) {
 
-    gl.viewport(0, 0, (width * dpr).toInt(), (height * dpr).toInt());
-    // gl.clearColor(0.1, 0.2, 0.1, 1);
-    gl.clearColor(1, 1, 1, 1); // the renderer background color.
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    gl.enable(gl.BLEND); // fixes the png transparent issue.
-    gl.enable(gl.CULL_FACE);
-    gl.enable(gl.DEPTH_TEST);
-    
+    clear();
 
     // Draw the objects.
     drawObjects(scene, camera);

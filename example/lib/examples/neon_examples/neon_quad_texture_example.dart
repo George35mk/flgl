@@ -8,14 +8,14 @@ import 'package:flgl_example/examples/common/camera_projection_toggle_menu.dart'
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
-class NeonQuadExample2 extends StatefulWidget {
-  const NeonQuadExample2({Key? key}) : super(key: key);
+class NeonQuadTextureExample extends StatefulWidget {
+  const NeonQuadTextureExample({Key? key}) : super(key: key);
 
   @override
-  _NeonQuadExample2State createState() => _NeonQuadExample2State();
+  _NeonQuadTextureExampleState createState() => _NeonQuadTextureExampleState();
 }
 
-class _NeonQuadExample2State extends State<NeonQuadExample2> {
+class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
   /// Set this to true when the FLGLViewport initialized.
   bool initialized = false;
 
@@ -39,7 +39,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
  
 
   late NeonMesh mesh;
-  late NeonRenderer neonRenderer;
+  NeonRenderer? neonRenderer;
 
   NeonScene scene = NeonScene();
   late PerspectiveCamera perspectiveCamera;
@@ -83,7 +83,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Quad 2"),
+        title: const Text("Neon: Quad texture"),
       ),
       body: Stack(
         children: [
@@ -124,60 +124,72 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
           //     onPressed: () {/* ... */},
           //   ),
           // ),
-          Positioned(
-            top: 10,
-            left: 10,
-            child: CameraProjectionToggleMenu(
-              options: selectedCameras, 
-              onChange: (index) => {
-                setState(() {
-                  if (index == 0) {
-                    activeCamera = orthographicCamera;
-                  } else {
-                    activeCamera = perspectiveCamera;
-                  }
-                })
-              },
+            Positioned(
+              top: 10,
+              left: 10,
+              child: CameraProjectionToggleMenu(
+                options: selectedCameras, 
+                onChange: (index) => {
+                  setState(() {
+                    if (index == 0) {
+                      activeCamera = orthographicCamera;
+                    } else {
+                      activeCamera = perspectiveCamera;
+                    }
+                  })
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
   /// Initialize's the scene.
-  initScene() {
+  initScene() async {
     var aspect = dpr; // 1.5
     orthographicCamera = OrthographicCamera((width * aspect) / -2, (width * aspect) / 2, (height * aspect) / -2, (height * aspect) / 2, -1, 1000);
     orthographicCamera.name = 'OrthographicCamera';
     orthographicCamera.setPosition(Vector3(0, 0, 100));
 
-    perspectiveCamera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
+    perspectiveCamera = PerspectiveCamera(45, (width * dpr) / (height * dpr), 1, 2000);
     perspectiveCamera.name = 'PerspectiveCamera';
     perspectiveCamera.setPosition(Vector3(0, 0, 300));
 
+
+    // initialize texture.
+    // NeonTexture texture = NeonTexture(gl, 'assets/images/pepsi_transparent.png');
+    // await texture.loadTexture('assets/images/pepsi_transparent.png');
+    // texture.bind();
+
+    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
+
     var geometry = NeonQuadGeometry();
-    var material = NeonMeshBasicMaterial(color: Color(0, 1, 1, 1));
+    var material = NeonMeshBasicMaterial(
+      color: Color(1, 1, 1, 1.0),
+      map: textureInfo,
+    );
     var mesh = NeonMesh(gl, geometry, material);
     mesh.name = 'Quad';
-    mesh.setScale(Vector3(100, 100, 1));
+    mesh.setScale(Vector3(200, 200, 1));
 
     scene.add(mesh);
 
     neonRenderer = NeonRenderer(flgl, gl);
-    neonRenderer.width = width;
-    neonRenderer.height = height;
-    neonRenderer.dpr = dpr;
-    neonRenderer.setClearColor(Color(0 , 0, 0, 1));
-    neonRenderer.init();
+    neonRenderer!.width = width;
+    neonRenderer!.height = height;
+    neonRenderer!.dpr = dpr;
+    neonRenderer!.setClearColor(Color(0 , 0, 0, 1));
+    neonRenderer!.init();
 
 
+    // activeCamera = orthographicCamera;
     activeCamera = perspectiveCamera;
   }
 
   render() {
     if (neonRenderer != null && scene != null && activeCamera != null) {
-      neonRenderer.render(scene, activeCamera!);
+      neonRenderer!.render(scene, activeCamera!);
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:flgl_example/examples/geometries/flutter3d_triangle.dart';
 import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_colors_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_textures_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
+import 'package:flgl_example/examples/neon_examples/neon_quad_texture_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_example.dart';
 import 'package:flgl_example/examples/textures/flutter3d_assets_texture.dart';
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
         '/neon': (context) => const NeonExamples(),
         '/neon/quad': (context) => const NeonQuadExample(),
         '/neon/quad2': (context) => const NeonQuadExample2(),
+        '/neon/quad_texture': (context) => const NeonQuadTextureExample(),
         '/neon/texture': (context) => const NeonTextureExample(),
         '/neon/batch_rendering_colors': (context) => const NeonBatchRenderingColorsExample(),
         '/neon/batch_rendering_textures': (context) => const NeonBatchRenderingTexturesExample(),

@@ -17,10 +17,20 @@ class NeonObject3D {
   /// The material
   Material material;
 
+  /// The Vertex Array Object (VAO)
   late VertexArray vao;
+
+  /// The Vertex Buffer
   late VertexBuffer vb;
+
+  /// The index Buffer.
   late IndexBuffer ib;
+
+  /// The shader instance
   late Shader shader;
+
+  /// The texture instance
+  NeonTexture? texture;
 
   /// The object name
   String name = '';

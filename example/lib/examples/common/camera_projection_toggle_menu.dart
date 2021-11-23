@@ -13,34 +13,41 @@ class CameraProjectionToggleMenu extends StatefulWidget {
 class _CameraProjectionToggleMenuState extends State<CameraProjectionToggleMenu> {
   @override
   Widget build(BuildContext context) {
-    return ToggleButtons(
-      color: Colors.red,
-      children: const <Widget>[
-        // Icon(Icons.videocam_outlined),
-        TextButton(
-          child: Text('Orthographic', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          onPressed: null,
-        ),
-        TextButton(
-          child: Text('Perspective', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          onPressed: null,
-        )
-      ],
-      onPressed: (int index) {
-        setState(() {
-          int selectedIndex = 0;
-          for (int buttonIndex = 0; buttonIndex < widget.options.length; buttonIndex++) {
-            if (buttonIndex == index) {
-              widget.options[buttonIndex] = !widget.options[buttonIndex];
-              selectedIndex = buttonIndex;
-            } else {
-              widget.options[buttonIndex] = false;
+    return Container(
+      color: Colors.white12,
+      child: ToggleButtons(
+        selectedColor: Colors.blue,
+        selectedBorderColor: Colors.blue,
+        splashColor: Colors.blue,
+        color: Colors.red,
+        highlightColor: Colors.red,
+        children: const <Widget>[
+          // Icon(Icons.videocam_outlined),
+          TextButton(
+            child: Text('Orthographic', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
+            onPressed: null,
+          ),
+          TextButton(
+            child: Text('Perspective', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
+            onPressed: null,
+          )
+        ],
+        onPressed: (int index) {
+          setState(() {
+            int selectedIndex = 0;
+            for (int buttonIndex = 0; buttonIndex < widget.options.length; buttonIndex++) {
+              if (buttonIndex == index) {
+                widget.options[buttonIndex] = !widget.options[buttonIndex];
+                selectedIndex = buttonIndex;
+              } else {
+                widget.options[buttonIndex] = false;
+              }
             }
-          }
-          widget.onChange(selectedIndex);
-        });
-      },
-      isSelected: widget.options,
+            widget.onChange(selectedIndex);
+          });
+        },
+        isSelected: widget.options,
+      ),
     );
   }
 }
