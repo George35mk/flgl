@@ -4,6 +4,7 @@ import 'package:flgl/flgl.dart';
 import 'package:flgl/flgl_3d.dart';
 import 'package:flgl/flgl_viewport.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
+import 'package:flgl_example/examples/common/camera_projection_toggle_menu.dart';
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
@@ -35,16 +36,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
 
   /// The timer for the render loop.
   Timer? timer;
-
-  /// dummy var for red color.
-  double r = 0;
-
-  // new stuff
-  // late VertexArray va;
-  // late VertexBuffer vb;
-  // late BufferLayout layout;
-  // late IndexBuffer ib;
-  // late Shader shader;
+ 
 
   late NeonMesh mesh;
   late NeonRenderer neonRenderer;
@@ -55,7 +47,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
   Camera? activeCamera;
 
 
-  List<bool> isSelected = [false, true];
+  List<bool> selectedCameras = [false, true];
 
   @override
   void initState() {
@@ -81,41 +73,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
     );
   }
 
-  Widget cameraToggleButtonMenu(List<bool> isSelected) {
-    return ToggleButtons(
-      color: Colors.red,
-      children: const <Widget>[
-        // Icon(Icons.videocam_outlined),
-        TextButton(
-          child: Text('Orthographic', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          onPressed: null,
-        ),
-        TextButton(
-          child: Text('Perspective', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-          onPressed: null,
-        )
-      ],
-      onPressed: (int index) {
-        setState(() {
-          for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-            if (buttonIndex == index) {
-              isSelected[buttonIndex] = !isSelected[buttonIndex];
-            } else {
-              isSelected[buttonIndex] = false;
-            }
-          }
-
-          // set camera
-          if (isSelected[0]) {
-            activeCamera = orthographicCamera;
-          } else {
-            activeCamera = perspectiveCamera;
-          }
-        });
-      },
-      isSelected: isSelected,
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +127,18 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
           Positioned(
             top: 10,
             left: 10,
-            child: cameraToggleButtonMenu(isSelected),
+            child: CameraProjectionToggleMenu(
+              options: selectedCameras, 
+              onChange: (index) => {
+                setState(() {
+                  if (index == 0) {
+                    activeCamera = orthographicCamera;
+                  } else {
+                    activeCamera = perspectiveCamera;
+                  }
+                })
+              },
+            ),
           ),
         ],
       ),
@@ -186,8 +155,6 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
     perspectiveCamera = PerspectiveCamera(45, (width * flgl.dpr) / (height * flgl.dpr), 1, 2000);
     perspectiveCamera.name = 'PerspectiveCamera';
     perspectiveCamera.setPosition(Vector3(0, 0, 300));
-
-
 
     var geometry = NeonQuadGeometry();
     var material = NeonMeshBasicMaterial(color: Color(0, 1, 1, 1));
