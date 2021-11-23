@@ -45,6 +45,7 @@ export './flutter3d/core/vertex_array.dart';
 
 export './flutter3d/geometries/neon_triangle_geometry.dart';
 export './flutter3d/geometries/neon_quad_geometry.dart';
+export './flutter3d/geometries/neon_box_geometry.dart';
 
 export './flutter3d/objects/neon_mesh.dart';
 

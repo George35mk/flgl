@@ -48,7 +48,7 @@ class NeonMeshBasicMaterial extends Material {
         
         precision highp float;
 
-        layout(location = 0) out vec4 color;
+        layout(location = 0) out vec4 fragmentColor;
 
         in vec2 v_TexCoord;
 
@@ -56,8 +56,8 @@ class NeonMeshBasicMaterial extends Material {
         uniform sampler2D u_Texture;
 
         void main() {
-          color = texture(u_Texture, v_TexCoord) * u_Color;
-          // color = vec4(1);
+          fragmentColor = texture(u_Texture, v_TexCoord) * u_Color;
+          // fragmentColor = vec4(1);
         }
       """;
       shaderSource = {
@@ -98,7 +98,7 @@ class NeonMeshBasicMaterial extends Material {
         
         precision highp float;
 
-        layout(location = 0) out vec4 color;
+        layout(location = 0) out vec4 fragmentColor;
 
         uniform vec4 u_Color;
 
@@ -106,7 +106,7 @@ class NeonMeshBasicMaterial extends Material {
         in vec3 v_Normal;
 
         void main() {
-          color = u_Color;
+          fragmentColor = v_Color * u_Color;
         }
       """;
 
@@ -117,8 +117,6 @@ class NeonMeshBasicMaterial extends Material {
 
     }
 
-    // ignore: todo
-    // TODO: If the user has map data then tou should change the shaderSource.
   }
 }
 

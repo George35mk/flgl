@@ -42,6 +42,10 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
   NeonRenderer? neonRenderer;
   Camera? activeCamera;
 
+  double x = 0;
+  double y = 0;
+  double z = 0;
+
   List<bool> selectedCameras = [false, true];
 
   @override
@@ -138,16 +142,16 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
     perspectiveCamera!.setPosition(Vector3(0, 0, 300));
 
     // init texture info.
-    TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
+    // TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
 
-    var geometry = NeonQuadGeometry();
+    var geometry = NeonBoxGeometry();
     var material = NeonMeshBasicMaterial(
-      color: Color(1, 1, 1, 1.0),
-      map: textureInfo,
+      color: Color(1, 1, 1, 0.8),
+      // map: textureInfo,
     );
     var mesh = NeonMesh(gl, geometry, material);
     mesh.name = 'Quad';
-    mesh.setScale(Vector3(200, 200, 1));
+    mesh.setScale(Vector3(100, 100, 100));
 
     scene.add(mesh);
 
@@ -155,7 +159,7 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
     neonRenderer!.width = width;
     neonRenderer!.height = height;
     neonRenderer!.dpr = dpr;
-    neonRenderer!.setClearColor(Color(0 , 0, 0, 1));
+    neonRenderer!.setClearColor(Color(0, 0, 0, 1));
     neonRenderer!.init();
 
     // activeCamera = orthographicCamera;
@@ -163,7 +167,11 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
   }
 
   render() {
-    if (neonRenderer != null && scene != null && activeCamera != null) {
+    if (neonRenderer != null && activeCamera != null) {
+      x += 0.90;
+      y += 0.90;
+      z += 0.90;
+      scene.children[0].setRotation(Vector3(x, y, z));
       neonRenderer!.render(scene, activeCamera!);
     }
   }

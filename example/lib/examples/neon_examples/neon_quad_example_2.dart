@@ -36,10 +36,8 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
 
   /// The timer for the render loop.
   Timer? timer;
- 
 
-  late NeonMesh mesh;
-  late NeonRenderer neonRenderer;
+  NeonRenderer? neonRenderer;
 
   NeonScene scene = NeonScene();
   late PerspectiveCamera perspectiveCamera;
@@ -157,7 +155,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
     perspectiveCamera.setPosition(Vector3(0, 0, 300));
 
     var geometry = NeonQuadGeometry();
-    var material = NeonMeshBasicMaterial(color: Color(0, 1, 1, 1));
+    var material = NeonMeshBasicMaterial(color: Color(1, 0, 1, 1));
     var mesh = NeonMesh(gl, geometry, material);
     mesh.name = 'Quad';
     mesh.setScale(Vector3(100, 100, 1));
@@ -165,19 +163,19 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
     scene.add(mesh);
 
     neonRenderer = NeonRenderer(flgl, gl);
-    neonRenderer.width = width;
-    neonRenderer.height = height;
-    neonRenderer.dpr = dpr;
-    neonRenderer.setClearColor(Color(0 , 0, 0, 1));
-    neonRenderer.init();
+    neonRenderer!.width = width;
+    neonRenderer!.height = height;
+    neonRenderer!.dpr = dpr;
+    neonRenderer!.setClearColor(Color(0, 0, 0, 1));
+    neonRenderer!.init();
 
 
     activeCamera = perspectiveCamera;
   }
 
   render() {
-    if (neonRenderer != null && scene != null && activeCamera != null) {
-      neonRenderer.render(scene, activeCamera!);
+    if (neonRenderer != null && activeCamera != null) {
+      neonRenderer!.render(scene, activeCamera!);
     }
   }
 }
