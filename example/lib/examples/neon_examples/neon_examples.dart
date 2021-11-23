@@ -39,6 +39,11 @@ class _NeonExamplesState extends State<NeonExamples> {
       "description": "Neon quad texture example",
       "route": 'quad_texture',
     },
+    6: {
+      "name": "Neon cube example",
+      "description": "Neon cube example",
+      "route": 'cube',
+    },
   };
 
   @override
