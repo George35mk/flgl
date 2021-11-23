@@ -16,8 +16,6 @@ class NeonQuadTextureExample extends StatefulWidget {
 }
 
 class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
-  /// Set this to true when the FLGLViewport initialized.
-  bool initialized = false;
 
   /// The flutter graphics library instance.
   late Flgl flgl;
@@ -89,7 +87,6 @@ class _NeonQuadTextureExampleState extends State<NeonQuadTextureExample> {
             height: height.toInt(),
             onInit: (Flgl _flgl) {
               setState(() {
-                initialized = true;
                 flgl = _flgl;
                 gl = flgl.gl;
 
