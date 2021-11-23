@@ -44,7 +44,8 @@ class NeonRenderer {
   render(NeonScene scene, Camera camera) {
 
     gl.viewport(0, 0, (width * dpr).toInt(), (height * dpr).toInt());
-    gl.clearColor(0.1, 0.2, 0.1, 1); // the renderer background color.
+    // gl.clearColor(0.1, 0.2, 0.1, 1);
+    gl.clearColor(1, 1, 1, 1); // the renderer background color.
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
