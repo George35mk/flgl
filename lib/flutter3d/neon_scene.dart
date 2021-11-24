@@ -15,13 +15,6 @@ class NeonScene {
   // Dispose scene objects.
   dispose(OpenGLContextES gl) {
     children.map((child) {
-      if (child.material is MeshBasicMaterial) {
-        // dispose the object textures.
-        if (child.material.uniforms['u_texture'] != null) {
-          print('Starting deleting textures.');
-          gl.deleteTexture(child.material.uniforms['u_texture']);
-        }
-      }
 
       // dispose program and shaders.
       child.dispose();

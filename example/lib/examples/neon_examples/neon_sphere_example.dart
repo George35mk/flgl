@@ -56,6 +56,7 @@ class _NeonSphereExampleState extends State<NeonSphereExample> {
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 

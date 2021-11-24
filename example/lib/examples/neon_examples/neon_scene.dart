@@ -8,14 +8,14 @@ import 'package:flgl_example/examples/common/camera_projection_toggle_menu.dart'
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
-class NeonCylinderExample extends StatefulWidget {
-  const NeonCylinderExample({Key? key}) : super(key: key);
+class NeonSceneExample extends StatefulWidget {
+  const NeonSceneExample({Key? key}) : super(key: key);
 
   @override
-  _NeonCylinderExampleState createState() => _NeonCylinderExampleState();
+  _NeonSceneExampleState createState() => _NeonSceneExampleState();
 }
 
-class _NeonCylinderExampleState extends State<NeonCylinderExample> {
+class _NeonSceneExampleState extends State<NeonSceneExample> {
 
   /// The flutter graphics library instance.
   late Flgl flgl;
@@ -73,8 +73,6 @@ class _NeonCylinderExampleState extends State<NeonCylinderExample> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -83,7 +81,7 @@ class _NeonCylinderExampleState extends State<NeonCylinderExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Cylinder example"),
+        title: const Text("Neon: Scene example"),
       ),
       body: Stack(
         children: [
@@ -145,14 +143,14 @@ class _NeonCylinderExampleState extends State<NeonCylinderExample> {
     // init texture info.
     // TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
 
-    var geometry = NeonCylinderGeometry();
+    var geometry = NeonBoxGeometry();
     var material = NeonMeshBasicMaterial(
       color: Color(1, 1, 1, 0.8),
       // map: textureInfo,
     );
     var mesh = NeonMesh(gl, geometry, material);
     mesh.name = 'Quad';
-    mesh.setScale(Vector3(1, 1, 1));
+    mesh.setScale(Vector3(100, 100, 100));
 
     scene.add(mesh);
 

@@ -56,6 +56,7 @@ class _NeonConeExampleState extends State<NeonConeExample> {
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 

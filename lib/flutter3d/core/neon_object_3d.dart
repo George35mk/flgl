@@ -95,6 +95,16 @@ class NeonObject3D {
     // gl.deleteShader(programInfo!.vertexShader);
     // gl.deleteShader(programInfo!.fragmentShader);
     // gl.deleteProgram(programInfo!.program);
+
+    vao.dispose();
+    vb.dispose();
+    ib.dispose();
+    shader.dispose();
+    if (texture != null) {
+
+      // I need to clean the image data also.
+      texture!.dispose();
+    }
     print('Object3D.dispose called');
   }
 

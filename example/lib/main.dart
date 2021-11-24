@@ -9,6 +9,7 @@ import 'package:flgl_example/examples/neon_examples/neon_cube_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_cylinder_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_texture_example.dart';
+import 'package:flgl_example/examples/neon_examples/neon_scene.dart';
 import 'package:flgl_example/examples/neon_examples/neon_sphere_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_example.dart';
@@ -75,6 +76,7 @@ class _MyAppState extends State<MyApp> {
         '/neon/sphere': (context) => const NeonSphereExample(),
         '/neon/cylinder': (context) => const NeonCylinderExample(),
         '/neon/cone': (context) => const NeonConeExample(),
+        '/neon/scene': (context) => const NeonSceneExample(),
       },
     );
   }

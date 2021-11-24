@@ -55,6 +55,7 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
   @override
   void dispose() {
     timer?.cancel();
+    scene.dispose(gl);
     super.dispose();
   }
 

@@ -59,6 +59,11 @@ class _NeonExamplesState extends State<NeonExamples> {
       "description": "Neon cone example",
       "route": 'cone',
     },
+    10: {
+      "name": "Neon scene example",
+      "description": "Neon scene example",
+      "route": 'scene',
+    },
   };
 
   @override
