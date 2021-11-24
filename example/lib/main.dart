@@ -7,6 +7,7 @@ import 'package:flgl_example/examples/neon_examples/neon_batch_rendering_texture
 import 'package:flgl_example/examples/neon_examples/neon_cube_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_examples.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_texture_example.dart';
+import 'package:flgl_example/examples/neon_examples/neon_sphere_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_texture_example.dart';
 import 'package:flgl_example/examples/neon_examples/neon_quad_example.dart';
 import 'package:flgl_example/examples/textures/flutter3d_assets_texture.dart';
@@ -69,6 +70,7 @@ class _MyAppState extends State<MyApp> {
         '/neon/batch_rendering_colors': (context) => const NeonBatchRenderingColorsExample(),
         '/neon/batch_rendering_textures': (context) => const NeonBatchRenderingTexturesExample(),
         '/neon/cube': (context) => const NeonCubeExample(),
+        '/neon/sphere': (context) => const NeonSphereExample(),
       },
     );
   }
