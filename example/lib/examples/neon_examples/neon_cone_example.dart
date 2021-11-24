@@ -8,14 +8,14 @@ import 'package:flgl_example/examples/common/camera_projection_toggle_menu.dart'
 import 'package:flgl_example/examples/controls/flgl_controls.dart';
 import 'package:flutter/material.dart';
 
-class NeonCubeExample extends StatefulWidget {
-  const NeonCubeExample({Key? key}) : super(key: key);
+class NeonConeExample extends StatefulWidget {
+  const NeonConeExample({Key? key}) : super(key: key);
 
   @override
-  _NeonCubeExampleState createState() => _NeonCubeExampleState();
+  _NeonConeExampleState createState() => _NeonConeExampleState();
 }
 
-class _NeonCubeExampleState extends State<NeonCubeExample> {
+class _NeonConeExampleState extends State<NeonConeExample> {
 
   /// The flutter graphics library instance.
   late Flgl flgl;
@@ -82,7 +82,7 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Neon: Cube example"),
+        title: const Text("Neon: Cone example"),
       ),
       body: Stack(
         children: [
@@ -144,14 +144,14 @@ class _NeonCubeExampleState extends State<NeonCubeExample> {
     // init texture info.
     // TextureInfo textureInfo = await TextureManager.loadTexture('assets/images/pepsi_transparent.png');
 
-    var geometry = NeonBoxGeometry();
+    var geometry = NeonConeGeometry();
     var material = NeonMeshBasicMaterial(
-      color: Color(1, 1, 1, 0.8),
+      color: Color(1, 1, 1, 1),
       // map: textureInfo,
     );
     var mesh = NeonMesh(gl, geometry, material);
     mesh.name = 'Quad';
-    mesh.setScale(Vector3(100, 100, 100));
+    mesh.setScale(Vector3(1, 1, 1));
 
     scene.add(mesh);
 

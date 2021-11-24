@@ -47,6 +47,8 @@ export './flutter3d/geometries/neon_triangle_geometry.dart';
 export './flutter3d/geometries/neon_quad_geometry.dart';
 export './flutter3d/geometries/neon_box_geometry.dart';
 export './flutter3d/geometries/neon_sphere_geometry.dart';
+export './flutter3d/geometries/neon_cylinder_geometry.dart';
+export './flutter3d/geometries/neon_cone_geometry.dart';
 
 export './flutter3d/objects/neon_mesh.dart';
 
