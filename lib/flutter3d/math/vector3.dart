@@ -1,8 +1,15 @@
 import 'dart:math' as math;
 
+import 'cylindrical.dart';
+import 'euler.dart';
 import 'math_utils.dart';
+import 'matrix3.dart';
+import 'matrix4.dart';
+import 'quaternion.dart';
+import 'spherical.dart';
 
 var _vector = Vector3();
+var _quaternion = Quaternion();
 
 class Vector3 {
   double x;
@@ -24,7 +31,6 @@ class Vector3 {
     x = scalar;
     y = scalar;
     z = scalar;
-
     return this;
   }
 
@@ -66,7 +72,6 @@ class Vector3 {
       default:
         throw ('index is out of range: $index');
     }
-
     return this;
   }
 
@@ -158,7 +163,7 @@ class Vector3 {
   }
 
   /// Multiplies this vector by v.
-  Vector3 multiply(v) {
+  Vector3 multiply(Vector3 v) {
     x *= v.x;
     y *= v.y;
     z *= v.z;
@@ -181,12 +186,120 @@ class Vector3 {
     return this;
   }
 
+  /// Applies euler transform to this vector by converting
+  /// the Euler object to a Quaternion and applying.
+  Vector3 applyEuler(Euler euler) {
+    if (!(euler != null && euler.isEuler)) {
+      print('THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.');
+    }
+
+    return applyQuaternion(_quaternion.setFromEuler(euler));
+  }
+
+  /// Applies a rotation specified by an axis and an angle to this vector.
+  ///
+  /// - [axis] - A normalized Vector3.
+  /// - [angle] - An angle in radians.
+  Vector3 applyAxisAngle(Vector3 axis, double angle) {
+    return applyQuaternion(_quaternion.setFromAxisAngle(axis, angle));
+  }
+
+  /// Multiplies this vector by [m]
+  Vector3 applyMatrix3(Matrix3 m) {
+    var x = this.x;
+    var y = this.y;
+    var z = this.z;
+    var e = m.elements;
+
+    this.x = e[0] * x + e[3] * y + e[6] * z;
+    this.y = e[1] * x + e[4] * y + e[7] * z;
+    this.z = e[2] * x + e[5] * y + e[8] * z;
+
+    return this;
+  }
+
+  /// Multiplies this vector by normal matrix m and normalizes the result.
+  Vector3 applyNormalMatrix(Matrix3 m) {
+    return applyMatrix3(m).normalize();
+  }
+
+  /// Multiplies this vector (with an implicit 1 in the 4th dimension) and m, and divides by perspective.
+  Vector3 applyMatrix4(Matrix4 m) {
+    var x = this.x;
+    var y = this.y;
+    var z = this.z;
+    var e = m.elements;
+
+    var w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]);
+
+    this.x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w;
+    this.y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w;
+    this.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
+
+    return this;
+  }
+
+  /// Applies a Quaternion transform to this vector.
+  Vector3 applyQuaternion(Quaternion q) {
+    var x = this.x, y = this.y, z = this.z;
+    var qx = q.x, qy = q.y, qz = q.z, qw = q.w;
+
+    // calculate quat * vector
+
+    var ix = qw * x + qy * z - qz * y;
+    var iy = qw * y + qz * x - qx * z;
+    var iz = qw * z + qx * y - qy * x;
+    var iw = -qx * x - qy * y - qz * z;
+
+    // calculate result * inverse quat
+
+    this.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+    this.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+    this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+
+    return this;
+  }
+
+  /// Projects this vector from world space into the camera's
+  /// normalized device coordinate (NDC) space.
+  ///
+  /// - [camera] — camera to use in the projection.
+  // Vector3 project(Camera camera) {
+  //   return applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+  // }
+
+  /// Projects this vector from the camera's normalized device
+  /// coordinate (NDC) space into world space.
+  ///
+  /// - [camera] — camera to use in the projection.
+  // Vector3 unproject(Camera camera) {
+  //   return applyMatrix4(camera.projectionMatrixInverse).applyMatrix4(camera.matrixWorld);
+  // }
+
+  /// Transforms the direction of this vector by a matrix
+  /// (the upper left 3 x 3 subset of a m) and then
+  /// normalizes the result.
+  Vector3 transformDirection(Matrix4 m) {
+    // input: THREE.Matrix4 affine matrix
+    // vector interpreted as a direction
+
+    var x = this.x;
+    var y = this.y;
+    var z = this.z;
+    var e = m.elements;
+
+    this.x = e[0] * x + e[4] * y + e[8] * z;
+    this.y = e[1] * x + e[5] * y + e[9] * z;
+    this.z = e[2] * x + e[6] * y + e[10] * z;
+
+    return normalize();
+  }
+
   /// Divides this vector by v.
   Vector3 divide(Vector3 v) {
     x /= v.x;
     y /= v.y;
     z /= v.z;
-
     return this;
   }
 
@@ -449,7 +562,6 @@ class Vector3 {
   /// slightly more efficient to calculate.
   double distanceToSquared(Vector3 v) {
     var dx = x - v.x, dy = y - v.y, dz = z - v.z;
-
     return dx * dx + dy * dy + dz * dz;
   }
 
@@ -457,4 +569,136 @@ class Vector3 {
   double manhattanDistanceTo(Vector3 v) {
     return (x - v.x).abs() + (y - v.y).abs() + (z - v.z).abs();
   }
+
+  /// Sets this vector from the spherical coordinates s.
+  Vector3 setFromSpherical(Spherical s) {
+    return setFromSphericalCoords(s.radius, s.phi, s.theta);
+  }
+
+  /// Sets this vector from the spherical coordinates radius, phi and theta.
+  Vector3 setFromSphericalCoords(double radius, double phi, double theta) {
+    var sinPhiRadius = math.sin(phi) * radius;
+
+    x = sinPhiRadius * math.sin(theta);
+    y = math.cos(phi) * radius;
+    z = sinPhiRadius * math.cos(theta);
+
+    return this;
+  }
+
+  /// Sets this vector from the cylindrical coordinates c.
+  setFromCylindrical(Cylindrical c) {
+    return setFromCylindricalCoords(c.radius, c.theta, c.y);
+  }
+
+  /// Sets this vector from the cylindrical coordinates radius, theta and y.
+  Vector3 setFromCylindricalCoords(double radius, double theta, double _y) {
+    x = radius * math.sin(theta);
+    y = _y;
+    z = radius * math.cos(theta);
+
+    return this;
+  }
+
+  /// Sets this vector to the position elements of the transformation matrix m.
+  Vector3 setFromMatrixPosition(Matrix4 m) {
+    var e = m.elements;
+
+    x = e[12];
+    y = e[13];
+    z = e[14];
+
+    return this;
+  }
+
+  /// Sets this vector to the scale elements of the transformation matrix m.
+  Vector3 setFromMatrixScale(Matrix4 m) {
+    var sx = setFromMatrixColumn(m, 0).length();
+    var sy = setFromMatrixColumn(m, 1).length();
+    var sz = setFromMatrixColumn(m, 2).length();
+
+    x = sx;
+    y = sy;
+    z = sz;
+
+    return this;
+  }
+
+  /// Sets this vector's x, y and z components from index column of matrix.
+  Vector3 setFromMatrixColumn(Matrix4 m, int index) {
+    return fromArray(m.elements, index * 4);
+  }
+
+  /// Sets this vector's x, y and z components from index column of matrix.
+  Vector3 setFromMatrix3Column(Matrix3 m, int index) {
+    return fromArray(m.elements, index * 3);
+  }
+
+  /// Returns true if the components of this vector and v are strictly equal;
+  /// false otherwise.
+  bool equals(Vector3 v) {
+    return ((v.x == x) && (v.y == y) && (v.z == z));
+  }
+
+  /// Sets this vector's x value to be array[ offset + 0 ], y value to be
+  /// array[ offset + 1 ] and z value to be array[ offset + 2 ].
+  ///
+  /// - [array] - the source array.
+  /// - [offset] - ( optional) offset into the array. Default is 0.
+  Vector3 fromArray(List<double> array, [int offset = 0]) {
+    x = array[offset];
+    y = array[offset + 1];
+    z = array[offset + 2];
+
+    return this;
+  }
+
+  /// Returns an array [x, y, z], or copies x, y and z into the provided array.
+  ///
+  ///- [array] - (optional) array to store this vector to. If this is not provided a new array will be created.
+  ///- [offset] - (optional) optional offset into the array.
+  List<double> toArray([List<double> array = const [], int offset = 0]) {
+    array[offset] = x;
+    array[offset + 1] = y;
+    array[offset + 2] = z;
+
+    return array;
+  }
+
+  /// Sets each component of this vector to a pseudo-random value between 0 and 1, excluding 1.
+  Vector3 random() {
+    x = math.Random().nextDouble();
+    y = math.Random().nextDouble();
+    z = math.Random().nextDouble();
+
+    return this;
+  }
+
+  /// Sets this vector to a uniformly random point on a unit sphere.
+  Vector3 randomDirection() {
+    // Derived from https://mathworld.wolfram.com/SpherePointPicking.html
+
+    var u = (math.Random().nextDouble() - 0.5) * 2;
+    var t = math.Random().nextDouble() * math.pi * 2;
+    // var f = math.sqrt( 1 - u ** 2 );
+    var f = math.sqrt(1 - u * 2); // this will be a problem
+
+    x = f * math.cos(t);
+    y = f * math.sin(t);
+    z = u;
+
+    return this;
+  }
+
+  // operator [](String i) => list[i]; // get
+  operator []=(String i, double value) => {
+    if (i == 'x')
+      {x = value}
+    else if (i == 'y')
+      {y = value}
+    else if (i == 'z')
+      {z = value}
+    else
+      {throw 'Unknown operator'}
+  }; // set
 }

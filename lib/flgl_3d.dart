@@ -23,15 +23,34 @@ export './flutter3d/geometries/cone_geometry.dart';
 export './flutter3d/geometries/cylinder_geometry.dart';
 export './flutter3d/geometries/edged_box_geometry.dart';
 
-export './flutter3d/math/m4.dart';
-export './flutter3d/math/math_utils.dart';
-export './flutter3d/math/vector3.dart';
+// Math
+export './flutter3d/math/m4.dart'; // old lib
+
+export './flutter3d/math/box3.dart';
 export './flutter3d/math/color.dart';
+export './flutter3d/math/cylindrical.dart';
+export './flutter3d/math/euler.dart';
+export './flutter3d/math/frustum.dart';
+export './flutter3d/math/line3.dart';
+export './flutter3d/math/math_utils.dart';
+export './flutter3d/math/matrix3.dart';
+export './flutter3d/math/matrix4.dart';
+export './flutter3d/math/plane.dart';
+export './flutter3d/math/quaternion.dart';
+export './flutter3d/math/ray.dart';
+export './flutter3d/math/sphere.dart';
+export './flutter3d/math/triangle.dart';
+export './flutter3d/math/vector2.dart';
+export './flutter3d/math/vector3.dart';
+export './flutter3d/math/vector4.dart';
 
 export './flutter3d/materials/material.dart';
 export './flutter3d/materials/mesh_basic_material.dart';
 
 export './flutter3d/managers/texture_manager.dart';
+
+// Camera Controls
+export './flutter3d/controls/orbit_controls.dart';
 
 // new stuf.
 export './flutter3d/core/neon_buffer_geometry.dart';

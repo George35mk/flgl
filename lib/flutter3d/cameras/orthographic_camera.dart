@@ -9,13 +9,33 @@ class OrthographicCamera extends Camera {
   double near;
   double far;
 
+  double orthographicSize = 1;
+  double aspectRatio = 1;
+
   OrthographicCamera(this.left, this.right, this.bottom, this.top, this.near, this.far) {
     projectionMatrix = M4.orthographic(left, right, bottom, top, near, far);
   }
 
-  zoom(double zoom) {
-    // viewMatrix = M4.translate(viewMatrix, -position.x, -position.y, 0);
-    // viewMatrix = M4.scale(viewMatrix, zoom, zoom, 1.0);
-    // viewMatrix = M4.translate(viewMatrix, right, top, 1.0);
+  setViewportSize(double width, double height) {
+    aspectRatio = width / height;
+    recalculateProjection();
   }
+
+  setOrthographic(double size, double nearPlane, double farPlane) {
+    orthographicSize = size;
+    near = nearPlane;
+    far = farPlane;
+    recalculateProjection();
+  }
+
+  recalculateProjection() {
+    left = -orthographicSize * aspectRatio * 0.5;
+    right = orthographicSize * aspectRatio * 0.5;
+    bottom = -orthographicSize * 0.5;
+    top = orthographicSize * 0.5;
+
+    projectionMatrix = M4.orthographic(left, right, bottom, top, near, far);
+  }
+
+
 }
