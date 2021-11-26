@@ -33,10 +33,10 @@ class Flgl {
   late int defaultFramebufferTexture;
   late int dbo;
 
-  /// Returns true if the textureId is not set.
+  /// Returns true if the textureId is initialized.
   bool get isInitialized => textureId != null;
 
-  /// The openGLES context.
+  /// The OpenGL ES context.
   OpenGLContextES get gl => openGLES.gl;
 
   /// The method channel.
