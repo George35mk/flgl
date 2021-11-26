@@ -1,117 +1,139 @@
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
 import 'package:flgl/flutter3d/cameras/camera.dart';
 import 'package:flgl/flutter3d/cameras/orthographic_camera.dart';
 import 'package:flgl/flutter3d/cameras/perspective_camera.dart';
-import 'package:flgl/flutter3d/math/m4.dart';
-import 'dart:math' as math;
-
-import 'package:flgl/flutter3d/math/math_utils.dart';
-import 'package:flgl/flutter3d/math/matrix4.dart';
 import 'package:flgl/flutter3d/math/vector3.dart';
 
 
+/// ### OrbitControls
+/// 
+/// OrbitControls use the spherical coordinate system to
+/// control the camera rotation around a target axis.
+/// 
+// ignore: todo
+/// TODO: Add pan support.
+/// 
+/// You can find more resources here:
+/// - https://en.wikipedia.org/wiki/Spherical_coordinate_system#Cartesian_coordinates.
+/// - https://en.wikipedia.org/wiki/Polar_coordinate_system
 class OrbitControls {
 
-  /// the target camera.
+  /// The target camera.
   /// 
   ///  Can be OrthographicCamera or PerspectiveCamera
   dynamic camera;
 
-  double camX = 0;
-  double camY = 0;
-  double camZ = 0;
+  // orbit vars.
+  Offset _offset = Offset.zero;
+  Offset _initialFocalPoint = Offset.zero;
+  Offset _sessionOffset = Offset.zero;
+  Offset _finalOffset = Offset.zero;
 
-  OrbitControls(this.camera);
+  // scale vars
+  double _finalScale = 20;
+  double _baseScale = 20;
+  double _newScale = 1;
+  double _previewsScale = 1;
 
+  // phi and theta
+  double phi = 0.001;
+  double theta = 0.001;
+
+  OrbitControls(this.camera) {
+    _baseScale = camera.distanceToOrigin;
+    _finalScale = camera.distanceToOrigin;
+  }
+
+  /// Sets the orbit control camera.
   setActiveCamera(Camera camera) {
+    camera.distanceToOrigin = this.camera.distanceToOrigin;
     this.camera = camera;
-  }
 
-  zoom(double scale,) {
     if (camera is OrthographicCamera) {
-      camera.setOrthographic(scale * 8, -1.0, 1000.0);
-    } else if (camera is PerspectiveCamera) {
-      // zoom for perspective camera.
-    } else {
-      throw 'Unkown camera';
+      camera.distanceToOrigin = _finalScale;
+      camera.setOrthographic(_finalScale, -1.0, 1000.0);
+    }
+
+    // update the camera so we don't have the last rotation
+    if (phi != 0 && theta != 0) {
+      update();
     }
   }
 
-  /// add good descripption.
-  /// I was planning to add orbit controls but I will this method here.
-  orbit(double dx, double dy) {
+  /// Use this method on orbit start.
+  onOrbitStart(Offset focalPoint) {
+    // print('On orbit start');
+    _initialFocalPoint = focalPoint;
+  }
+  
+  /// Orbits the camera around an orbit axis.
+  /// 
+  /// Constrains:
+  /// 
+  /// - r ≥ 0,
+  /// - 0° ≤ θ ≤ 180° (π rad),
+  /// - 0° ≤ φ < 360° (2π rad).
+  onOrbit(Offset focalPoint) {
+    // print('On orbit move');
+    _sessionOffset = focalPoint - _initialFocalPoint;
+    _finalOffset = _offset + _sessionOffset;
+
+    double dx = _finalOffset.dx;
+    double dy = _finalOffset.dy;
+
+    phi = dy.abs() * math.pi / 360;
+    theta = dx * math.pi / 180;
+
+    if (phi != 0 && theta != 0) {
+      update();
+    }
+  }
+
+  /// On zoom stop
+  onOrbitStop() {
+    // print('On orbit stop');
+    _offset += _sessionOffset;
+  }
+
+  /// On soom start.
+  onZoomStart() {
+    // print('Zoom start');
+    _previewsScale = _newScale;
+  }
+
+  /// On zoom.
+  onZoom(double scale) {
+    _newScale = (_previewsScale * scale).clamp(0.5, 100.0);
+    _finalScale = _newScale * _baseScale;
 
     if (camera is OrthographicCamera) {
-      double radious = 180;
-      double speedFactor = 0.01;
 
-      camX = (math.sin(dx * speedFactor) * radious);
-      camY = (math.cos(dy * speedFactor) * 360);
-      camZ = (math.cos(dx * speedFactor) * radious);
+      camera.distanceToOrigin = _finalScale;
+      camera.setOrthographic(_finalScale, -1.0, 1000.0);
 
-      camX = MathUtils.degToRad(camX);
-      camY = MathUtils.degToRad(camY);
-      camZ = MathUtils.degToRad(camZ);
-
-      camera.setPosition(Vector3(-camX, -camY, camZ)); // rotate around y axis // Rotate on x, y and z axis works!!!
-      
     } else if (camera is PerspectiveCamera) {
-      print('Start PerspectiveCamera orbit, dx: $dx, dy: $dy');
 
-      // glm::mat4 PivotPoint;
-      // glm::mat4 Camera;
-      // glm::mat4 View;
-      // float RotationSPeed = 0.05f;
+      camera.distanceToOrigin = _finalScale;
 
-      // PivotPoint = glm::mat4(1.0f);
-      // Camera = glm::mat4(1.0f);
-      // View = glm::mat4(1.0f);
-      // Camera = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f)) * Camera; //Offset it by some distance
-
-      // do //fake game loop per frame
-      // {
-      //   if (OrbitRight) Camera = glm::rotate(glm::mat4(1.0f), RotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * Camera; 
-      //   if (OrbitLeft) Camera = glm::rotate(glm::mat4(1.0f), -RotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * Camera; 
-      //   if (PanRight) PivotPoint = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f, 0.0f,0.0f)) * PivotPoint;
-      //   if (PanLeft) PivotPoint = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f, 0.0f,0.0f)) * PivotPoint;
-      //   if (ZoomIn) Camera = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f,0.1f)) * Camera;
-      //   if (ZoomOut) Camera = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f,-0.1f)) * Camera;
-      //   if (Forward) PivotPoint = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f,0.1f)) * PivotPoint;
-      //   if (Back) PivotPoint = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f,-0.1f)) * PivotPoint;
-
-      //   View = PivotPoint * Camera;
-      //   View = glm::inverse(View); //More academic than actually necessary.
-      // }while(GameRunning);
-
-
-
-      // EXAMPLE 1: WORKS BUT IS NOT PERFECT
-      const double radius = 500.0;
-      double speedFactor = 0.01;
-      camX = math.sin(dx * speedFactor) * radius;
-      camY = math.cos(dy * speedFactor) * radius;
-      camZ = math.cos(dx * speedFactor) * radius;
-
-      camera.setPosition(Vector3(-camX, -camY, camZ));
-
-
-
-
-      // EXAMPLE 2: I not working as I want.
-      // double speedFactor = 0.001;
-
-      // var mat = Matrix4();
-      // var axisy = Vector3(0, 1, 0);
-      // var xRad = MathUtils.degToRad(dx * speedFactor);
-
-      // // print('xRad: $xRad');
-      // // print('xRad to degree: ${MathUtils.radToDeg(xRad)}');
-
-      // mat = mat.makeRotationAxis(axisy, xRad);
-      // camera.viewMatrix = M4.multiply(camera.viewMatrix, mat.elements);
-
-      
     } else {
-      throw 'Unkown camera';
+      throw 'Unkown camera instance';
     }
+
+    update();
+  }
+
+  /// Use this method on zoom stop.
+  onZoomStop() {
+    // print('Zoom stop');
+  }
+
+  /// Updates the X, Y, Z from phi and theta
+  /// and sets the camera position vector.
+  update() {
+    double x = camera.distanceToOrigin * math.sin(phi) * math.cos(theta);
+    double y = camera.distanceToOrigin * math.cos(phi);
+    double z = camera.distanceToOrigin * math.sin(phi) * math.sin(theta);
+    camera.setPosition(Vector3(x, y, z));
   }
 }

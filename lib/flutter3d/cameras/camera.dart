@@ -28,6 +28,11 @@ class Camera {
   /// The camera uniforms.
   Map<String, dynamic> uniforms = {};
 
+  /// The camera distance from the origin.
+  // ignore: todo
+  /// TODO: This should be computed from a getter.
+  double distanceToOrigin = 500;
+
   Camera() {
     updateCameraMatrix();
   }

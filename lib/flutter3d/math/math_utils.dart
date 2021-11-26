@@ -1,11 +1,11 @@
 import 'dart:math' as math;
 
 class MathUtils {
-  static radToDeg(double r) {
+  static double radToDeg(double r) {
     return r * 180 / math.pi;
   }
 
-  static degToRad(double d) {
+  static double degToRad(double d) {
     return d * math.pi / 180;
   }
 

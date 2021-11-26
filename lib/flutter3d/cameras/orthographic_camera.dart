@@ -16,19 +16,22 @@ class OrthographicCamera extends Camera {
     projectionMatrix = M4.orthographic(left, right, bottom, top, near, far);
   }
 
+  /// Sets the viewport size.
   setViewportSize(double width, double height) {
     aspectRatio = width / height;
-    recalculateProjection();
+    updateProjection();
   }
 
+  /// Sets the orthographic.
   setOrthographic(double size, double nearPlane, double farPlane) {
     orthographicSize = size;
     near = nearPlane;
     far = farPlane;
-    recalculateProjection();
+    updateProjection();
   }
 
-  recalculateProjection() {
+  /// Update the camera projection.
+  void updateProjection() {
     left = -orthographicSize * aspectRatio * 0.5;
     right = orthographicSize * aspectRatio * 0.5;
     bottom = -orthographicSize * 0.5;
