@@ -107,22 +107,6 @@ class _NeonQuadExample2State extends State<NeonQuadExample2> {
               right: 10,
               child: FLGLControls(camera: activeCamera!, scene: scene),
             ),
-
-          // Positioned(
-          //   top: 10,
-          //   child: TextButton(
-          //     child: const Text('2D'),
-          //     onPressed: () {/* ... */},
-          //   ),
-          // ),
-          // Positioned(
-          //   top: 10,
-          //   left: 120,
-          //   child: TextButton(
-          //     child: const Text('3D'),
-          //     onPressed: () {/* ... */},
-          //   ),
-          // ),
           Positioned(
             top: 10,
             left: 10,

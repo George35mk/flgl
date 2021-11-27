@@ -4,6 +4,8 @@ import 'package:flgl/flutter3d/managers/texture_manager.dart';
 import 'package:flgl/openGL/bindings/gles_bindings.dart';
 import 'package:flgl/openGL/contexts/open_gl_context_es.dart';
 
+// How to manage textures: https://stackoverflow.com/questions/11217121/how-to-manage-memory-with-texture-in-opengl
+
 class NeonTexture {
   OpenGLContextES gl;
   int m_RendererID = 0;

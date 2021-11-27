@@ -263,6 +263,17 @@ class _NeonSceneExampleState extends State<NeonSceneExample> {
     mesh2.setPosition(Vector3(0, 0, 0));
     scene.add(mesh2);
 
+    // Quad mesh.
+    var geometry3 = NeonQuadGeometry();
+    var material3 = NeonMeshBasicMaterial(color: Color(1, 0, 1, 1));
+    material3.side = CullFace.frontAndBack;
+    var mesh3 = NeonMesh(gl, geometry3, material3);
+    mesh3.name = 'Quad';
+    mesh3.setPosition(Vector3(-200, 0, 1));
+    mesh3.setScale(Vector3(100, 100, 1));
+
+    scene.add(mesh3);
+
     // Setup renderer.
     neonRenderer = NeonRenderer(flgl, gl);
     neonRenderer!.width = width;

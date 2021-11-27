@@ -67,7 +67,29 @@ class NeonRenderer {
     }
   }
 
+
+  /// Computes the polygon render side.
+  /// More info here: 
+  /// - https://community.khronos.org/t/texture-mapping-to-two-sides-of-a-polygon/16605
+  computePolygonRenderSide(NeonObject3D obj) {
+    gl.enable(gl.CULL_FACE);
+    if (obj.material.side == CullFace.front) {
+      gl.cullFace(GL_FRONT);
+    } else if (obj.material.side == CullFace.back) {
+      gl.cullFace(GL_BACK);
+    } else if (obj.material.side == CullFace.frontAndBack) {
+      gl.disable(GL_CULL_FACE);
+      // gl.cullFace(GL_FRONT_AND_BACK);
+    } else {
+      gl.cullFace(GL_BACK);
+    }
+  }
+
   draw(VertexArray va, IndexBuffer ib, Shader shader, NeonObject3D obj, Camera camera) {
+
+    // handle plolygon render side
+    computePolygonRenderSide(obj);
+
     shader.bind();
 
     // This is the best place to set uniforms just before you bind the VAO object.
