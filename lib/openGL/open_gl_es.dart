@@ -92,5 +92,19 @@ class OpenGLES {
   dispose() {
     eglMakeCurrent(_display, 0, 0, 0);
     // print(" OpenGLES dispose .... ");
+
+    // test code to fix the 28th reload bug.
+    // Pointer<Void> p_display = Pointer<Void>.fromAddress(_display);
+    // Pointer<Void> p_surface = Pointer<Void>.fromAddress(_surface);
+    // Pointer<Void> p_context = Pointer<Void>.fromAddress(_context);
+
+    // egl.eglDestroySurface(p_display, p_surface); // <-- issue.
+    // egl.eglDestroyContext(p_display, p_context);
+    // egl.eglReleaseThread();
+    // egl.eglTerminate(p_display);
+
+    // calloc.free(p_display);
+    // calloc.free(p_surface);
+    // calloc.free(p_context);
   }
 }

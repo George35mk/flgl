@@ -50,8 +50,7 @@ class EglEnv {
 
         val configs = arrayOfNulls<EGLConfig>(1)
         val numConfigs = IntArray(1)
-        if (!EGL14.eglChooseConfig(eglDisplay, attributesList, 0, configs,
-                        0, configs.size, numConfigs, 0)) {
+        if (!EGL14.eglChooseConfig(eglDisplay, attributesList, 0, configs, 0, configs.size, numConfigs, 0)) {
             checkEglError("EGL choose config failed")
         }
         eglConfig = configs[0]
@@ -107,15 +106,14 @@ class EglEnv {
 
 
     fun dispose() {
-        if (eglDisplay != EGL14.EGL_NO_DISPLAY) {
-            EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE,
-                    EGL14.EGL_NO_CONTEXT)
+        if (eglDisplay != EGL14.EGL_NO_DISPLAY && eglSurface != EGL14.EGL_NO_SURFACE) {
+            EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
             EGL14.eglDestroySurface(eglDisplay, eglSurface)
             EGL14.eglDestroyContext(eglDisplay, eglContext)
             EGL14.eglReleaseThread()
             EGL14.eglTerminate(eglDisplay)
 
-            Log.d(this.javaClass.name, "dispose method called")
+            // Log.d(this.javaClass.name, "dispose method called")
         }
         eglSurface = EGL14.EGL_NO_SURFACE
         eglContext = EGL14.EGL_NO_CONTEXT

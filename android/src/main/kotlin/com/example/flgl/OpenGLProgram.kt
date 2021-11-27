@@ -60,6 +60,9 @@ class OpenGLProgram {
             GLES30.glDeleteProgram(programHandle);
             throw Exception(" Linking of program failed. ")
         }
+        
+        GLES30.glDeleteShader(vertexShader)
+        GLES30.glDeleteShader(fragmentShader)
 
         return programHandle;
     }
