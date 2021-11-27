@@ -9,20 +9,18 @@ class OpenGLContextES extends OpenGL30Constant {
   /// TODO need free memory
   // List<Pointer<Uint32>> _uint32pointers = [];
 
-  // late LibOpenGLES gl; // use this.
   late LibOpenGLES gl;
-  // late dynamic gl;
 
   OpenGLContextES(Map<String, dynamic> parameters) {
     gl = parameters["gl"];
   }
 
-  scissor(x, y, z, w) {
-    return gl.glScissor(x, y, z, w);
+  void scissor(int x, int y, int width, int height) {
+    gl.glScissor(x, y, width, height);
   }
 
   void viewport(int x, int y, int width, int height) {
-    return gl.glViewport(x, y, width, height);
+    gl.glViewport(x, y, width, height);
   }
 
   ShaderPrecisionFormat getShaderPrecisionFormat(int shadertype, int precisiontype) {
@@ -119,7 +117,7 @@ class OpenGLContextES extends OpenGL30Constant {
     gl.glTexParameteri(target, pname, param);
   }
 
-  texImage2D(
+  void texImage2D(
     int target,
     int level,
     int internalformat,
@@ -156,7 +154,7 @@ class OpenGLContextES extends OpenGL30Constant {
   //   return gl.texImage2D(target, level, internalformat, format, type, data);
   // }
 
-  texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format,
+  void texImage3D(int target, int level, int internalformat, int width, int height, int depth, int border, int format,
       int type, data) {
     Pointer<Int8> nativeBuffer;
     if (data != null) {
@@ -170,12 +168,12 @@ class OpenGLContextES extends OpenGL30Constant {
     }
   }
 
-  depthFunc(v0) {
-    return gl.glDepthFunc(v0);
+  void depthFunc(int func) {
+    gl.glDepthFunc(func);
   }
 
-  depthMask(bool v0) {
-    return gl.glDepthMask(v0 ? 1 : 0);
+  void depthMask(bool v0) {
+    gl.glDepthMask(v0 ? 1 : 0);
   }
 
   /// ### enable or disable server-side GL capabilities
@@ -183,130 +181,127 @@ class OpenGLContextES extends OpenGL30Constant {
   ///
   /// - [cap] Specifies a symbolic constant indicating a GL capability.
   void enable(int cap) {
-    return gl.glEnable(cap);
+    gl.glEnable(cap);
   }
 
-  disable(v0) {
-    return gl.glDisable(v0);
+  void disable(int cap) {
+    gl.glDisable(cap);
   }
 
-  blendEquation(v0) {
-    return gl.glBlendEquation(v0);
+  void blendEquation(v0) {
+    gl.glBlendEquation(v0);
   }
 
-  useProgram(int program) {
-    return gl.glUseProgram(program);
+  void useProgram(int program) {
+    gl.glUseProgram(program);
   }
 
   void detachShader(int program, int shader) {
     gl.glDetachShader(program, shader);
   }
 
-  blendFuncSeparate(v0, v1, v2, v3) {
-    return gl.glBlendFuncSeparate(v0, v1, v2, v3);
+  void blendFuncSeparate(int sfactorRGB, int dfactorRGB, int sfactorAlpha, int dfactorAlpha) {
+    gl.glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
   }
 
-  blendFunc(int sfactor, int dfactor) {
-    return gl.glBlendFunc(sfactor, dfactor);
+  void blendFunc(int sfactor, int dfactor) {
+    gl.glBlendFunc(sfactor, dfactor);
   }
 
-  blendEquationSeparate(var0, var1) {
+  void blendEquationSeparate(var0, var1) {
     // print(" OpenGL blendEquationSeparate ...  ");
   }
 
-  frontFace(v0) {
-    return gl.glFrontFace(v0);
+  void frontFace(int mode) {
+    gl.glFrontFace(mode);
   }
 
-  cullFace(v0) {
-    return gl.glCullFace(v0);
+  void cullFace(int mode) {
+    gl.glCullFace(mode);
   }
 
-  lineWidth(num v0) {
-    return gl.glLineWidth(v0.toDouble());
+  void lineWidth(double width) {
+    gl.glLineWidth(width);
   }
 
-  polygonOffset(v0, v1) {
-    return gl.glPolygonOffset(v0, v1);
+  void polygonOffset(double factor, double units) {
+    gl.glPolygonOffset(factor, units);
   }
 
-  stencilMask(v0) {
+  void stencilMask(v0) {
     // print(" OpenGL stencilMask ...  ");
   }
 
-  stencilFunc(v0, v1, v2) {
+  void stencilFunc(v0, v1, v2) {
     // print(" OpenGL stencilFunc ...  ");
   }
 
-  stencilOp(v0, v1, v2) {
+  void stencilOp(v0, v1, v2) {
     // print(" OpenGL stencilOp ...  ");
   }
 
-  clearStencil(v0) {
-    return gl.glClearStencil(v0);
+  void clearStencil(int s) {
+    gl.glClearStencil(s);
   }
 
-  clearDepth(num v0) {
-    return gl.glClearDepthf(v0.toDouble());
+  void clearDepth(double d) {
+    gl.glClearDepthf(d);
   }
 
-  colorMask(bool v0, bool v1, bool v2, bool v3) {
-    return gl.glColorMask(v0 ? 1 : 0, v1 ? 1 : 0, v2 ? 1 : 0, v3 ? 1 : 0);
+  void colorMask(bool red, bool green, bool blue, bool alpha) {
+    gl.glColorMask(red ? 1 : 0, green ? 1 : 0, blue ? 1 : 0, alpha ? 1 : 0);
   }
 
-  clearColor(num r, num g, num b, num a) {
-    return gl.glClearColor(r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble());
+  void clearColor(double red, double green, double blue, double alpha) {
+    gl.glClearColor(red, green, blue, alpha);
   }
 
-  compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data) {
-    return gl.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+  /// The data should be a pointer.
+  void compressedTexImage2D(int target, int level, int internalformat, int width, int height, int border, int imageSize, data) {
+    gl.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
   }
 
-  generateMipmap(v0) {
-    return gl.glGenerateMipmap(v0);
+  void generateMipmap(int target) {
+    gl.glGenerateMipmap(target);
   }
 
-  deleteTexture(int v0) {
-    var _texturesList = [v0];
+  void deleteTexture(int texture) {
+    var _texturesList = [texture];
     final ptr = calloc<Int32>(_texturesList.length);
     ptr.asTypedList(1).setAll(0, _texturesList);
     gl.glDeleteTextures(1, ptr);
     calloc.free(ptr);
   }
 
-  deleteFramebuffer(int v0) {
-    var _list = [v0];
+  void deleteFramebuffer(int framebuffer) {
+    var _list = [framebuffer];
     final ptr = calloc<Int32>(_list.length);
     ptr.asTypedList(1).setAll(0, _list);
     gl.glDeleteFramebuffers(1, ptr);
     calloc.free(ptr);
   }
 
-  deleteRenderbuffer(int v0) {
-    var _list = [v0];
+  void deleteRenderbuffer(int renderbuffer) {
+    var _list = [renderbuffer];
     final ptr = calloc<Int32>(_list.length);
     ptr.asTypedList(1).setAll(0, _list);
     gl.glDeleteRenderbuffers(1, ptr);
     calloc.free(ptr);
   }
 
-  texParameterf(v0, v1, v2) {
-    return gl.glTexParameterf(v0, v1, v2);
+  void texParameterf(int target, int pname, double param) {
+    gl.glTexParameterf(target, pname, param);
   }
 
-  pixelStorei(v0, v1) {
-    return gl.glPixelStorei(v0, v1);
+  void pixelStorei(int pname, int param) {
+    gl.glPixelStorei(pname, param);
   }
-
-  // getContextAttributes() {
-  //   return gl.getContextAttributes();
-  // }
 
   int getProgramParameter(int program, int pname) {
-    Pointer<Int32> status = calloc<Int32>();
-    gl.glGetProgramiv(program, pname, status);
-    int _v = status.value;
-    calloc.free(status);
+    Pointer<Int32> p_params = calloc<Int32>();
+    gl.glGetProgramiv(program, pname, p_params);
+    int _v = p_params.value;
+    calloc.free(p_params);
     return _v;
   }
 
@@ -316,7 +311,8 @@ class OpenGLContextES extends OpenGL30Constant {
     Pointer<Uint32> type = calloc<Uint32>();
     Pointer<Int8> name = calloc<Int8>(100);
 
-    gl.glGetActiveUniform(program, index, 99, length, size, type, name);
+    int bufSize = 99;
+    gl.glGetActiveUniform(program, index, bufSize, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
@@ -330,13 +326,14 @@ class OpenGLContextES extends OpenGL30Constant {
     return ActiveInfo(_type, _name, _size);
   }
 
-  getActiveAttrib(int program, int index) {
+  ActiveInfo getActiveAttrib(int program, int index) {
     var length = calloc<Int32>();
     var size = calloc<Int32>();
     var type = calloc<Uint32>();
     var name = calloc<Int8>(100);
 
-    gl.glGetActiveAttrib(program, index, 99, length, size, type, name);
+    int bufSize = 99;
+    gl.glGetActiveAttrib(program, index, bufSize, length, size, type, name);
 
     int _type = type.value;
     String _name = name.cast<Utf8>().toDartString();
@@ -361,11 +358,11 @@ class OpenGLContextES extends OpenGL30Constant {
     return location;
   }
 
-  clear(int mask) {
-    return gl.glClear(mask);
+  void clear(int mask) {
+    gl.glClear(mask);
   }
 
-  /// Generates buffer's
+  /// Generates n buffer's
   int genBuffers(int n) {
     Pointer<Uint32> bufferId = calloc<Uint32>();
     gl.glGenBuffers(n, bufferId);
@@ -492,9 +489,9 @@ class OpenGLContextES extends OpenGL30Constant {
     // print(" OpenGL copyTexImage2D ...  ");
   }
 
-  texSubImage2D(target, level, x, y, width, height, format, type, Uint8List data) {
+  texSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Uint8List data) {
     final dataPtr = uint8ListToArrayPointer(data);
-    gl.glTexSubImage2D(target, level, x, y, width, height, format, type, dataPtr.cast<Void>());
+    gl.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, dataPtr.cast<Void>());
     calloc.free(dataPtr);
   }
 
@@ -508,23 +505,23 @@ class OpenGLContextES extends OpenGL30Constant {
     // print(" OpenGL compressedTexSubImage2D ...  ");
   }
 
-  bindRenderbuffer(v0, v1) {
-    return gl.glBindRenderbuffer(v0, v1 ?? 0);
+  void bindRenderbuffer(int target, int renderbuffer) {
+    gl.glBindRenderbuffer(target, renderbuffer);
   }
 
-  renderbufferStorageMultisample(target, samples, internalformat, width, height) {
-    return gl.glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
+  void renderbufferStorageMultisample(int target, int samples, int internalformat, int width, int height) {
+    gl.glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
   }
 
-  renderbufferStorage(v0, v1, v2, v3) {
-    return gl.glRenderbufferStorage(v0, v1, v2, v3);
+  void renderbufferStorage(int target, int internalformat, int width, int height) {
+    gl.glRenderbufferStorage(target, internalformat, width, height);
   }
 
-  framebufferRenderbuffer(v0, v1, v2, v3) {
-    return gl.glFramebufferRenderbuffer(v0, v1, v2, v3);
+  void framebufferRenderbuffer(int target, int attachment, int renderbuffertarget, int renderbuffer) {
+    gl.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
   }
 
-  createRenderbuffer() {
+  int createRenderbuffer() {
     final v = calloc<Uint32>();
     gl.glGenRenderbuffers(1, v);
     int _v = v.value;
@@ -682,8 +679,8 @@ class OpenGLContextES extends OpenGL30Constant {
     gl.glEnableVertexAttribArray(index);
   }
 
-  disableVertexAttribArray(v0) {
-    return gl.glDisableVertexAttribArray(v0);
+  void disableVertexAttribArray(int index) {
+    gl.glDisableVertexAttribArray(index);
   }
 
   vertexAttribIPointer(v0, v1, v2, v3, v4) {
